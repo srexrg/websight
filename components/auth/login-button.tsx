@@ -29,9 +29,9 @@ export default function LoginButton() {
   return (
     <Button
       onClick={handleGoogleLogin}
-      className="w-full"
+      className="w-full cursor-pointer"
     >
-      <FaGoogle className="mr-2" />  <p className="font-text">Sign in with Google</p>
+      <FaGoogle className="mr-2" />  <p className="font-text ">Sign in with Google</p>
     </Button>
   )
 }
