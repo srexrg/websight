@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
-import { GlobeIcon, PlusIcon, TrashIcon, AlertCircleIcon } from 'lucide-react'
+import { GlobeIcon, PlusIcon, TrashIcon, AlertCircleIcon, ExternalLinkIcon, ArrowRightIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface Domain {
@@ -32,7 +32,6 @@ export default function DomainManager({
     return domain.replace(/^www\./i, '');
   }
 
-
   function validateAndParseDomain(input: string): { isValid: boolean; domain: string; normalizedDomain: string; error: string | null } {
     input = input.trim()
     
@@ -40,7 +39,6 @@ export default function DomainManager({
       return { isValid: false, domain: '', normalizedDomain: '', error: 'Domain cannot be empty' }
     }
     
-
     if (input.includes('://')) {
       return { 
         isValid: false, 
@@ -50,7 +48,6 @@ export default function DomainManager({
       }
     }
     
-
     if (input.startsWith('http') || input.startsWith('https')) {
       return { 
         isValid: false,
@@ -60,7 +57,6 @@ export default function DomainManager({
       }
     }
     
-   
     if (input.includes('/')) {
       return { 
         isValid: false,
@@ -79,7 +75,6 @@ export default function DomainManager({
       }
     }
     
-
     if (input.includes(':')) {
       return { 
         isValid: false,
@@ -122,7 +117,6 @@ export default function DomainManager({
     
     setIsSubmitting(true)
     
-
     const { data: existingDomain, error: checkError } = await supabase
       .from('domains')
       .select('id, user_id, domain')
@@ -130,7 +124,6 @@ export default function DomainManager({
       .single()
       
     if (checkError && checkError.code !== 'PGRST116') {
-
       console.error('Error checking domain:', checkError)
       setError('Error checking domain availability. Please try again.')
       setIsSubmitting(false)
@@ -138,7 +131,6 @@ export default function DomainManager({
     }
     
     if (existingDomain) {
-  
       if (existingDomain.user_id === userId) {
         const enteredWithWWW = validation.domain.startsWith('www.');
         const storedWithWWW = existingDomain.domain.startsWith('www.');
@@ -155,7 +147,6 @@ export default function DomainManager({
       return
     }
     
-
     const { data: newDomainData, error: insertError } = await supabase
       .from('domains')
       .insert({
@@ -173,10 +164,8 @@ export default function DomainManager({
       return
     }
     
-
     setNewDomain('')
     
-  
     if (newDomainData && newDomainData[0]) {
       setDomains([newDomainData[0], ...domains]);
     } else {
@@ -207,6 +196,11 @@ export default function DomainManager({
     setDomains(domains.filter(domain => domain.id !== domainId))
     
     router.refresh()
+  }
+
+  function handleDomainClick(domainId: string) {
+    // Navigate to the website's detail page
+    router.push(`/website/${domainId}`);
   }
 
   return (
@@ -247,35 +241,53 @@ export default function DomainManager({
           </Button>
         </form>
         
-        <div className="space-y-3">
-          {domains.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <GlobeIcon className="mx-auto h-8 w-8 mb-2 opacity-50" />
-              <p>You haven't added any domains yet.</p>
-              <p className="text-sm">Add your first domain above to get started.</p>
-            </div>
-          ) : (
-            domains.map((domain) => (
-              <div 
+        {domains.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <GlobeIcon className="mx-auto h-8 w-8 mb-2 opacity-50" />
+            <p>You haven't added any domains yet.</p>
+            <p className="text-sm">Add your first domain above to get started.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {domains.map((domain) => (
+              <Card 
                 key={domain.id}
-                className="flex items-center justify-between p-3 rounded-md border bg-card"
+                className="group relative overflow-hidden transition-all border hover:border-primary hover:shadow-md cursor-pointer"
+                onClick={() => handleDomainClick(domain.id)}
               >
-                <div className="flex items-center gap-2">
-                  <GlobeIcon className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">{domain.domain}</span>
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-2 rounded-full bg-primary/10">
+                      <GlobeIcon className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="font-medium text-lg">{domain.domain}</h3>
+                  </div>
+                  
+                  <div className="text-sm text-muted-foreground mb-3">
+                    Added on {new Date(domain.created_at).toLocaleDateString()}
+                  </div>
+                  
+                  <div className="flex items-center text-primary text-sm font-medium group-hover:underline">
+                    View website details
+                    <ArrowRightIcon className="h-3.5 w-3.5 ml-1" />
+                  </div>
                 </div>
+                
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => removeDomain(domain.id)}
-                  className="text-muted-foreground hover:text-destructive"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeDomain(domain.id);
+                  }}
+                  className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                 >
                   <TrashIcon className="h-4 w-4" />
                 </Button>
-              </div>
-            ))
-          )}
-        </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </CardContent>
       <CardFooter className="text-sm text-muted-foreground border-t pt-6">
         <div>
