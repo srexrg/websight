@@ -15,7 +15,7 @@ export default async function Dashboard() {
         redirect("/auth");
     }
 
-    // Fetch domains using server component
+
     const { data: domains, error: domainsError } = await supabase
         .from('domains')
         .select('*')
