@@ -5,6 +5,47 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { GlobeIcon, ArrowLeftIcon } from "lucide-react";
 import { AnalyticsClient } from "@/components/analytics/AnalyticsClient";
+import { Database } from "@/lib/database.types";
+
+type PageView = Database['public']['Tables']['page_views']['Row']
+type Visit = Database['public']['Tables']['visits']['Row']
+
+interface GroupedPageView {
+  page: string;
+  visits: number;
+}
+
+interface GroupedSource {
+  source: string;
+  visits: number;
+}
+
+function groupPageViews(pageViews: PageView[]): GroupedPageView[] {
+  const groupedViews: Record<string, number> = {};
+  pageViews.forEach(({ page }) => {
+    if (page) {
+      const path = page.replace(/^(?:\/\/|[^\/]+)*\/?/, "");
+      groupedViews[path] = (groupedViews[path] || 0) + 1;
+    }
+  });
+
+  return Object.entries(groupedViews)
+    .map(([page, visits]) => ({ page, visits }))
+    .sort((a, b) => b.visits - a.visits);
+}
+
+function groupPageSources(visits: Visit[]): GroupedSource[] {
+  const groupedSources: Record<string, number> = {};
+  visits.forEach(({ source }) => {
+    if (source) {
+      groupedSources[source] = (groupedSources[source] || 0) + 1;
+    }
+  });
+
+  return Object.entries(groupedSources)
+    .map(([source, visits]) => ({ source, visits }))
+    .sort((a, b) => b.visits - a.visits);
+}
 
 interface PageProps {
   params: {
@@ -23,21 +64,35 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
   if (!user) {
     redirect("/auth");
   }
-  const { data: domainData, error } = await supabase
-    .from("domains")
-    .select("*")
-    .eq("domain", decodeURIComponent(domain))
-    .eq("user_id", user.id)
-    .single();
-  const { data: newdata } =  await supabase.from("page_views").select("*").eq("domain", domain)
 
+  // Fetch domain data and analytics data in parallel
+  const [domainResponse, viewsResponse, visitsResponse] = await Promise.all([
+    supabase
+      .from("domains")
+      .select("*")
+      .eq("domain", decodeURIComponent(domain))
+      .eq("user_id", user.id)
+      .single(),
+    supabase.from("page_views").select().eq("domain", domain),
+    supabase.from("visits").select().eq("website_id", domain)
+  ]);
 
+  console.log("Domain Response:", domainResponse);
+  console.log("Views Response:", viewsResponse);
+  console.log("Visits Response:", visitsResponse);
 
+  const { data: domainData, error } = domainResponse;
+  const pageViews = viewsResponse.data || [];
+  const visits = visitsResponse.data || [];
 
   if (error || !domainData) {
     console.error("Error fetching domain:", error);
     notFound();
   }
+
+  // Process analytics data
+  const groupedPageViews = groupPageViews(pageViews);
+  const groupedPageSources = groupPageSources(visits);
 
   const createdAt = new Date(domainData.created_at).toLocaleDateString("en-US", {
     year: "numeric",
@@ -132,7 +187,13 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
                 <CardTitle>Website Analytics</CardTitle>
               </CardHeader>
               <CardContent>
-                <AnalyticsClient domain={domainData.domain} />
+                <AnalyticsClient 
+                  domain={domainData.domain}
+                  initialPageViews={pageViews}
+                  initialVisits={visits}
+                  initialGroupedPageViews={groupedPageViews}
+                  initialGroupedPageSources={groupedPageSources}
+                />
               </CardContent>
             </Card>
           </div>

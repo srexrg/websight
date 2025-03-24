@@ -8,6 +8,8 @@ interface AnalyticsOverviewProps {
 }
 
 export function AnalyticsOverview({ pageViews, totalVisits }: AnalyticsOverviewProps) {
+
+  console.log("AnalyticsOverview", { pageViews, totalVisits });
   const abbreviateNumber = (number: number): string => {
     if (number >= 1000000) {
       return (number / 1000000).toFixed(1) + "M";
