@@ -28,6 +28,15 @@ export default function DomainManager({
   const supabase = createClient()
   const router = useRouter()
 
+  function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric'
+    });
+  }
+
   function normalizeDomain(domain: string): string {
     return domain.replace(/^www\./i, '');
   }
@@ -198,9 +207,8 @@ export default function DomainManager({
     router.refresh()
   }
 
-  function handleDomainClick(domainId: string) {
-    // Navigate to the website's detail page
-    router.push(`/website/${domainId}`);
+  function handleDomainClick(domain: string) {
+    router.push(`/website/${encodeURIComponent(domain)}`);
   }
 
   return (
@@ -253,7 +261,7 @@ export default function DomainManager({
               <Card 
                 key={domain.id}
                 className="group relative overflow-hidden transition-all border hover:border-primary hover:shadow-md cursor-pointer"
-                onClick={() => handleDomainClick(domain.id)}
+                onClick={() => handleDomainClick(domain.domain)}
               >
                 <div className="p-4">
                   <div className="flex items-center gap-2 mb-2">
@@ -264,7 +272,7 @@ export default function DomainManager({
                   </div>
                   
                   <div className="text-sm text-muted-foreground mb-3">
-                    Added on {new Date(domain.created_at).toLocaleDateString()}
+                    Added on {formatDate(domain.created_at)}
                   </div>
                   
                   <div className="flex items-center text-primary text-sm font-medium group-hover:underline">

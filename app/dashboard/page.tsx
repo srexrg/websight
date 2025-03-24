@@ -28,7 +28,7 @@ export default async function Dashboard() {
 
     return (
         <div className="flex flex-col min-h-screen bg-background">
-            {/* Dashboard Header */}
+ 
             <header className="border-b py-6">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center">
@@ -48,7 +48,7 @@ export default async function Dashboard() {
                 </div>
             </header>
 
-            {/* Dashboard Content */}
+           
             <main className="flex-1 py-8">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="mb-8">
@@ -56,7 +56,7 @@ export default async function Dashboard() {
                         <p className="text-muted-foreground mt-1">Manage your website domains</p>
                     </div>
 
-                    {/* Domain Manager Section */}
+                    
                     <DomainManager
                         userId={authUser.id}
                         initialDomains={domains || []}

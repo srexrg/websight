@@ -4,18 +4,18 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { GlobeIcon, ArrowLeftIcon } from "lucide-react";
+import { AnalyticsClient } from "@/components/analytics/AnalyticsClient";
 
 interface PageProps {
   params: {
-    id: string;
+    domain: string;
   };
 }
 
 export default async function WebsiteDetailPage({ params }: PageProps) {
-  const { id } = params;
+  const { domain } = await params;
   const supabase = await createClient();
 
-  // Check user authentication
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -24,21 +24,19 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
     redirect("/auth");
   }
 
-  // Fetch domain details
-  const { data: domain, error } = await supabase
+  const { data: domainData, error } = await supabase
     .from("domains")
     .select("*")
-    .eq("id", id)
+    .eq("domain", decodeURIComponent(domain))
     .eq("user_id", user.id)
     .single();
 
-  if (error || !domain) {
+  if (error || !domainData) {
     console.error("Error fetching domain:", error);
     notFound();
   }
 
-  // Format creation date
-  const createdAt = new Date(domain.created_at).toLocaleDateString("en-US", {
+  const createdAt = new Date(domainData.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -46,7 +44,6 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b py-6">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
@@ -63,10 +60,8 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Back button */}
           <Link href="/dashboard" className="inline-block mb-6">
             <Button variant="ghost" className="flex items-center gap-1 pl-0 cursor-pointer">
               <ArrowLeftIcon className="h-4 w-4" />
@@ -74,15 +69,12 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
             </Button>
           </Link>
 
-          {/* Domain header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold">{domain.domain}</h1>
+            <h1 className="text-3xl font-bold">{domainData.domain}</h1>
             <p className="text-muted-foreground mt-1">Added on {createdAt}</p>
           </div>
 
-          {/* Domain details */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Domain information */}
             <Card className="lg:col-span-1">
               <CardHeader>
                 <CardTitle>Domain Information</CardTitle>
@@ -91,7 +83,7 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-sm font-medium text-muted-foreground">Domain Name</h3>
-                    <p className="text-lg">{domain.domain}</p>
+                    <p className="text-lg">{domainData.domain}</p>
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-muted-foreground">Date Added</h3>
@@ -100,7 +92,7 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
                   <div>
                     <h3 className="text-sm font-medium text-muted-foreground">Website URL</h3>
                     <a 
-                      href={`https://${domain.domain}`}
+                      href={`https://${domainData.domain}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline flex items-center gap-1.5"
@@ -122,38 +114,22 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
                       </svg>
                     </a>
                   </div>
+                  <div className="pt-4 border-t">
+                    <h3 className="text-sm font-medium text-muted-foreground mb-2">Tracking Script</h3>
+                    <div className="bg-black/5 dark:bg-white/5 rounded-lg p-3 text-xs font-mono">
+                      {`<script src="${process.env.NEXT_PUBLIC_APP_URL}/tracker.js" data-site="${domainData.domain}"></script>`}
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Analytics placeholder */}
             <Card className="lg:col-span-2">
               <CardHeader>
                 <CardTitle>Website Analytics</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="48"
-                    height="48"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="mb-4 opacity-50"
-                  >
-                    <path d="M3 3v18h18" />
-                    <path d="m19 9-5 5-4-4-3 3" />
-                  </svg>
-                  <p className="text-lg mb-2">Analytics coming soon</p>
-                  <p className="max-w-md">
-                    We're working on bringing you detailed analytics for your website.
-                    Check back later for visitor stats, traffic sources, and more.
-                  </p>
-                </div>
+                <AnalyticsClient domain={domainData.domain} />
               </CardContent>
             </Card>
           </div>
