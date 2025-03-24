@@ -1,5 +1,6 @@
 'use client'
 
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 interface PageView {
   page: string;
@@ -14,42 +15,53 @@ interface PageSource {
 interface PageAnalyticsProps {
   groupedPageViews: PageView[];
   groupedPageSources: PageSource[];
+  totalVisits: number;
 }
 
-export function PageAnalytics({ groupedPageViews, groupedPageSources }: PageAnalyticsProps) {
+export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisits }: PageAnalyticsProps) {
   return (
-    <div className="items-center justify-center grid grid-cols-1 bg-black lg:grid-cols-2 mt-12 w-full border-y border-white/5">
-      {/* Top pages */}
-      <div className="flex flex-col bg-black z-40 h-full w-full">
-        <h1 className="text-white/70 font-medium py-8 w-full text-center border-b border-white/5">Top Pages</h1>
-        {groupedPageViews.map((view) => (
-          <div
-            key={view.page}
-            className="text-white w-full items-center justify-between px-6 py-4 border-b border-white/5 flex"
-          >
-            <p className="text-white/70 font-light">/{view.page}</p>
-            <p className="">{view.visits}</p>
+    <div className="grid gap-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Most Viewed Pages</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {groupedPageViews.map(({ page, visits }) => (
+              <div key={page} className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">/{page}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {visits} {visits === 1 ? 'visit' : 'visits'}
+                  </p>
+                </div>
+                <div className="font-mono text-sm text-muted-foreground">{((visits / totalVisits) * 100).toFixed(1)}%</div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      {/* Top sources */}
-      <div className="flex flex-col bg-black z-40 h-full w-full lg:border-l border-t lg:border-t-0 border-white/5">
-        <h1 className="text-white/70 font-medium py-8 w-full text-center border-b border-white/5 relative">
-          Top Visit Sources
-          <p className="absolute bottom-2 right-2 text-[10px] italic font-light">
-            add ?utm={"{source}"} to track
-          </p>
-        </h1>
-        {groupedPageSources.map((source) => (
-          <div
-            key={source.source}
-            className="text-white w-full items-center justify-between px-6 py-4 border-b border-white/5 flex"
-          >
-            <p className="text-white/70 font-light">/{source.source}</p>
-            <p className="">{source.visits}</p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Traffic Sources</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {groupedPageSources.map(({ source, visits }) => (
+              <div key={source} className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">{source || 'Direct'}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {visits} {visits === 1 ? 'visit' : 'visits'}
+                  </p>
+                </div>
+                <div className="font-mono text-sm text-muted-foreground">{((visits / totalVisits) * 100).toFixed(1)}%</div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

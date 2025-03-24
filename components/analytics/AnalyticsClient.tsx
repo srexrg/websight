@@ -28,6 +28,7 @@ interface AnalyticsClientProps {
 }
 
 export function AnalyticsClient({ domain }: AnalyticsClientProps) {
+
   const [pageViews, setPageViews] = useState<PageView[]>([]);
   const [totalVisits, setTotalVisits] = useState<Visit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,6 +39,7 @@ export function AnalyticsClient({ domain }: AnalyticsClientProps) {
 
   const fetchAnalytics = async (filter_duration?: string) => {
     setLoading(true);
+    /* Filter duration logic commented out for now
     const ThatTimeAgo = new Date();
     
     if (filter_duration) {
@@ -45,28 +47,19 @@ export function AnalyticsClient({ domain }: AnalyticsClientProps) {
       const onlyNumber_filter_duration = match ? parseInt(match[0]) : 0;
       ThatTimeAgo.setDate(ThatTimeAgo.getDate() - onlyNumber_filter_duration);
     }
+    */
 
     try {
-      const [viewsResponse, visitsResponse] = filter_duration
-        ? await Promise.all([
-            supabase
-              .from("page_views")
-              .select()
-              .eq("domain", domain)
-              .filter("created_at", "gte", ThatTimeAgo.toISOString()),
-            supabase
-              .from("visits")
-              .select()
-              .eq("website_id", domain)
-              .filter("created_at", "gte", ThatTimeAgo.toISOString()),
-          ])
-        : await Promise.all([
-            supabase.from("page_views").select().eq("domain", domain),
-            supabase.from("visits").select().eq("website_id", domain),
-          ]);
+      const [viewsResponse, visitsResponse] = await Promise.all([
+        supabase.from("page_views").select("*").eq("domain", domain),
+        supabase.from("visits").select("*").eq("website_id", domain),
+      ]);
+
 
       const views = viewsResponse.data || [];
+      console.log("Views:", views);
       const visits = visitsResponse.data || [];
+      console.log("Visits:", visits);
 
       setPageViews(views);
       setGroupedPageViews(groupPageViews(views));
@@ -157,6 +150,7 @@ export function AnalyticsClient({ domain }: AnalyticsClientProps) {
 
   return (
     <div className="space-y-6">
+      {/* Filter UI commented out for now
       <div className="flex justify-end px-4">
         <Select
           value={filterValue.toString()}
@@ -182,6 +176,7 @@ export function AnalyticsClient({ domain }: AnalyticsClientProps) {
           <ArrowBigDownDashIcon className="h-4 w-4" />
         </button>
       </div>
+      */}
 
       <Tabs defaultValue="overview" className="w-full">
         <TabsList>
@@ -200,6 +195,7 @@ export function AnalyticsClient({ domain }: AnalyticsClientProps) {
           <PageAnalytics
             groupedPageViews={groupedPageViews}
             groupedPageSources={groupedPageSources}
+            totalVisits={totalVisits.length}
           />
         </TabsContent>
       </Tabs>

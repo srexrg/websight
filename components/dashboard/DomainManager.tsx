@@ -195,7 +195,7 @@ export default function DomainManager({
       .from('domains')
       .delete()
       .eq('id', domainId)
-      .eq('user_id', userId) // Security check
+      .eq('user_id', userId) 
     
     if (error) {
       console.error('Error removing domain:', error)

@@ -23,13 +23,16 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
   if (!user) {
     redirect("/auth");
   }
-
   const { data: domainData, error } = await supabase
     .from("domains")
     .select("*")
     .eq("domain", decodeURIComponent(domain))
     .eq("user_id", user.id)
     .single();
+  const { data: newdata } =  await supabase.from("page_views").select("*").eq("domain", domain)
+
+
+
 
   if (error || !domainData) {
     console.error("Error fetching domain:", error);
