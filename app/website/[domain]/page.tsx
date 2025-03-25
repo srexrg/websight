@@ -47,14 +47,17 @@ function groupPageSources(visits: Visit[]): GroupedSource[] {
     .sort((a, b) => b.visits - a.visits);
 }
 
-interface PageProps {
-  params: {
-    domain: string;
-  };
-}
+export const metadata = {
+  title: {
+    template: "%s Analytics",
+  }
+};
 
-export default async function WebsiteDetailPage({ params }: PageProps) {
-  const { domain } = await params;
+
+export type paramsType = Promise<{ domain: string }>;
+
+export default async function WebsiteDetailPage(props: { params: paramsType }) {
+  const { domain } = await props.params;
   const supabase = await createClient();
 
   const {
@@ -65,7 +68,6 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
     redirect("/auth");
   }
 
-  // Fetch domain data and analytics data in parallel
   const [domainResponse, viewsResponse, visitsResponse] = await Promise.all([
     supabase
       .from("domains")
@@ -76,10 +78,6 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
     supabase.from("page_views").select().eq("domain", domain),
     supabase.from("visits").select().eq("website_id", domain)
   ]);
-
-  console.log("Domain Response:", domainResponse);
-  console.log("Views Response:", viewsResponse);
-  console.log("Visits Response:", visitsResponse);
 
   const { data: domainData, error } = domainResponse;
   const pageViews = viewsResponse.data || [];
@@ -106,12 +104,25 @@ export default async function WebsiteDetailPage({ params }: PageProps) {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-primary/10 rounded-lg">
-                <GlobeIcon className="h-6 w-6 text-primary" />
-              </div>
-              <h1 className="text-xl font-semibold">WebSight</h1>
+              <Link href="/dashboard">
+                <div className="p-1.5 bg-primary/10 rounded-lg cursor-pointer hover:bg-primary/20 transition-colors">
+                  <GlobeIcon className="h-6 w-6 text-primary" />
+                </div>
+              </Link>
+              <Link 
+                href="/dashboard" 
+                className="text-xl font-semibold hover:text-primary transition-colors"
+              >
+                WebSight
+              </Link>
             </div>
-            <div>
+            <div className="flex items-center gap-4">
+              <Link 
+                href="/settings" 
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Settings
+              </Link>
               <span className="text-sm text-muted-foreground">{user.email}</span>
             </div>
           </div>

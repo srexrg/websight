@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AnalyticsOverview } from './AnalyticsOverview'
 import { PageAnalytics } from './PageAnalytics'
@@ -28,7 +27,6 @@ interface AnalyticsClientProps {
 }
 
 export function AnalyticsClient({ 
-  domain, 
   initialPageViews, 
   initialVisits,
   initialGroupedPageViews,

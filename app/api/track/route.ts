@@ -1,12 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-export const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-};
+import { corsHeaders } from "@/utils/cors";
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS() {
     return NextResponse.json({}, { headers: corsHeaders });
 }
 

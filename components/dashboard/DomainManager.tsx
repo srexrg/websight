@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
-import { GlobeIcon, PlusIcon, TrashIcon, AlertCircleIcon, ExternalLinkIcon, ArrowRightIcon } from 'lucide-react'
+import { GlobeIcon, PlusIcon, TrashIcon, AlertCircleIcon, ArrowRightIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface Domain {
@@ -260,23 +260,25 @@ export default function DomainManager({
             {domains.map((domain) => (
               <Card 
                 key={domain.id}
-                className="group relative overflow-hidden transition-all border hover:border-primary hover:shadow-md cursor-pointer"
-                onClick={() => handleDomainClick(domain.domain)}
+                className="group relative overflow-hidden transition-all border hover:border-primary hover:shadow-md"
               >
-                <div className="p-4">
+                <div 
+                  className="p-4 cursor-pointer"
+                  onClick={() => handleDomainClick(domain.domain)}
+                >
                   <div className="flex items-center gap-2 mb-2">
                     <div className="p-2 rounded-full bg-primary/10">
                       <GlobeIcon className="h-5 w-5 text-primary" />
                     </div>
-                    <h3 className="font-medium text-lg">{domain.domain}</h3>
+                    <h3 className="font-medium text-lg group-hover:text-primary transition-colors">{domain.domain}</h3>
                   </div>
                   
                   <div className="text-sm text-muted-foreground mb-3">
                     Added on {formatDate(domain.created_at)}
                   </div>
                   
-                  <div className="flex items-center text-primary text-sm font-medium group-hover:underline">
-                    View website details
+                  <div className="flex items-center text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                    View analytics
                     <ArrowRightIcon className="h-3.5 w-3.5 ml-1" />
                   </div>
                 </div>
@@ -288,19 +290,28 @@ export default function DomainManager({
                     e.stopPropagation();
                     removeDomain(domain.id);
                   }}
-                  className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                  className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+                  title="Remove domain"
                 >
                   <TrashIcon className="h-4 w-4" />
                 </Button>
-              </Card>
-            ))}
+              </Card>))}
           </div>
         )}
       </CardContent>
       <CardFooter className="text-sm text-muted-foreground border-t pt-6">
-        <div>
-          <p>Need help setting up tracking on your website?</p>
-          <p>Check our <a href="#" className="text-primary hover:underline">documentation</a> for easy integration steps.</p>
+        <div className="w-full">
+          <p className="mb-2">Need help setting up tracking on your website?</p>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" className="text-sm" onClick={() => router.push('/settings')}>
+              Get tracking code
+            </Button>
+            <Button variant="ghost" className="text-sm" asChild>
+              <a href="/docs" target="_blank" rel="noopener noreferrer">
+                View documentation
+              </a>
+            </Button>
+          </div>
         </div>
       </CardFooter>
     </Card>

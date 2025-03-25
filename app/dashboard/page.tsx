@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import SignOutButton from "@/components/auth/sign-out-button";
 import DomainManager from "@/components/dashboard/DomainManager";
 import { ImageIcon } from "lucide-react";
+import Link from "next/link";
+
+export const metadata = {
+    title: "Dashboard"
+};
 
 export default async function Dashboard() {
     const supabase = await createClient();
@@ -29,16 +34,29 @@ export default async function Dashboard() {
     return (
         <div className="flex flex-col min-h-screen bg-background">
  
-            <header className="border-b py-6">
+             <header className="border-b py-6">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                            <div className="p-1.5 bg-primary/10 rounded-lg">
-                                <ImageIcon className="h-6 w-6 text-primary" />
-                            </div>
-                            <h1 className="text-xl font-semibold">WebSight</h1>
+                            <Link href="/">
+                                <div className="p-1.5 bg-primary/10 rounded-lg cursor-pointer hover:bg-primary/20 transition-colors">
+                                    <ImageIcon className="h-6 w-6 text-primary" />
+                                </div>
+                            </Link>
+                            <Link 
+                                href="/" 
+                                className="text-xl font-semibold hover:text-primary transition-colors"
+                            >
+                                WebSight
+                            </Link>
                         </div>
                         <div className="flex items-center gap-4">
+                            <Link 
+                                href="/settings" 
+                                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                                Settings
+                            </Link>
                             <span className="text-sm text-muted-foreground">
                                 {authUser.email}
                             </span>
