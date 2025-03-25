@@ -106,7 +106,7 @@ export default function SettingsClient({ userId, initialApiKey }: SettingsClient
           <CardHeader>
             <CardTitle>Usage Example</CardTitle>
             <CardDescription>
-              Here's how to use your API key to track custom events
+              Here&apos;s how to use your API key to track custom events
             </CardDescription>
           </CardHeader>
           <CardContent>

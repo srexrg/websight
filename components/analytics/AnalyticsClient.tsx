@@ -52,7 +52,7 @@ export function AnalyticsClient({
         </svg>
         <p className="text-lg mb-2">No analytics data yet</p>
         <p className="max-w-md">
-          We're waiting for the first page view. Make sure you've added the tracking
+          We&apos;re waiting for the first page view. Make sure you&apos;ve added the tracking
           script to your website.
         </p>
       </div>
