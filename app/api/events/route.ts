@@ -12,6 +12,7 @@ export async function POST(req:NextRequest) {
     const supabase = await createClient();
     const authHeader = (await headers()).get("authorization");
     const { name, domain, description } = await req.json();
+    console.log(name, domain, description)
     
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json(

@@ -10,6 +10,7 @@ export async function OPTIONS() {
 export async function POST(req: NextRequest) {
     const supabase = await createClient();
     const res = await req.json();
+    console.log(res)
     const { domain, url, event, source } = res;
     if (!url.includes(domain))
         return NextResponse.json(
