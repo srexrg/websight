@@ -70,14 +70,13 @@ export function AnalyticsClient({
   osStats,
   totalStats
 }: AnalyticsClientProps) {
-  // Calculate total visitors and page views from daily stats
+
   const totalPageViews = totalStats.page_views;
   const totalVisitors = totalStats.unique_visitors;
   const totalVisits = totalStats.visits;
 
-  // Calculate average session duration (if you have session duration data)
-  // For now we'll leave it undefined
-  const averageSessionDuration = undefined;
+
+  // const averageSessionDuration = undefined;
 
   if (initialPageViews.length === 0) {
     return (
@@ -119,7 +118,7 @@ export function AnalyticsClient({
             pageViews={totalPageViews}
             totalVisits={totalVisits}
             uniqueVisitors={totalVisitors}
-            averageSessionDuration={averageSessionDuration}
+            // averageSessionDuration={averageSessionDuration}
             deviceStats={deviceStats}
             countryStats={countryStats}
             osStats={osStats}

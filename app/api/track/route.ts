@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { corsHeaders } from "@/utils/cors";
 import { UAParser } from "ua-parser-js";
 
-// Function to get device type
+
 function getDeviceType(userAgent: string) {
     const parser = new UAParser(userAgent);
     const device = parser.getDevice();
@@ -14,7 +14,7 @@ function getDeviceType(userAgent: string) {
     return "desktop";
 }
 
-// Function to get OS info
+
 function getOSInfo(userAgent: string) {
     const parser = new UAParser(userAgent);
     const os = parser.getOS();
@@ -23,15 +23,13 @@ function getOSInfo(userAgent: string) {
     };
 }
 
-// Get country info from headers
 function getCountryInfo(req: NextRequest) {
-    // Check various headers from different CDNs and edge providers
     const cfCountry = req.headers.get("cf-ipcountry");
     const vercelCountry = req.headers.get("x-vercel-ip-country");
     const fastlyCountry = req.headers.get("Fastly-Geo-Country");
     const cloudfrontCountry = req.headers.get("CloudFront-Viewer-Country");
 
-    // Use the first available country code, or default to "XX" for unknown
+
     return cfCountry || vercelCountry || fastlyCountry || cloudfrontCountry || "XX";
 }
 
@@ -79,7 +77,6 @@ export async function POST(req: NextRequest) {
         const countryCode = getCountryInfo(req);
         const sourceName = source || utm?.medium || utm?.source || "direct";
 
-        // Log analytics data
         console.log("==== ANALYTICS EVENT ====");
         console.log("Event Type:", event);
         console.log("Domain:", domain);
@@ -96,7 +93,7 @@ export async function POST(req: NextRequest) {
         console.log("UTM Parameters:", utm);
         console.log("========================");
 
-        // Track visit data
+   
         if (event === "session_start") {
             console.log('Tracking session start...');
             await supabase.from("visits").insert([{
@@ -116,7 +113,7 @@ export async function POST(req: NextRequest) {
             }]);
             console.log('Session start tracked');
 
-            // Update analytics aggregates
+           
             const today = new Date().toISOString().split('T')[0];
             console.log('Updating daily stats for session start...');
             const { data: existingStats } = await supabase
@@ -152,7 +149,7 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        // Track page views
+
         if (event === "pageview") {
             console.log('Tracking page view...');
             await supabase.from("page_views").insert([{
@@ -166,7 +163,7 @@ export async function POST(req: NextRequest) {
             }]);
             console.log('Page view tracked');
 
-            // Update page view count
+            
             const today = new Date().toISOString().split('T')[0];
             console.log('Updating daily stats for page view...');
             const { data: existingStats } = await supabase

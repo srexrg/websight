@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const error = searchParams.get("error");
     const errorDescription = searchParams.get("error_description");
     
-    // If there's an error in the callback, redirect with the error
+
     if (error) {
       console.error('Auth callback error:', {
         error,

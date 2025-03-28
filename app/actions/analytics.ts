@@ -22,7 +22,7 @@ export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string
     supabaseClient.rpc('get_os_stats', { website_domain: domain })
   ]);
 
-  // Rest of your code remains the same
+ 
   return {
     pageViews: pageViewsResponse.data || [],
     visits: visitsResponse.data || [],

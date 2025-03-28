@@ -32,7 +32,6 @@ export function AnalyticsOverview({
   pageViews, 
   totalVisits, 
   uniqueVisitors,
-  averageSessionDuration,
   deviceStats = [],
   countryStats = [],
   osStats = []
@@ -88,14 +87,6 @@ export function AnalyticsOverview({
             </p>
             <p className="py-12 text-3xl lg:text-4xl font-bold">
               {abbreviateNumber(uniqueVisitors)}
-            </p>
-          </Card>
-          <Card className="border-border text-center">
-            <p className="font-medium text-muted-foreground py-8 w-full text-center border-b border-border">
-              AVG SESSION
-            </p>
-            <p className="py-12 text-3xl lg:text-4xl font-bold">
-              {averageSessionDuration ? formatDuration(averageSessionDuration) : '--'}
             </p>
           </Card>
         </div>
