@@ -18,22 +18,19 @@ export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string
       .order('date', { ascending: false })
       .limit(30),
     supabaseClient.from("visits")
-      .select('device_type, count')
-      .eq("website_id", domain)
       .select('device_type, count(*)')
-      .group('device_type'),
-    supabaseClient.from("visits")
-      .select('country, count')
       .eq("website_id", domain)
+      .groupBy('device_type'),
+    supabaseClient.from("visits")
       .select('country, count(*)')
-      .group('country')
+      .eq("website_id", domain)
+      .groupBy('country')
       .order('count', { ascending: false })
       .limit(10),
     supabaseClient.from("visits")
-      .select('os, count')
-      .eq("website_id", domain)
       .select('os, count(*)')
-      .group('os')
+      .eq("website_id", domain)
+      .groupBy('os')
       .order('count', { ascending: false })
       .limit(10)
   ]);
