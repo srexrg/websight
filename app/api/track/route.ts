@@ -64,8 +64,6 @@ export async function POST(req: NextRequest) {
             language
         } = payload;
 
-        console.log('Extracted payload:', { domain, url, path, event, utm, source, user_agent, visitor_id, session_id, screen, language });
-
         console.log('Domain validation check...');
         if (!url.includes(domain)) {
             console.warn('Domain mismatch detected:', { url, domain });
@@ -75,23 +73,6 @@ export async function POST(req: NextRequest) {
             );
         }
         console.log('Domain validation passed');
-
-        // Check if domain exists
-        console.log('Checking if domain exists in the database...');
-        const { data: domainExists } = await supabase
-            .from("domains")
-            .select("id")
-            .eq("domain", domain)
-            .single();
-
-        if (!domainExists) {
-            console.warn('Domain not registered:', domain);
-            return NextResponse.json(
-                { error: "Domain not registered" },
-                { headers: corsHeaders }
-            );
-        }
-        console.log('Domain exists:', domain);
 
         const deviceType = user_agent ? getDeviceType(user_agent) : "desktop";
         const osInfo = user_agent ? getOSInfo(user_agent) : { name: "Unknown" };
