@@ -64,6 +64,8 @@ export async function POST(req: NextRequest) {
             language
         } = payload;
 
+        console.log('Extracted payload:', { domain, url, path, event, utm, source, user_agent, visitor_id, session_id, screen, language });
+
         console.log('Domain validation check...');
         if (!url.includes(domain)) {
             console.warn('Domain mismatch detected:', { url, domain });
