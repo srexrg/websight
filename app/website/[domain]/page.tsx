@@ -5,20 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { GlobeIcon, ArrowLeftIcon } from "lucide-react";
 import { AnalyticsClient } from "@/components/analytics/AnalyticsClient";
-import { Database } from "@/lib/database.types";
-
-type PageView = Database['public']['Tables']['page_views']['Row']
-type Visit = Database['public']['Tables']['visits']['Row']
-
-interface GroupedPageView {
-  page: string;
-  visits: number;
-}
-
-interface GroupedSource {
-  source: string;
-  visits: number;
-}
+import { fetchEnhancedAnalytics } from "@/app/actions/analytics";
+import { GroupedPageView, GroupedSource, DailyStats, PageView, Visit } from "@/lib/types";
 
 function groupPageViews(pageViews: PageView[]): GroupedPageView[] {
   const groupedViews: Record<string, number> = {};
@@ -53,7 +41,6 @@ export const metadata = {
   }
 };
 
-
 export type paramsType = Promise<{ domain: string }>;
 
 export default async function WebsiteDetailPage(props: { params: paramsType }) {
@@ -68,29 +55,28 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
     redirect("/auth");
   }
 
-  const [domainResponse, viewsResponse, visitsResponse] = await Promise.all([
-    supabase
-      .from("domains")
-      .select("*")
-      .eq("domain", decodeURIComponent(domain))
-      .eq("user_id", user.id)
-      .single(),
-    supabase.from("page_views").select().eq("domain", domain),
-    supabase.from("visits").select().eq("website_id", domain)
-  ]);
-
-  const { data: domainData, error } = domainResponse;
-  const pageViews = viewsResponse.data || [];
-  const visits = visitsResponse.data || [];
+  const { data: domainData, error } = await supabase
+    .from("domains")
+    .select("*")
+    .eq("domain", decodeURIComponent(domain))
+    .eq("user_id", user.id)
+    .single();
 
   if (error || !domainData) {
     console.error("Error fetching domain:", error);
     notFound();
   }
 
-  // Process analytics data
-  const groupedPageViews = groupPageViews(pageViews);
-  const groupedPageSources = groupPageSources(visits);
+  const analytics = await fetchEnhancedAnalytics(supabase, domain);
+  
+  const groupedPageViews = groupPageViews(analytics.pageViews);
+  const groupedPageSources = groupPageSources(analytics.visits);
+
+  const totalStats = analytics.dailyStats.reduce((acc: { visits: number; unique_visitors: number; page_views: number }, day: DailyStats) => ({
+    visits: acc.visits + (day.visits || 0),
+    unique_visitors: acc.unique_visitors + (day.unique_visitors || 0),
+    page_views: acc.page_views + (day.page_views || 0)
+  }), { visits: 0, unique_visitors: 0, page_views: 0 });
 
   const createdAt = new Date(domainData.created_at).toLocaleDateString("en-US", {
     year: "numeric",
@@ -200,10 +186,15 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
               <CardContent>
                 <AnalyticsClient 
                   domain={domainData.domain}
-                  initialPageViews={pageViews}
-                  initialVisits={visits}
+                  initialPageViews={analytics.pageViews}
+                  initialVisits={analytics.visits}
                   initialGroupedPageViews={groupedPageViews}
                   initialGroupedPageSources={groupedPageSources}
+                  initialDailyStats={analytics.dailyStats}
+                  deviceStats={analytics.deviceStats}
+                  countryStats={analytics.countryStats}
+                  osStats={analytics.osStats}
+                  totalStats={totalStats}
                 />
               </CardContent>
             </Card>

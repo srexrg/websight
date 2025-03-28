@@ -18,20 +18,67 @@ interface GroupedSource {
   visits: number;
 }
 
+interface DeviceStats {
+  deviceType: string;
+  visits: number;
+}
+
+interface CountryStats {
+  country: string;
+  visits: number;
+}
+
+interface OsStats {
+  os: string;
+  visits: number;
+}
+
+interface DailyStat {
+  date: string;
+  visits: number;
+  unique_visitors: number;
+  page_views: number;
+}
+
+interface TotalStats {
+  visits: number;
+  unique_visitors: number;
+  page_views: number;
+}
+
 interface AnalyticsClientProps {
   domain: string;
   initialPageViews: PageView[];
   initialVisits: Visit[];
   initialGroupedPageViews: GroupedPageView[];
   initialGroupedPageSources: GroupedSource[];
+  initialDailyStats: DailyStat[];
+  deviceStats: DeviceStats[];
+  countryStats: CountryStats[];
+  osStats: OsStats[];
+  totalStats: TotalStats;
 }
 
 export function AnalyticsClient({ 
   initialPageViews, 
   initialVisits,
   initialGroupedPageViews,
-  initialGroupedPageSources 
+  initialGroupedPageSources,
+  initialDailyStats,
+  deviceStats,
+  countryStats,
+  osStats,
+  totalStats
 }: AnalyticsClientProps) {
+  // Calculate total visitors and page views from daily stats
+  const totalPageViews = totalStats.page_views;
+  const totalVisitors = totalStats.unique_visitors;
+  const totalVisits = totalStats.visits;
+
+  // Calculate average session duration (if you have session duration data)
+  // For now we'll leave it undefined
+  const averageSessionDuration = undefined;
+
   if (initialPageViews.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
@@ -52,7 +99,7 @@ export function AnalyticsClient({
         </svg>
         <p className="text-lg mb-2">No analytics data yet</p>
         <p className="max-w-md">
-          We&apos;re waiting for the first page view. Make sure you&apos;ve added the tracking
+          We're waiting for the first page view. Make sure you've added the tracking
           script to your website.
         </p>
       </div>
@@ -69,8 +116,13 @@ export function AnalyticsClient({
 
         <TabsContent value="overview" className="mt-6">
           <AnalyticsOverview
-            pageViews={initialPageViews.length}
-            totalVisits={initialVisits.length}
+            pageViews={totalPageViews}
+            totalVisits={totalVisits}
+            uniqueVisitors={totalVisitors}
+            averageSessionDuration={averageSessionDuration}
+            deviceStats={deviceStats}
+            countryStats={countryStats}
+            osStats={osStats}
           />
         </TabsContent>
 
@@ -78,7 +130,7 @@ export function AnalyticsClient({
           <PageAnalytics
             groupedPageViews={initialGroupedPageViews}
             groupedPageSources={initialGroupedPageSources}
-            totalVisits={initialVisits.length}
+            totalVisits={totalVisits}
           />
         </TabsContent>
       </Tabs>

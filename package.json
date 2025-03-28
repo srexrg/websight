@@ -15,6 +15,7 @@
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.1",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "@types/ua-parser-js": "^0.7.39",
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -25,7 +26,8 @@
     "react-icons": "^5.5.0",
     "react-syntax-highlighter": "^15.6.1",
     "tailwind-merge": "^3.0.2",
-    "tw-animate-css": "^1.2.4"
+    "tw-animate-css": "^1.2.4",
+    "ua-parser-js": "^2.0.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
