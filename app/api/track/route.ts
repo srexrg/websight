@@ -41,8 +41,15 @@ export async function OPTIONS() {
 
 export async function POST(req: NextRequest) {
     try {
+        console.log('=== Starting Analytics Processing ===');
+        console.log('Timestamp:', new Date().toISOString());
+        
         const supabase = await createClient();
+        console.log('Supabase client initialized');
+        
         const payload = await req.json();
+        console.log('Request payload received:', JSON.stringify(payload));
+        
         const { 
             domain, 
             url, 
@@ -57,14 +64,18 @@ export async function POST(req: NextRequest) {
             language
         } = payload;
 
+        console.log('Domain validation check...');
         if (!url.includes(domain)) {
+            console.warn('Domain mismatch detected:', { url, domain });
             return NextResponse.json(
                 { error: "Domain mismatch error" },
                 { headers: corsHeaders }
             );
         }
+        console.log('Domain validation passed');
 
         // Check if domain exists
+        console.log('Checking if domain exists in the database...');
         const { data: domainExists } = await supabase
             .from("domains")
             .select("id")
@@ -72,11 +83,13 @@ export async function POST(req: NextRequest) {
             .single();
 
         if (!domainExists) {
+            console.warn('Domain not registered:', domain);
             return NextResponse.json(
                 { error: "Domain not registered" },
                 { headers: corsHeaders }
             );
         }
+        console.log('Domain exists:', domain);
 
         const deviceType = user_agent ? getDeviceType(user_agent) : "desktop";
         const osInfo = user_agent ? getOSInfo(user_agent) : { name: "Unknown" };
@@ -102,6 +115,7 @@ export async function POST(req: NextRequest) {
 
         // Track visit data
         if (event === "session_start") {
+            console.log('Tracking session start...');
             await supabase.from("visits").insert([{
                 website_id: domain,
                 source: sourceName,
@@ -117,9 +131,11 @@ export async function POST(req: NextRequest) {
                 utm_medium: utm?.medium,
                 utm_campaign: utm?.campaign
             }]);
+            console.log('Session start tracked');
 
             // Update analytics aggregates
             const today = new Date().toISOString().split('T')[0];
+            console.log('Updating daily stats for session start...');
             const { data: existingStats } = await supabase
                 .from("daily_stats")
                 .select()
@@ -128,6 +144,7 @@ export async function POST(req: NextRequest) {
                 .single();
 
             if (existingStats) {
+                console.log('Existing stats found, updating...');
                 await supabase
                     .from("daily_stats")
                     .update({
@@ -136,7 +153,9 @@ export async function POST(req: NextRequest) {
                     })
                     .eq("domain", domain)
                     .eq("date", today);
+                console.log('Daily stats updated');
             } else {
+                console.log('No existing stats found, inserting new stats...');
                 await supabase
                     .from("daily_stats")
                     .insert({
@@ -146,11 +165,13 @@ export async function POST(req: NextRequest) {
                         unique_visitors: 1,
                         page_views: 0
                     });
+                console.log('New daily stats inserted');
             }
         }
 
         // Track page views
         if (event === "pageview") {
+            console.log('Tracking page view...');
             await supabase.from("page_views").insert([{
                 domain,
                 page: path || url,
@@ -160,9 +181,11 @@ export async function POST(req: NextRequest) {
                 os: osInfo.name,
                 country: countryCode
             }]);
+            console.log('Page view tracked');
 
             // Update page view count
             const today = new Date().toISOString().split('T')[0];
+            console.log('Updating daily stats for page view...');
             const { data: existingStats } = await supabase
                 .from("daily_stats")
                 .select()
@@ -171,6 +194,7 @@ export async function POST(req: NextRequest) {
                 .single();
 
             if (existingStats) {
+                console.log('Existing stats found, updating...');
                 await supabase
                     .from("daily_stats")
                     .update({
@@ -178,7 +202,9 @@ export async function POST(req: NextRequest) {
                     })
                     .eq("domain", domain)
                     .eq("date", today);
+                console.log('Daily stats updated');
             } else {
+                console.log('No existing stats found, inserting new stats...');
                 await supabase
                     .from("daily_stats")
                     .insert({
@@ -188,9 +214,11 @@ export async function POST(req: NextRequest) {
                         unique_visitors: 0,
                         page_views: 1
                     });
+                console.log('New daily stats inserted');
             }
         }
 
+        console.log('Analytics processing completed successfully');
         return NextResponse.json(
             { success: true, event: event },
             { headers: corsHeaders }
