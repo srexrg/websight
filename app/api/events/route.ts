@@ -10,16 +10,6 @@ export async function OPTIONS() {
 export async function POST(req:NextRequest) {
   try {
     const supabase = await createClient();
-    const {
-      data: { user: authUser },
-  } = await supabase.auth.getUser();
-
-  if (!authUser) {
-    return NextResponse.json(
-      { error: "Unauthorized user" },
-      { status: 401, headers: corsHeaders }
-    );
-  }
 
     const authHeader = (await headers()).get("authorization");
     const { name, domain, description } = await req.json();
@@ -37,7 +27,6 @@ export async function POST(req:NextRequest) {
     const { data: users, error: userError } = await supabase
       .from("users")
       .select()
-      .eq('id', authUser.id)
       .eq("api", apiKey)
 
       console.log(users)
