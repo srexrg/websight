@@ -4,9 +4,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AnalyticsOverview } from './AnalyticsOverview'
 import { PageAnalytics } from './PageAnalytics'
 import { Database } from '@/lib/database.types'
+import { CustomEventsAnalytics } from "./CustomEventsAnalytics"
 
 type PageView = Database['public']['Tables']['page_views']['Row']
 type Visit = Database['public']['Tables']['visits']['Row']
+
+interface TrackedEvent {
+  event_name: string
+  message?: string
+  created_at: string
+}
 
 interface GroupedPageView {
   page: string;
@@ -57,6 +64,7 @@ interface AnalyticsClientProps {
   countryStats: CountryStats[];
   osStats: OsStats[];
   totalStats: TotalStats;
+  events: TrackedEvent[];
 }
 
 export function AnalyticsClient({ 
@@ -68,6 +76,7 @@ export function AnalyticsClient({
   deviceStats,
   countryStats,
   osStats,
+  events,
   totalStats
 }: AnalyticsClientProps) {
 
@@ -111,6 +120,7 @@ export function AnalyticsClient({
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="pages">Pages & Sources</TabsTrigger>
+          <TabsTrigger value="events">Events</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-6">
@@ -131,6 +141,9 @@ export function AnalyticsClient({
             groupedPageSources={initialGroupedPageSources}
             totalVisits={totalVisits}
           />
+        </TabsContent>
+        <TabsContent value="events" className="mt-6">
+          <CustomEventsAnalytics events={events} />
         </TabsContent>
       </Tabs>
     </div>

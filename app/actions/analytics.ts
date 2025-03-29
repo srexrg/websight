@@ -8,7 +8,8 @@ export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string
     dailyStatsResponse,
     deviceStatsPromise,
     countryStatsPromise,
-    osStatsPromise
+    osStatsPromise,
+    eventsResponse
   ] = await Promise.all([
     supabaseClient.from("page_views").select("*").eq("domain", domain),
     supabaseClient.from("visits").select("*").eq("website_id", domain),
@@ -17,6 +18,10 @@ export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string
       .eq("domain", domain)
       .order('date', { ascending: false })
       .limit(30),
+      supabaseClient
+      .from("events")
+      .select('*')
+      .eq("website_id", domain),
     supabaseClient.rpc('get_device_stats', { website_domain: domain }),
     supabaseClient.rpc('get_country_stats', { website_domain: domain }),
     supabaseClient.rpc('get_os_stats', { website_domain: domain })
@@ -38,6 +43,7 @@ export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string
     osStats: osStatsPromise.data?.map((o: any) => ({
       os: o.os || 'unknown',
       visits: parseInt(o.count)
-    })) || []
+    })) || [],
+    events: eventsResponse.data || []
   };
 }

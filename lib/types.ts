@@ -28,6 +28,12 @@ export interface OsStat {
   visits: number;
 }
 
+export interface Event {
+  event_name: string;
+  message?: string;
+  created_at: string;
+}
+
 export interface DailyStats {
   date: string;
   visits: number;
@@ -48,4 +54,6 @@ export interface AnalyticsData {
   deviceStats: DeviceStat[];
   countryStats: CountryStat[];
   osStats: OsStat[];
+  events: Event[];
+
 }

@@ -195,6 +195,7 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
                   countryStats={analytics.countryStats}
                   osStats={analytics.osStats}
                   totalStats={totalStats}
+                  events={analytics.events}
                 />
               </CardContent>
             </Card>
