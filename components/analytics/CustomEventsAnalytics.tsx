@@ -13,26 +13,34 @@ interface CustomEventsAnalyticsProps {
 }
 
 export function CustomEventsAnalytics({ events }: CustomEventsAnalyticsProps) {
+  console.log("CustomEventsAnalytics", events);
   return (
     <Card>
       <CardHeader>
         <CardTitle>Custom Events</CardTitle>
+        <span className="text-sm text-muted-foreground">
+          {events.length} {events.length === 1 ? "event" : "events"}
+        </span>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {events.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No custom events tracked yet</p>
+            <p className="text-sm text-muted-foreground">
+              No custom events tracked yet
+            </p>
           ) : (
-            events.map((event) => (
-              <div key={event.event_name} className="flex items-center justify-between">
+            events.map((event, index) => (
+              <div
+                key={`${event.event_name}-${index}-${event.created_at}`}
+                className="flex items-center justify-between"
+              >
                 <div className="space-y-1">
                   <p className="text-sm font-medium">{event.event_name}</p>
                   {event.message && (
-                    <p className="text-sm text-muted-foreground">{event.message}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {event.message}
+                    </p>
                   )}
-                  {/* <p className="text-sm text-muted-foreground">
-                    {event.count} {event.count === 1 ? 'time' : 'times'}
-                  </p> */}
                 </div>
               </div>
             ))
@@ -40,5 +48,5 @@ export function CustomEventsAnalytics({ events }: CustomEventsAnalyticsProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

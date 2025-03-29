@@ -50,7 +50,7 @@ export async function POST(req:NextRequest) {
       .insert([
         {
           event_name: name.toLowerCase(),
-          website_id: domain,
+          website_id: domain.replace(/^(https?:\/\/)?(www\.)?/i, ''),
           message: description,
         }
       ]);

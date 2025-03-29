@@ -6,10 +6,10 @@ export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string
     pageViewsResponse,
     visitsResponse,
     dailyStatsResponse,
+    eventsResponse,
     deviceStatsPromise,
     countryStatsPromise,
     osStatsPromise,
-    eventsResponse
   ] = await Promise.all([
     supabaseClient.from("page_views").select("*").eq("domain", domain),
     supabaseClient.from("visits").select("*").eq("website_id", domain),

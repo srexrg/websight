@@ -69,10 +69,8 @@ interface AnalyticsClientProps {
 
 export function AnalyticsClient({ 
   initialPageViews, 
-  initialVisits,
   initialGroupedPageViews,
   initialGroupedPageSources,
-  initialDailyStats,
   deviceStats,
   countryStats,
   osStats,
