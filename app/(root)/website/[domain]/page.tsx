@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { GlobeIcon, ArrowLeftIcon } from "lucide-react";
 import { AnalyticsClient } from "@/components/analytics/AnalyticsClient";
-import { fetchEnhancedAnalytics } from "@/app/actions/analytics";
+import { fetchEnhancedAnalytics } from "@/lib/actions/analytics";
 import { GroupedPageView, GroupedSource, DailyStats, PageView, Visit } from "@/lib/types";
 
 function groupPageViews(pageViews: PageView[]): GroupedPageView[] {

@@ -1,5 +1,5 @@
 "use server"
-import { DailyStats, AnalyticsData } from "../../lib/types";
+import { DailyStats, AnalyticsData } from "../types";
 
 export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string): Promise<AnalyticsData> {
   const [
