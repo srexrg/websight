@@ -3,17 +3,17 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Globe, Mail, Instagram, Twitter, Facebook, Linkedin, ArrowRight, ExternalLink } from "lucide-react";
+import { Mail, Instagram, Twitter, Facebook, Linkedin, ArrowRight, Globe } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Footer = () => {
   return (
-    <footer className="relative pt-24 pb-12 overflow-hidden border-t border-violet-500/10">
+    <footer className="relative pt-24 pb-12 overflow-hidden border-t border-zinc-800 bg-black">
       {/* Background Elements */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_-100px,#7c3aed10,transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_-100px,#2563eb10,transparent)]" />
         <motion.div 
-          className="absolute -bottom-80 -left-40 w-96 h-96 rounded-full bg-gradient-to-br from-violet-500/5 to-indigo-500/5 filter blur-3xl"
+          className="absolute -bottom-80 -left-40 w-96 h-96 rounded-full bg-blue-500/5 filter blur-3xl"
           animate={{ 
             x: [0, 30, 0],
             y: [0, -30, 0],
@@ -21,7 +21,7 @@ const Footer = () => {
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div 
-          className="absolute -bottom-20 right-0 w-80 h-80 rounded-full bg-gradient-to-br from-indigo-500/5 to-violet-500/5 filter blur-3xl"
+          className="absolute -bottom-20 right-0 w-80 h-80 rounded-full bg-blue-500/5 filter blur-3xl"
           animate={{ 
             x: [0, -20, 0],
             y: [0, 20, 0],
@@ -36,12 +36,12 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-6">
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-indigo-600 rounded-lg blur-sm opacity-60"></div>
-                <div className="p-1.5 bg-zinc-900/80 rounded-lg border border-violet-500/20 relative">
-                  <Globe className="h-5 w-5 text-violet-400" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg blur-sm opacity-60"></div>
+                <div className="p-1.5 bg-zinc-900/80 rounded-lg border border-blue-500/20 relative">
+                  <Globe className="h-5 w-5 text-blue-400" />
                 </div>
               </div>
-              <span className="text-lg font-semibold bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">
+              <span className="text-lg font-semibold text-white">
                 WebSight
               </span>
             </div>
@@ -66,14 +66,8 @@ const Footer = () => {
               <FooterLink href="#features">Features</FooterLink>
               <FooterLink href="#pricing">Pricing</FooterLink>
               <FooterLink href="#customers">Testimonials</FooterLink>
-              <FooterLink href="/docs">
-                Documentation
-                <ExternalLink className="h-3 w-3 ml-1" />
-              </FooterLink>
-              <FooterLink href="/blog">
-                Blog
-                <ExternalLink className="h-3 w-3 ml-1" />
-              </FooterLink>
+              <FooterLink href="/docs">Documentation</FooterLink>
+              <FooterLink href="/blog">Blog</FooterLink>
             </nav>
           </div>
           
@@ -91,11 +85,11 @@ const Footer = () => {
         </div>
         
         {/* Newsletter */}
-        <div className="py-10 px-6 md:px-12 bg-zinc-900/40 backdrop-blur-xl border border-violet-500/10 rounded-2xl mb-16">
+        <div className="py-10 px-6 md:px-12 bg-zinc-900/40 backdrop-blur-xl border border-zinc-800 rounded-lg mb-16">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
               <h3 className="text-xl font-semibold text-white mb-2">Stay up to date</h3>
-              <p className="text-gray-400 mb-0">
+              <p className="text-gray-400">
                 Get the latest news and articles to your inbox every month.
               </p>
             </div>
@@ -103,9 +97,9 @@ const Footer = () => {
               <Input 
                 type="email" 
                 placeholder="Enter your email" 
-                className="bg-zinc-900/40 backdrop-blur-sm border-violet-500/20 rounded-full text-gray-300 placeholder:text-gray-500"
+                className="bg-zinc-900/40 backdrop-blur-sm border-zinc-800 rounded-md text-gray-300 placeholder:text-gray-500 focus:border-blue-500/50 focus:ring-blue-500/50"
               />
-              <Button className="rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40 transition-all duration-300 hover:-translate-y-0.5">
+              <Button className="rounded-md bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300">
                 Subscribe
                 <ArrowRight className="h-4 w-4 ml-1.5" />
               </Button>
@@ -114,19 +108,19 @@ const Footer = () => {
         </div>
         
         {/* Bottom */}
-        <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-violet-500/10">
+        <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-zinc-800">
           <p className="text-sm text-gray-400 order-2 md:order-1 mt-4 md:mt-0">
             © {new Date().getFullYear()} WebSight. All rights reserved.
           </p>
           
           <div className="flex gap-6 order-1 md:order-2">
-            <Link href="/" className="text-sm text-gray-400 hover:text-violet-400 transition-colors">
+            <Link href="/privacy" className="text-sm text-gray-400 hover:text-blue-400 transition-colors">
               Privacy
             </Link>
-            <Link href="/" className="text-sm text-gray-400 hover:text-violet-400 transition-colors">
+            <Link href="/terms" className="text-sm text-gray-400 hover:text-blue-400 transition-colors">
               Terms
             </Link>
-            <Link href="/" className="text-sm text-gray-400 hover:text-violet-400 transition-colors">
+            <Link href="/cookies" className="text-sm text-gray-400 hover:text-blue-400 transition-colors">
               Cookies
             </Link>
           </div>
@@ -139,7 +133,7 @@ const Footer = () => {
 const SocialLink = ({ icon, href }: { icon: React.ReactNode, href: string }) => (
   <Link 
     href={href}
-    className="p-2 bg-zinc-900/40 backdrop-blur-xl border border-violet-500/20 text-violet-400 rounded-full hover:bg-zinc-900/60 hover:text-violet-300 transition-all duration-300 hover:-translate-y-0.5"
+    className="p-2 bg-zinc-900/40 backdrop-blur-xl border border-zinc-800 text-gray-400 rounded-lg hover:bg-zinc-900/60 hover:text-blue-400 transition-all duration-300"
     target="_blank"
     rel="noopener noreferrer"
   >
@@ -150,7 +144,7 @@ const SocialLink = ({ icon, href }: { icon: React.ReactNode, href: string }) => 
 const FooterLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
   <Link 
     href={href}
-    className="text-gray-400 hover:text-violet-400 transition-colors flex items-center group"
+    className="text-gray-400 hover:text-blue-400 transition-colors flex items-center group"
   >
     {children}
   </Link>
