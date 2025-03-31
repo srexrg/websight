@@ -40,7 +40,7 @@ const Navbar = () => {
             <NavLink href="#features">Features</NavLink>
             <NavLink href="#pricing">Pricing</NavLink>
             <NavLink href="#customers">Customers</NavLink>
-            <NavLink href="/docs">Documentation</NavLink>
+            <NavLink href="/docs">Docs</NavLink>
           </nav>
 
           {/* Desktop Call-to-actions */}
