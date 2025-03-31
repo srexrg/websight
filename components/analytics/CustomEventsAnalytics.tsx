@@ -13,7 +13,6 @@ interface CustomEventsAnalyticsProps {
 }
 
 export function CustomEventsAnalytics({ events }: CustomEventsAnalyticsProps) {
-  console.log("CustomEventsAnalytics", events);
   return (
     <Card>
       <CardHeader>

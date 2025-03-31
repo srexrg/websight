@@ -13,7 +13,6 @@ export async function POST(req:NextRequest) {
 
     const authHeader = (await headers()).get("authorization");
     const { name, domain, description } = await req.json();
-    console.log(name, domain, description)
     
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json(
@@ -23,13 +22,11 @@ export async function POST(req:NextRequest) {
     }
 
     const apiKey = authHeader.split("Bearer ")[1];
-    console.log(apiKey)
     const { data: users, error: userError } = await supabase
       .from("users")
       .select()
       .eq("api", apiKey)
 
-      console.log(users)
 
     if (userError || users.length === 0) {
       return NextResponse.json(
