@@ -9,136 +9,124 @@ const HowItWorks = () => {
       icon: <Code className="h-6 w-6" />,
       title: "Add a Simple Script",
       description: "Just add our lightweight tracking script to your website with a single line of code. No complex setup required.",
-      color: "from-blue-500 to-indigo-600",
       delay: 0.1
     },
     {
       icon: <RefreshCw className="h-6 w-6" />,
       title: "Collect Data Automatically",
       description: "WebSight automatically tracks visitor data, page views, and user interactions in real-time with minimal performance impact.",
-      color: "from-indigo-600 to-purple-600",
       delay: 0.2
     },
     {
       icon: <BarChart4 className="h-6 w-6" />,
       title: "Analyze & Visualize",
       description: "View beautiful, intuitive visualizations and reports of your website traffic, user behavior, and conversion metrics.",
-      color: "from-purple-600 to-pink-600",
       delay: 0.3
     },
     {
       icon: <Zap className="h-6 w-6" />,
       title: "Optimize Performance",
       description: "Make data-driven decisions to optimize your website, improve user experience, and increase conversions.",
-      color: "from-pink-600 to-blue-500",
       delay: 0.4
     }
   ];
 
   return (
-    <section id="how-it-works" className="py-24 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-950/10 to-transparent"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] bg-repeat opacity-5"></div>
-      </div>
-      
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-sm uppercase font-semibold tracking-wider text-purple-400 mb-3"
-          >
-            Simple Integration
-          </motion.p>
-          
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
-          >
+    <section 
+      id="how-it-works" 
+      className="relative py-32 bg-gradient-to-b from-black to-zinc-900 overflow-hidden"
+      aria-label="How It Works Section"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#7c3aed10,transparent)]" />
+
+      <div className="container relative mx-auto px-4 max-w-7xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="text-center max-w-3xl mx-auto mb-24"
+        >
+          <h2 className="text-4xl md:text-6xl font-heading mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-violet-200 to-violet-500">
             How WebSight Works
-          </motion.h2>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="max-w-2xl mx-auto text-lg text-gray-400"
-          >
-            Get up and running in minutes with our easy-to-use analytics platform
-          </motion.p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-          {/* Connecting line */}
-          <div className="absolute top-1/3 left-0 w-full h-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hidden lg:block"></div>
+            <span className="block mt-3 text-gray-300 text-2xl md:text-3xl font-title">
+              Start Tracking in Minutes
+            </span>
+          </h2>
+          <p className="text-gray-400 text-lg md:text-xl font-light tracking-wide max-w-2xl mx-auto">
+            Get started with powerful analytics in just a few simple steps
+          </p>
+        </motion.div>
+
+        <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6 lg:gap-8 relative">
+          {/* Connecting Lines */}
+          <div className="absolute top-[45%] left-0 w-full h-px bg-gradient-to-r from-violet-500/20 via-indigo-500/20 to-violet-500/20 hidden lg:block" />
           
           {steps.map((step, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: step.delay }}
-              className="relative"
+              transition={{ 
+                duration: 0.5, 
+                delay: index * 0.15,
+                ease: "easeOut"
+              }}
             >
-              <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800 h-full">
-                <div className="mb-5 relative">
-                  <div className={`absolute inset-0 bg-gradient-to-r ${step.color} blur-lg opacity-30`}></div>
-                  <div className={`w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-r ${step.color} text-white relative z-10`}>
-                    {step.icon}
+              <div className="group h-full bg-zinc-900/40 hover:bg-zinc-900/60 transition-all duration-500 backdrop-blur-xl border-0 rounded-2xl p-8">
+                <div className="flex flex-col gap-8">
+                  <div className="relative">
+                    <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-500/10 to-indigo-500/30 flex items-center justify-center shadow-lg shadow-black/40">
+                      <div className="text-violet-400 group-hover:scale-110 group-hover:text-violet-300 transition-all duration-500">
+                        {step.icon}
+                      </div>
+                    </div>
+                    {/* Step number */}
+                    <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
+                      <span className="text-violet-400 text-sm font-medium">{index + 1}</span>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="lg:relative lg:z-10 bg-gray-900 lg:pb-4">
-                  <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-                  <p className="text-gray-400">{step.description}</p>
-                </div>
-                
-                {/* Step number */}
-                <div className="absolute -bottom-3 -right-3 w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-purple-400 font-bold">
-                  {index + 1}
+                  
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-medium text-white tracking-tight group-hover:text-violet-300 transition-colors duration-500">
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-400 leading-relaxed text-sm">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
-        
-        {/* Code example preview */}
+
+        {/* Code Block */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="mt-20 max-w-3xl mx-auto rounded-xl overflow-hidden"
+          className="mt-20 max-w-3xl mx-auto"
         >
-          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-            <div className="flex items-center bg-gray-800 px-4 py-2">
+          <div className="bg-zinc-900/40 backdrop-blur-xl border border-violet-500/10 rounded-xl overflow-hidden">
+            <div className="flex items-center bg-zinc-900/60 px-4 py-2 border-b border-violet-500/10">
               <div className="flex space-x-1.5">
-                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
               </div>
               <span className="ml-3 text-sm text-gray-400">tracking-script.js</span>
             </div>
-            <div className="p-4 text-sm font-mono text-gray-300 overflow-x-auto">
+            <div className="p-6 text-sm font-mono text-gray-300 overflow-x-auto">
               <pre className="whitespace-pre">
-                <span className="text-purple-400">{"<script "}</span>
-                <span className="text-blue-400">src</span>
-                <span className="text-purple-400">{"="}</span>
-                <span className="text-green-400">"https://websight.io/tracker.js"</span> 
-                <span className="text-blue-400">{" data-key"}</span>
-                <span className="text-purple-400">{"="}</span>
-                <span className="text-green-400">"YOUR_API_KEY"</span>
-                <span className="text-purple-400">{"></script>"}</span>
+                <span className="text-violet-400">{"<script "}</span>
+                <span className="text-indigo-400">src</span>
+                <span className="text-violet-400">{"="}</span>
+                <span className="text-emerald-400">"https://websight.io/tracker.js"</span> 
+                <span className="text-indigo-400">{" data-key"}</span>
+                <span className="text-violet-400">{"="}</span>
+                <span className="text-emerald-400">"YOUR_API_KEY"</span>
+                <span className="text-violet-400">{"></script>"}</span>
               </pre>
             </div>
           </div>

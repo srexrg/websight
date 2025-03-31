@@ -78,68 +78,57 @@ const Testimonials = () => {
   };
 
   return (
-    <section id="customers" className="py-24 relative overflow-hidden">
+    <section 
+      id="customers" 
+      className="relative py-32 bg-gradient-to-b from-black to-zinc-900 overflow-hidden"
+      aria-label="Testimonials Section"
+    >
       {/* Background Elements */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-50 to-indigo-50 dark:from-violet-950/20 dark:to-indigo-950/20"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#7c3aed10,transparent)]" />
         <motion.div 
-          className="absolute top-1/4 right-10 w-80 h-80 rounded-full bg-pink-300/10 filter blur-3xl"
+          className="absolute top-1/4 right-10 w-80 h-80 bg-gradient-to-br from-violet-500/5 to-indigo-500/5 rounded-full filter blur-3xl"
           animate={{ scale: [1, 1.2, 1] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div 
-          className="absolute bottom-1/3 left-10 w-72 h-72 rounded-full bg-violet-300/10 filter blur-3xl"
+          className="absolute bottom-1/3 left-10 w-72 h-72 bg-gradient-to-br from-indigo-500/5 to-violet-500/5 rounded-full filter blur-3xl"
           animate={{ scale: [1.2, 1, 1.2] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
       </div>
       
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-sm uppercase font-semibold tracking-wider text-violet-600 dark:text-violet-400 mb-3"
-          >
-            Testimonials
-          </motion.p>
-          
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
-          >
+      <div className="container relative mx-auto px-4 max-w-7xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="text-center max-w-3xl mx-auto mb-24"
+        >
+          <h2 className="text-4xl md:text-6xl font-heading mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-violet-200 to-violet-500">
             Trusted by businesses worldwide
-          </motion.h2>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="max-w-2xl mx-auto text-lg text-muted-foreground"
-          >
-            See what our customers have to say about their experience with WebSight analytics.
-          </motion.p>
-        </div>
+            <span className="block mt-3 text-gray-300 text-2xl md:text-3xl font-title">
+              See what our customers say
+            </span>
+          </h2>
+          <p className="text-gray-400 text-lg md:text-xl font-light tracking-wide max-w-2xl mx-auto">
+            Join thousands of businesses using WebSight to transform their analytics experience
+          </p>
+        </motion.div>
         
         <div className="max-w-5xl mx-auto relative">
-          {/* Decorative elements */}
-          <div className="absolute -top-10 -left-10 text-violet-200 dark:text-violet-800 opacity-30">
+          {/* Decorative quotes */}
+          <div className="absolute -top-10 -left-10 text-violet-500/10">
             <Quote size={80} />
           </div>
-          <div className="absolute -bottom-10 -right-10 text-violet-200 dark:text-violet-800 opacity-30 rotate-180">
+          <div className="absolute -bottom-10 -right-10 text-violet-500/10 rotate-180">
             <Quote size={80} />
           </div>
           
           {/* Testimonial carousel */}
           <div className="relative">
             <div className="overflow-hidden py-10">
-              <div className="relative flex flex-col items-center">
+              <div className="relative flex flex-col items-center min-h-[400px]">
                 {testimonials.map((testimonial, index) => (
                   <motion.div
                     key={testimonial.id}
@@ -155,21 +144,23 @@ const Testimonials = () => {
                     transition={{ duration: 0.6, ease: 'easeInOut' }}
                   >
                     <div className="max-w-3xl mx-auto text-center px-6">
-                      <p className="text-xl md:text-2xl italic mb-8 leading-relaxed">
-                        "{testimonial.content}"
-                      </p>
-                      
-                      <div className="flex flex-col items-center">
-                        <div className="mb-4 relative">
-                          <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full blur-sm"></div>
-                          <img 
-                            src={testimonial.avatar} 
-                            alt={testimonial.author}
-                            className="w-16 h-16 rounded-full object-cover relative z-10 border-2 border-white dark:border-gray-800"
-                          />
+                      <div className="bg-zinc-900/40 backdrop-blur-xl p-8 rounded-2xl border border-violet-500/10 shadow-lg shadow-violet-500/5">
+                        <p className="text-xl md:text-2xl text-gray-300 italic mb-8 leading-relaxed">
+                          "{testimonial.content}"
+                        </p>
+                        
+                        <div className="flex flex-col items-center">
+                          <div className="mb-4 relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full blur"></div>
+                            <img 
+                              src={testimonial.avatar} 
+                              alt={testimonial.author}
+                              className="w-16 h-16 rounded-full object-cover relative z-10 border-2 border-zinc-900"
+                            />
+                          </div>
+                          <h4 className="font-semibold text-lg text-white">{testimonial.author}</h4>
+                          <p className="text-gray-400">{testimonial.position}, {testimonial.company}</p>
                         </div>
-                        <h4 className="font-semibold text-lg">{testimonial.author}</h4>
-                        <p className="text-muted-foreground">{testimonial.position}, {testimonial.company}</p>
                       </div>
                     </div>
                   </motion.div>
@@ -182,20 +173,20 @@ const Testimonials = () => {
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full border-violet-200 dark:border-violet-800 hover:bg-violet-100 dark:hover:bg-violet-900/30"
+                className="rounded-full border-violet-500/20 bg-zinc-900/40 hover:bg-zinc-900/60 backdrop-blur-xl"
                 onClick={handlePrev}
               >
-                <ChevronLeft className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+                <ChevronLeft className="h-5 w-5 text-violet-400" />
               </Button>
               
               <div className="flex space-x-2 mx-2">
                 {testimonials.map((_, index) => (
                   <button
                     key={index}
-                    className={`w-2.5 h-2.5 rounded-full transition-all ${
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${
                       index === activeIndex 
                         ? 'bg-gradient-to-r from-violet-500 to-indigo-500 w-6' 
-                        : 'bg-violet-200 dark:bg-violet-800'
+                        : 'bg-violet-500/20'
                     }`}
                     onClick={() => handleDotClick(index)}
                   />
@@ -205,27 +196,40 @@ const Testimonials = () => {
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full border-violet-200 dark:border-violet-800 hover:bg-violet-100 dark:hover:bg-violet-900/30"
+                className="rounded-full border-violet-500/20 bg-zinc-900/40 hover:bg-zinc-900/60 backdrop-blur-xl"
                 onClick={handleNext}
               >
-                <ChevronRight className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+                <ChevronRight className="h-5 w-5 text-violet-400" />
               </Button>
             </div>
           </div>
           
           {/* Company logos */}
-          <div className="mt-20 border-t border-violet-100 dark:border-violet-900 pt-10">
-            <p className="text-center text-sm text-muted-foreground mb-8">Trusted by innovative companies around the world</p>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mt-20 pt-10"
+          >
+            <p className="text-center text-sm text-gray-400 mb-8">Trusted by innovative companies worldwide</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center justify-items-center">
               {['TechFlow', 'Byteloom', 'StyleBoost', 'SecureSolutions', 'GlobalReach'].map((company, i) => (
-                <div key={i} className="flex items-center justify-center h-8">
-                  <div className="text-lg font-semibold tracking-tight opacity-70 bg-gradient-to-r from-violet-500 to-indigo-500 bg-clip-text text-transparent">
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  className="group flex items-center justify-center h-8 relative"
+                >
+                  <div className="text-lg font-semibold tracking-tight bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-300">
                     {company}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
