@@ -80,19 +80,19 @@ const Testimonials = () => {
   return (
     <section 
       id="customers" 
-      className="relative py-32 bg-gradient-to-b from-black to-zinc-900 overflow-hidden"
+      className="relative py-32 bg-black overflow-hidden"
       aria-label="Testimonials Section"
     >
       {/* Background Elements */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#7c3aed10,transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#2563eb10,transparent)]" />
         <motion.div 
-          className="absolute top-1/4 right-10 w-80 h-80 bg-gradient-to-br from-violet-500/5 to-indigo-500/5 rounded-full filter blur-3xl"
+          className="absolute top-1/4 right-10 w-80 h-80 bg-blue-500/5 rounded-full filter blur-3xl"
           animate={{ scale: [1, 1.2, 1] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div 
-          className="absolute bottom-1/3 left-10 w-72 h-72 bg-gradient-to-br from-indigo-500/5 to-violet-500/5 rounded-full filter blur-3xl"
+          className="absolute bottom-1/3 left-10 w-72 h-72 bg-blue-500/5 rounded-full filter blur-3xl"
           animate={{ scale: [1.2, 1, 1.2] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -105,23 +105,23 @@ const Testimonials = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center max-w-3xl mx-auto mb-24"
         >
-          <h2 className="text-4xl md:text-6xl font-heading mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-violet-200 to-violet-500">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
             Trusted by businesses worldwide
-            <span className="block mt-3 text-gray-300 text-2xl md:text-3xl font-title">
+            <span className="block mt-3 text-gray-400 text-xl md:text-2xl font-normal">
               See what our customers say
             </span>
           </h2>
-          <p className="text-gray-400 text-lg md:text-xl font-light tracking-wide max-w-2xl mx-auto">
+          <p className="text-gray-400 text-lg md:text-xl font-light max-w-2xl mx-auto">
             Join thousands of businesses using WebSight to transform their analytics experience
           </p>
         </motion.div>
         
         <div className="max-w-5xl mx-auto relative">
           {/* Decorative quotes */}
-          <div className="absolute -top-10 -left-10 text-violet-500/10">
+          <div className="absolute -top-10 -left-10 text-blue-500/10">
             <Quote size={80} />
           </div>
-          <div className="absolute -bottom-10 -right-10 text-violet-500/10 rotate-180">
+          <div className="absolute -bottom-10 -right-10 text-blue-500/10 rotate-180">
             <Quote size={80} />
           </div>
           
@@ -144,14 +144,14 @@ const Testimonials = () => {
                     transition={{ duration: 0.6, ease: 'easeInOut' }}
                   >
                     <div className="max-w-3xl mx-auto text-center px-6">
-                      <div className="bg-zinc-900/40 backdrop-blur-xl p-8 rounded-2xl border border-violet-500/10 shadow-lg shadow-violet-500/5">
+                      <div className="bg-zinc-900/40 backdrop-blur-xl p-8 rounded-lg border border-zinc-800 shadow-lg">
                         <p className="text-xl md:text-2xl text-gray-300 italic mb-8 leading-relaxed">
                           "{testimonial.content}"
                         </p>
                         
                         <div className="flex flex-col items-center">
                           <div className="mb-4 relative">
-                            <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full blur"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full blur"></div>
                             <img 
                               src={testimonial.avatar} 
                               alt={testimonial.author}
@@ -173,10 +173,10 @@ const Testimonials = () => {
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full border-violet-500/20 bg-zinc-900/40 hover:bg-zinc-900/60 backdrop-blur-xl"
+                className="rounded-lg border-zinc-800 bg-zinc-900/40 hover:bg-zinc-900/60 backdrop-blur-xl"
                 onClick={handlePrev}
               >
-                <ChevronLeft className="h-5 w-5 text-violet-400" />
+                <ChevronLeft className="h-5 w-5 text-blue-400" />
               </Button>
               
               <div className="flex space-x-2 mx-2">
@@ -185,8 +185,8 @@ const Testimonials = () => {
                     key={index}
                     className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${
                       index === activeIndex 
-                        ? 'bg-gradient-to-r from-violet-500 to-indigo-500 w-6' 
-                        : 'bg-violet-500/20'
+                        ? 'bg-blue-500 w-6' 
+                        : 'bg-blue-500/20'
                     }`}
                     onClick={() => handleDotClick(index)}
                   />
@@ -196,10 +196,10 @@ const Testimonials = () => {
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full border-violet-500/20 bg-zinc-900/40 hover:bg-zinc-900/60 backdrop-blur-xl"
+                className="rounded-lg border-zinc-800 bg-zinc-900/40 hover:bg-zinc-900/60 backdrop-blur-xl"
                 onClick={handleNext}
               >
-                <ChevronRight className="h-5 w-5 text-violet-400" />
+                <ChevronRight className="h-5 w-5 text-blue-400" />
               </Button>
             </div>
           </div>
@@ -223,7 +223,7 @@ const Testimonials = () => {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   className="group flex items-center justify-center h-8 relative"
                 >
-                  <div className="text-lg font-semibold tracking-tight bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="text-lg font-semibold tracking-tight text-gray-400 group-hover:text-blue-400 transition-colors duration-300">
                     {company}
                   </div>
                 </motion.div>

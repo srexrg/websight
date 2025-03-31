@@ -34,10 +34,10 @@ const HowItWorks = () => {
   return (
     <section 
       id="how-it-works" 
-      className="relative py-32 bg-gradient-to-b from-black to-zinc-900 overflow-hidden"
+      className="relative py-32 bg-black overflow-hidden"
       aria-label="How It Works Section"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#7c3aed10,transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#2563eb10,transparent)]" />
 
       <div className="container relative mx-auto px-4 max-w-7xl">
         <motion.div
@@ -46,20 +46,20 @@ const HowItWorks = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center max-w-3xl mx-auto mb-24"
         >
-          <h2 className="text-4xl md:text-6xl font-heading mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-violet-200 to-violet-500">
-            How WebSight Works
-            <span className="block mt-3 text-gray-300 text-2xl md:text-3xl font-title">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+            How It Works
+            <span className="block mt-3 text-gray-400 text-xl md:text-2xl font-normal">
               Start Tracking in Minutes
             </span>
           </h2>
-          <p className="text-gray-400 text-lg md:text-xl font-light tracking-wide max-w-2xl mx-auto">
+          <p className="text-gray-400 text-lg md:text-xl font-light max-w-2xl mx-auto">
             Get started with powerful analytics in just a few simple steps
           </p>
         </motion.div>
 
         <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6 lg:gap-8 relative">
           {/* Connecting Lines */}
-          <div className="absolute top-[45%] left-0 w-full h-px bg-gradient-to-r from-violet-500/20 via-indigo-500/20 to-violet-500/20 hidden lg:block" />
+          <div className="absolute top-[45%] left-0 w-full h-px bg-zinc-800 hidden lg:block" />
           
           {steps.map((step, index) => (
             <motion.div
@@ -68,29 +68,29 @@ const HowItWorks = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ 
                 duration: 0.5, 
-                delay: index * 0.15,
+                delay: index * 0.1,
                 ease: "easeOut"
               }}
             >
-              <div className="group h-full bg-zinc-900/40 hover:bg-zinc-900/60 transition-all duration-500 backdrop-blur-xl border-0 rounded-2xl p-8">
-                <div className="flex flex-col gap-8">
+              <div className="group h-full bg-zinc-900/40 hover:bg-zinc-900/60 transition-all duration-500 backdrop-blur-xl border border-zinc-800 rounded-lg p-6">
+                <div className="flex flex-col gap-6">
                   <div className="relative">
-                    <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-500/10 to-indigo-500/30 flex items-center justify-center shadow-lg shadow-black/40">
-                      <div className="text-violet-400 group-hover:scale-110 group-hover:text-violet-300 transition-all duration-500">
+                    <div className="h-12 w-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                      <div className="text-blue-400 group-hover:scale-110 group-hover:text-blue-300 transition-all duration-500">
                         {step.icon}
                       </div>
                     </div>
                     {/* Step number */}
-                    <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-                      <span className="text-violet-400 text-sm font-medium">{index + 1}</span>
+                    <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                      <span className="text-blue-400 text-sm font-medium">{index + 1}</span>
                     </div>
                   </div>
                   
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-medium text-white tracking-tight group-hover:text-violet-300 transition-colors duration-500">
+                  <div>
+                    <h3 className="text-xl font-medium text-white mb-3 group-hover:text-blue-300 transition-colors duration-500">
                       {step.title}
                     </h3>
-                    <p className="text-gray-400 leading-relaxed text-sm">
+                    <p className="text-gray-400 leading-relaxed">
                       {step.description}
                     </p>
                   </div>
@@ -108,8 +108,8 @@ const HowItWorks = () => {
           transition={{ duration: 0.7, delay: 0.5 }}
           className="mt-20 max-w-3xl mx-auto"
         >
-          <div className="bg-zinc-900/40 backdrop-blur-xl border border-violet-500/10 rounded-xl overflow-hidden">
-            <div className="flex items-center bg-zinc-900/60 px-4 py-2 border-b border-violet-500/10">
+          <div className="bg-zinc-900/40 backdrop-blur-xl border border-zinc-800 rounded-lg overflow-hidden">
+            <div className="flex items-center bg-zinc-900/60 px-4 py-2 border-b border-zinc-800">
               <div className="flex space-x-1.5">
                 <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
                 <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
@@ -119,14 +119,14 @@ const HowItWorks = () => {
             </div>
             <div className="p-6 text-sm font-mono text-gray-300 overflow-x-auto">
               <pre className="whitespace-pre">
-                <span className="text-violet-400">{"<script "}</span>
-                <span className="text-indigo-400">src</span>
-                <span className="text-violet-400">{"="}</span>
-                <span className="text-emerald-400">"https://websight.io/tracker.js"</span> 
-                <span className="text-indigo-400">{" data-key"}</span>
-                <span className="text-violet-400">{"="}</span>
-                <span className="text-emerald-400">"YOUR_API_KEY"</span>
-                <span className="text-violet-400">{"></script>"}</span>
+                <span className="text-blue-400">{"<script "}</span>
+                <span className="text-blue-300">src</span>
+                <span className="text-blue-400">{"="}</span>
+                <span className="text-green-400">"https://WebSight.io/tracker.js"</span> 
+                <span className="text-blue-300">{" data-key"}</span>
+                <span className="text-blue-400">{"="}</span>
+                <span className="text-green-400">"YOUR_API_KEY"</span>
+                <span className="text-blue-400">{"></script>"}</span>
               </pre>
             </div>
           </div>
