@@ -69,15 +69,16 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
 
   const analytics = await fetchEnhancedAnalytics(supabase, domain);
 
-  
   const groupedPageViews = groupPageViews(analytics.pageViews);
   const groupedPageSources = groupPageSources(analytics.visits);
 
-  const totalStats = analytics.dailyStats.reduce((acc: { visits: number; unique_visitors: number; page_views: number }, day: DailyStats) => ({
-    visits: acc.visits + (day.visits || 0),
-    unique_visitors: acc.unique_visitors + (day.unique_visitors || 0),
-    page_views: acc.page_views + (day.page_views || 0)
-  }), { visits: 0, unique_visitors: 0, page_views: 0 });
+  const totalStats = {
+    visits: analytics.totalStats.visits,
+    unique_visitors: analytics.totalStats.unique_visitors,
+    page_views: analytics.totalStats.page_views,
+    averageSessionDuration: analytics.totalStats.averageSessionDuration,
+    bounceRate: analytics.totalStats.bounceRate
+  };
 
   const createdAt = new Date(domainData.created_at).toLocaleDateString("en-US", {
     year: "numeric",

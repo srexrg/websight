@@ -59,7 +59,9 @@ export async function POST(req: NextRequest) {
             visitor_id, 
             session_id,
             screen,
-            language
+            language,
+            session_duration,
+            is_bounce
         } = payload;
 
         console.log('Domain validation check...');
@@ -195,6 +197,40 @@ export async function POST(req: NextRequest) {
                         page_views: 1
                     });
                 console.log('New daily stats inserted');
+            }
+        }
+
+        if (event === "session_end") {
+            console.log('Tracking session end...');
+            await supabase.from("visits")
+                .update({ 
+                    duration: session_duration,
+                    is_bounce: is_bounce
+                })
+                .eq("session_id", session_id);
+
+            const today = new Date().toISOString().split('T')[0];
+            const { data: existingStats } = await supabase
+                .from("daily_stats")
+                .select()
+                .eq("domain", domain)
+                .eq("date", today)
+                .single();
+
+            if (existingStats) {
+                const newTotalDuration = (existingStats.total_session_duration || 0) + session_duration;
+                const newSessionCount = (existingStats.completed_sessions || 0) + 1;
+                const newBounceCount = existingStats.bounce_count + (is_bounce ? 1 : 0);
+
+                await supabase
+                    .from("daily_stats")
+                    .update({
+                        total_session_duration: newTotalDuration,
+                        completed_sessions: newSessionCount,
+                        bounce_count: newBounceCount
+                    })
+                    .eq("domain", domain)
+                    .eq("date", today);
             }
         }
 

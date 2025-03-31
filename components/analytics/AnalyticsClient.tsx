@@ -51,6 +51,8 @@ interface TotalStats {
   visits: number;
   unique_visitors: number;
   page_views: number;
+  averageSessionDuration: number;
+  bounceRate: number;
 }
 
 interface AnalyticsClientProps {
@@ -81,9 +83,8 @@ export function AnalyticsClient({
   const totalPageViews = totalStats.page_views;
   const totalVisitors = totalStats.unique_visitors;
   const totalVisits = totalStats.visits;
-
-
-  // const averageSessionDuration = undefined;
+  const averageSessionDuration = totalStats.averageSessionDuration;
+  const bounceRate = totalStats.bounceRate;
 
   if (initialPageViews.length === 0) {
     return (
@@ -113,11 +114,11 @@ export function AnalyticsClient({
   }
 
   return (
-    <div className="space-y-6">
-      <Tabs defaultValue="overview" className="w-full">
+    <div>
+      <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="pages">Pages & Sources</TabsTrigger>
+          <TabsTrigger value="pages">Pages</TabsTrigger>
           <TabsTrigger value="events">Events</TabsTrigger>
         </TabsList>
 
@@ -126,7 +127,8 @@ export function AnalyticsClient({
             pageViews={totalPageViews}
             totalVisits={totalVisits}
             uniqueVisitors={totalVisitors}
-            // averageSessionDuration={averageSessionDuration}
+            averageSessionDuration={averageSessionDuration}
+            bounceRate={bounceRate}
             deviceStats={deviceStats}
             countryStats={countryStats}
             osStats={osStats}

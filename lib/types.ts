@@ -13,17 +13,17 @@ export interface GroupedSource {
   visits: number;
 }
 
-export interface DeviceStat {
+export interface DeviceStats {
   deviceType: string;
   visits: number;
 }
 
-export interface CountryStat {
+export interface CountryStats {
   country: string;
   visits: number;
 }
 
-export interface OsStat {
+export interface OsStats {
   os: string;
   visits: number;
 }
@@ -35,25 +35,31 @@ export interface Event {
 }
 
 export interface DailyStats {
+  domain: string;
   date: string;
   visits: number;
   unique_visitors: number;
   page_views: number;
+  total_session_duration?: number;
+  completed_sessions?: number;
+  bounce_count?: number;
 }
 
 export interface TotalStats {
   visits: number;
   unique_visitors: number;
   page_views: number;
+  averageSessionDuration: number;
+  bounceRate: number;
 }
 
 export interface AnalyticsData {
   pageViews: PageView[];
   visits: Visit[];
   dailyStats: DailyStats[];
-  deviceStats: DeviceStat[];
-  countryStats: CountryStat[];
-  osStats: OsStat[];
+  deviceStats: DeviceStats[];
+  countryStats: CountryStats[];
+  osStats: OsStats[];
   events: Event[];
-
+  totalStats: TotalStats;
 }
