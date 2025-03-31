@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { 
@@ -14,31 +14,19 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
     <>
       <header 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "py-3 bg-white/80 dark:bg-black/70 backdrop-blur-lg shadow-md" : "py-5"
-        }`}
+        className="fixed top-0 left-0 right-0 z-50 py-4 dark:bg-black/70 backdrop-blur-lg shadow-md"
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 relative z-10">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-indigo-600 rounded-lg blur-sm"></div>
-              <div className="p-1.5 bg-white dark:bg-gray-900 rounded-lg border border-violet-100 dark:border-violet-900 relative">
+              <div className="p-1.5 dark:bg-gray-900 rounded-lg border border-violet-100 dark:border-violet-900 relative">
                 <Globe className="h-5 w-5 text-violet-600 dark:text-violet-400" />
               </div>
             </div>
@@ -95,7 +83,7 @@ const Navbar = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 
-            className="fixed inset-0 z-40 bg-white dark:bg-gray-900 flex flex-col pt-24 pb-8 px-6"
+            className="fixed inset-0 z-40 dark:bg-gray-900 flex flex-col pt-24 pb-8 px-6"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -147,7 +135,7 @@ const Navbar = () => {
 const NavLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
   <Link 
     href={href} 
-    className="px-4 py-2 text-sm font-medium rounded-full text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:text-violet-700 dark:hover:text-violet-300 transition-colors relative group"
+    className="px-4 py-2 text-sm font-medium rounded-full text-gray-700 dark:hover:bg-violet-900/20 hover:text-violet-700transition-colors relative group"
   >
     {children}
     <span className="absolute inset-x-0 -bottom-px h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-300 bg-gradient-to-r from-violet-400 to-indigo-400"></span>
@@ -159,7 +147,7 @@ const MobileNavLink = ({ href, onClick, children }: { href: string, onClick: () 
   <Link 
     href={href} 
     onClick={onClick}
-    className="py-3 text-lg font-medium border-b dark:border-gray-800 flex items-center text-gray-900 dark:text-gray-100"
+    className="py-3 text-lg font-medium border-b dark:border-gray-800 flex items-center text-gray-900"
   >
     {children}
   </Link>
