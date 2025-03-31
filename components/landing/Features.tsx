@@ -1,147 +1,105 @@
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card";
-import { LineChart, BarChart, Users, Activity, Bell, Globe, Lock, Zap } from "lucide-react";
+import {
+  LineChart,
+  BarChart,
+  Users,
+  Activity,
+  Bell,
+  Globe,
+  Lock,
+  Zap
+} from "lucide-react";
 import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
 
 const featuresData = [
   {
-    icon: <LineChart className="h-5 w-5" />,
     title: "Real-time Analytics",
     description: "Track website performance as it happens with live updates and instant insights.",
-    color: "from-violet-500 to-indigo-500",
-    lightColor: "bg-violet-100 dark:bg-violet-900/30",
-    iconColor: "text-violet-600 dark:text-violet-400"
+    icon: <LineChart className="w-6 h-6" />,
   },
   {
-    icon: <Users className="h-5 w-5" />,
     title: "Visitor Insights",
     description: "Understand your audience with detailed breakdowns of visitor behavior and demographics.",
-    color: "from-blue-500 to-cyan-500",
-    lightColor: "bg-blue-100 dark:bg-blue-900/30",
-    iconColor: "text-blue-600 dark:text-blue-400"
+    icon: <Users className="w-6 h-6" />,
   },
   {
-    icon: <BarChart className="h-5 w-5" />,
     title: "Custom Events",
     description: "Track specific user interactions and conversions that matter most to your business.",
-    color: "from-cyan-500 to-teal-500",
-    lightColor: "bg-cyan-100 dark:bg-cyan-900/30",
-    iconColor: "text-cyan-600 dark:text-cyan-400"
+    icon: <BarChart className="w-6 h-6" />,
   },
   {
-    icon: <Activity className="h-5 w-5" />,
     title: "Performance Monitoring",
     description: "Identify bottlenecks and optimize your website's speed and responsiveness.",
-    color: "from-teal-500 to-emerald-500",
-    lightColor: "bg-teal-100 dark:bg-teal-900/30",
-    iconColor: "text-teal-600 dark:text-teal-400"
+    icon: <Activity className="w-6 h-6" />,
   },
   {
-    icon: <Bell className="h-5 w-5" />,
-    title: "Custom Alerts",
-    description: "Set up notifications for important metrics and events that require your attention.",
-    color: "from-amber-500 to-orange-500",
-    lightColor: "bg-amber-100 dark:bg-amber-900/30",
-    iconColor: "text-amber-600 dark:text-amber-400"
+    title: "Smart Alerts",
+    description: "Get instant notifications for important metrics and events that require attention.",
+    icon: <Bell className="w-6 h-6" />,
   },
   {
-    icon: <Globe className="h-5 w-5" />,
-    title: "Geographic Tracking",
-    description: "Track visitor locations and understand your global audience distribution.",
-    color: "from-orange-500 to-rose-500",
-    lightColor: "bg-orange-100 dark:bg-orange-900/30",
-    iconColor: "text-orange-600 dark:text-orange-400"
-  },
-  {
-    icon: <Lock className="h-5 w-5" />,
-    title: "Privacy Focused",
-    description: "Collect data while respecting privacy laws and user consent preferences.",
-    color: "from-rose-500 to-pink-500",
-    lightColor: "bg-rose-100 dark:bg-rose-900/30",
-    iconColor: "text-rose-600 dark:text-rose-400"
-  },
-  {
-    icon: <Zap className="h-5 w-5" />,
-    title: "Lightweight Script",
-    description: "Minimal impact on your website's loading speed with our optimized tracker.",
-    color: "from-pink-500 to-violet-500",
-    lightColor: "bg-pink-100 dark:bg-pink-900/30", 
-    iconColor: "text-pink-600 dark:text-pink-400"
+    title: "Global Tracking",
+    description: "Monitor visitor locations and understand your worldwide audience distribution.",
+    icon: <Globe className="w-6 h-6" />,
   }
 ];
 
 const Features = () => {
   return (
-    <section id="features" className="py-24 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-10 right-0 w-80 h-80 bg-teal-300/20 rounded-full filter blur-3xl"></div>
-        <div className="absolute bottom-10 left-0 w-80 h-80 bg-violet-300/20 rounded-full filter blur-3xl"></div>
-      </div>
-      
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-sm uppercase font-semibold tracking-wider text-violet-600 dark:text-violet-400 mb-3"
-          >
-            Powerful Features
-          </motion.p>
-          
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
-          >
-            Everything you need to monitor your website
-          </motion.h2>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="max-w-2xl mx-auto text-lg text-muted-foreground"
-          >
-            WebSight provides a comprehensive suite of tools to help you understand your visitors,
-            track performance, and make data-driven decisions.
-          </motion.p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <section
+      id="features"
+      className="relative py-32 bg-gradient-to-b from-black to-zinc-900 overflow-hidden"
+      aria-label="Features Section"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#7c3aed10,transparent)]" />
+
+      <div className="container relative mx-auto px-4 max-w-7xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="text-center max-w-3xl mx-auto mb-24"
+        >
+          <h2 className="text-4xl md:text-6xl font-heading mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-violet-200 to-violet-500">
+            Website Analytics Reimagined
+            <span className="block mt-3 text-gray-300 text-2xl md:text-3xl font-title">
+              Powerful Insights Made Simple
+            </span>
+          </h2>
+          <p className="text-gray-400 text-lg md:text-xl font-light tracking-wide max-w-2xl mx-auto">
+            Transform your website data into actionable insights with our comprehensive analytics suite
+          </p>
+        </motion.div>
+
+        <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-6 lg:gap-8">
           {featuresData.map((feature, index) => (
             <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
+              key={feature.title}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 * index }}
+              transition={{
+                duration: 0.5,
+                delay: index * 0.15,
+                ease: "easeOut"
+              }}
             >
-              <Card className="h-full overflow-hidden group hover:shadow-lg transition-shadow duration-300 border-transparent hover:border-violet-200 dark:hover:border-violet-800">
-                <CardContent className="p-6">
-                  <div className="mb-4">
-                    <div className={`p-3 inline-flex rounded-xl ${feature.lightColor}`}>
-                      <div className={`${feature.iconColor}`}>
-                        {feature.icon}
-                      </div>
+              <Card className="group h-full bg-zinc-900/40 hover:bg-zinc-900/60 transition-all duration-500 backdrop-blur-xl border-0">
+                <CardContent className="p-8 flex flex-col gap-8">
+                  <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-500/10 to-indigo-500/30 flex items-center justify-center shadow-lg shadow-black/40">
+                    <div className="text-violet-400 group-hover:scale-110 group-hover:text-violet-300 transition-all duration-500">
+                      {feature.icon}
                     </div>
                   </div>
-                  
-                  <h3 className="text-lg font-semibold mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:transition-all group-hover:duration-300 group-hover:ease-in-out">
-                    <span className={`group-hover:bg-gradient-to-r group-hover:${feature.color}`}>
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-medium text-white tracking-tight group-hover:text-violet-300 transition-colors duration-500">
                       {feature.title}
-                    </span>
-                  </h3>
-                  
-                  <p className="text-muted-foreground">
-                    {feature.description}
-                  </p>
+                    </h3>
+                    <p className="text-gray-400 leading-relaxed text-sm">
+                      {feature.description}
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
