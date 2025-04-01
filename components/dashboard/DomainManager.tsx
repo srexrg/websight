@@ -5,8 +5,9 @@ import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
-import { GlobeIcon, PlusIcon, TrashIcon, AlertCircleIcon, ArrowRightIcon } from 'lucide-react'
+import { GlobeIcon, PlusIcon, TrashIcon, AlertCircleIcon, ArrowRightIcon, BarChart3, BookOpen } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 
 interface Domain {
   id: string;
@@ -212,108 +213,141 @@ export default function DomainManager({
   }
 
   return (
-    <Card className="w-full max-w-3xl">
-      <CardHeader>
-        <CardTitle className="text-2xl">Your Domains</CardTitle>
-        <CardDescription>
-          Add your website domains to start tracking analytics data
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={addDomain} className="flex gap-2 mb-6">
-          <div className="flex-1">
-            <Input
-              placeholder="Enter your domain (e.g., example.com)"
-              value={newDomain}
-              onChange={(e) => setNewDomain(e.target.value)}
-              className="w-full"
-            />
-            {error && (
-              <div className="flex items-start gap-1.5 text-destructive text-sm mt-2">
-                <AlertCircleIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <p>{error}</p>
-              </div>
-            )}
-            <p className="text-muted-foreground text-xs mt-2">
-              Enter only the domain name without http:// or other parts. Example: example.com <br />
-              Note: Domains with or without "www." are treated as the same domain (e.g., example.com and www.example.com).
-            </p>
-          </div>
-          <Button 
-            type="submit" 
-            disabled={isSubmitting}
-            className="flex items-center gap-1 cursor-pointer"
-          >
-            <PlusIcon className="h-4 w-4" />
-            Add Domain
-          </Button>
-        </form>
-        
-        {domains.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <GlobeIcon className="mx-auto h-8 w-8 mb-2 opacity-50" />
-            <p>You haven't added any domains yet.</p>
-            <p className="text-sm">Add your first domain above to get started.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {domains.map((domain) => (
-              <Card 
-                key={domain.id}
-                className="group relative overflow-hidden transition-all border hover:border-primary hover:shadow-md"
-              >
-                <div 
-                  className="p-4 cursor-pointer"
-                  onClick={() => handleDomainClick(domain.domain)}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="w-full backdrop-blur-xl bg-zinc-900/40 border-zinc-800 shadow-2xl">
+        <CardHeader>
+          <CardTitle className="text-2xl text-white">Your Domains</CardTitle>
+          <CardDescription className="text-gray-400">
+            Add your website domains to start tracking analytics data
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={addDomain} className="flex gap-3 mb-8">
+            <div className="flex-1">
+              <Input
+                placeholder="Enter your domain (e.g., example.com)"
+                value={newDomain}
+                onChange={(e) => setNewDomain(e.target.value)}
+                className="w-full bg-zinc-900/60 border-zinc-700 text-white placeholder:text-gray-500 focus:border-violet-500 focus:ring-violet-500/20"
+              />
+              {error && (
+                <motion.div 
+                  className="flex items-start gap-1.5 text-red-400 text-sm mt-2"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-2 rounded-full bg-primary/10">
-                      <GlobeIcon className="h-5 w-5 text-primary" />
+                  <AlertCircleIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <p>{error}</p>
+                </motion.div>
+              )}
+              <p className="text-gray-500 text-xs mt-2">
+                Enter only the domain name without http:// or other parts. Example: example.com <br />
+                Note: Domains with or without "www." are treated as the same domain.
+              </p>
+            </div>
+            <Button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="bg-violet-600 hover:bg-violet-700 text-white shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40 transition-all duration-300"
+            >
+              <PlusIcon className="h-4 w-4 mr-2" />
+              Add Domain
+            </Button>
+          </form>
+          
+          {domains.length === 0 ? (
+            <motion.div 
+              className="text-center py-16 text-gray-400"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <GlobeIcon className="mx-auto h-12 w-12 mb-4 opacity-50" />
+              <p className="text-lg mb-2">You haven't added any domains yet.</p>
+              <p className="text-sm text-gray-500">Add your first domain above to get started.</p>
+            </motion.div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {domains.map((domain, index) => (
+                <motion.div
+                  key={domain.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                >
+                  <Card 
+                    className="group relative overflow-hidden transition-all border-zinc-800 bg-zinc-900/40 hover:bg-zinc-900/60 hover:border-violet-500/50"
+                  >
+                    <div 
+                      className="p-5 cursor-pointer"
+                      onClick={() => handleDomainClick(domain.domain)}
+                    >
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="p-2.5 rounded-xl bg-violet-600/10 text-violet-500">
+                          <BarChart3 className="h-5 w-5" />
+                        </div>
+                        <h3 className="font-medium text-lg text-white group-hover:text-violet-400 transition-colors">{domain.domain}</h3>
+                      </div>
+                      
+                      <div className="text-sm text-gray-500 mb-4">
+                        Added on {formatDate(domain.created_at)}
+                      </div>
+                      
+                      <div className="flex items-center text-violet-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                        View analytics
+                        <ArrowRightIcon className="h-3.5 w-3.5 ml-1" />
+                      </div>
                     </div>
-                    <h3 className="font-medium text-lg group-hover:text-primary transition-colors">{domain.domain}</h3>
-                  </div>
-                  
-                  <div className="text-sm text-muted-foreground mb-3">
-                    Added on {formatDate(domain.created_at)}
-                  </div>
-                  
-                  <div className="flex items-center text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                    View analytics
-                    <ArrowRightIcon className="h-3.5 w-3.5 ml-1" />
-                  </div>
-                </div>
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeDomain(domain.id);
-                  }}
-                  className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
-                  title="Remove domain"
-                >
-                  <TrashIcon className="h-4 w-4" />
-                </Button>
-              </Card>))}
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeDomain(domain.id);
+                      }}
+                      className="absolute top-3 right-3 h-8 w-8 p-0 rounded-lg opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                      title="Remove domain"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </Button>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+        <CardFooter className="text-sm text-gray-400 border-t border-zinc-800 pt-6">
+          <div className="w-full">
+            <p className="mb-3">Need help setting up tracking on your website?</p>
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-violet-500/50 transition-all duration-300"
+                onClick={() => router.push('/settings')}
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Get tracking code
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="text-gray-400 hover:text-violet-400 hover:bg-violet-400/10"
+                asChild
+              >
+                <a href="/docs" target="_blank" rel="noopener noreferrer">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  View documentation
+                </a>
+              </Button>
+            </div>
           </div>
-        )}
-      </CardContent>
-      <CardFooter className="text-sm text-muted-foreground border-t pt-6">
-        <div className="w-full">
-          <p className="mb-2">Need help setting up tracking on your website?</p>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" className="text-sm" onClick={() => router.push('/settings')}>
-              Get tracking code
-            </Button>
-            <Button variant="ghost" className="text-sm" asChild>
-              <a href="/docs" target="_blank" rel="noopener noreferrer">
-                View documentation
-              </a>
-            </Button>
-          </div>
-        </div>
-      </CardFooter>
-    </Card>
+        </CardFooter>
+      </Card>
+    </motion.div>
   )
 }
