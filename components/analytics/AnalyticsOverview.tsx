@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { WorldMap } from "./WorldMap";
 
 interface DeviceStats {
   deviceType: string;
@@ -135,24 +136,27 @@ export function AnalyticsOverview({
       </TabsContent>
 
       <TabsContent value="locations" className="space-y-6">
-        <Card>
-          <p className="font-medium text-muted-foreground p-6 border-b border-border">
-            TOP COUNTRIES
-          </p>
-          <div className="divide-y">
-            {countryStats.map((stat) => (
-              <div key={stat.country} className="p-4 flex justify-between items-center">
-                <div>
-                  <p className="font-medium">{stat.country}</p>
-                  <p className="text-sm text-muted-foreground">{stat.visits} visits</p>
+        <div className="grid grid-cols-1 gap-6">
+          <WorldMap data={countryStats} className="col-span-1" />
+          <Card>
+            <p className="font-medium text-muted-foreground p-6 border-b border-border">
+              TOP COUNTRIES
+            </p>
+            <div className="divide-y">
+              {countryStats.map((stat) => (
+                <div key={stat.country} className="p-4 flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">{stat.country}</p>
+                    <p className="text-sm text-muted-foreground">{stat.visits} visits</p>
+                  </div>
+                  <p className="text-sm font-mono">
+                    {calculatePercentage(stat.visits, totalVisits)}
+                  </p>
                 </div>
-                <p className="text-sm font-mono">
-                  {calculatePercentage(stat.visits, totalVisits)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </Card>
+              ))}
+            </div>
+          </Card>
+        </div>
       </TabsContent>
     </Tabs>
   );
