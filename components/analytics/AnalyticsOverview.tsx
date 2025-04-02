@@ -5,6 +5,7 @@ import { WorldMap } from "./WorldMap";
 import { motion } from "framer-motion";
 import { Users, Globe2, Monitor, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
+import { calculateGrowth, abbreviateNumber, calculateNormalizedPercentage } from "@/lib/utils/analytics";
 
 interface DeviceStats {
   deviceType: string;
@@ -26,12 +27,16 @@ interface DailyStat {
   visits: number;
   unique_visitors: number;
   page_views: number;
+  avg_session_duration: number;
+  bounce_rate: number;
 }
 
 interface AnalyticsOverviewProps {
   pageViews: number;
   totalVisits: number;
   uniqueVisitors: number;
+  avgSessionDuration: number;
+  bounceRate: number;
   deviceStats?: DeviceStats[];
   countryStats?: CountryStats[];
   osStats?: OsStats[];
@@ -42,30 +47,17 @@ export function AnalyticsOverview({
   pageViews, 
   totalVisits, 
   uniqueVisitors,
+  avgSessionDuration,
+  bounceRate,
   deviceStats = [],
   countryStats = [],
   osStats = [],
   dailyStats = []
 }: AnalyticsOverviewProps) {
-  const abbreviateNumber = (number: number): string => {
-    if (number >= 1000000) {
-      return (number / 1000000).toFixed(1) + "M";
-    } else if (number >= 1000) {
-      return (number / 1000).toFixed(1) + "K";
-    } else {
-      return number.toString();
-    }
-  };
 
-  const calculatePercentage = (value: number, total: number): string => {
-    return total > 0 ? ((value / total) * 100).toFixed(1) + "%" : "0%";
-  };
 
-  const calculateGrowth = (current: number, previous: number): number => {
-    return previous > 0 ? ((current - previous) / previous) * 100 : 0;
-  };
 
-  // Process daily stats for charts
+
   const chartData = dailyStats.map(stat => ({
     name: new Date(stat.date).toISOString().split('T')[0].slice(5), 
     "Page Views": stat.page_views,
@@ -79,8 +71,11 @@ export function AnalyticsOverview({
   const previousTotal = dailyStats.slice(0, midPoint).reduce((acc, curr) => acc + curr.visits, 0);
   const growthRate = calculateGrowth(recentTotal, previousTotal);
 
+    const allDeviceVisits = deviceStats.map((stat) => stat.visits);
+    const allOsVisits = osStats.map((stat) => stat.visits);
+
   return (
-    <motion.div 
+    <motion.div
       className="space-y-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -90,18 +85,28 @@ export function AnalyticsOverview({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-2 rounded-lg bg-violet-600/10">
-              <Users className="h-5 w-5 text-violet-500" />
+            <div className="p-2 rounded-lg bg-blue-600/10">
+              <Users className="h-5 w-5 text-blue-500" />
             </div>
             <div className="flex items-center gap-1 text-sm">
-              <span className={`flex items-center ${growthRate >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-                {growthRate >= 0 ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+              <span
+                className={`flex items-center ${
+                  growthRate >= 0 ? "text-emerald-500" : "text-red-500"
+                }`}
+              >
+                {growthRate >= 0 ? (
+                  <ArrowUpRight className="h-4 w-4" />
+                ) : (
+                  <ArrowDownRight className="h-4 w-4" />
+                )}
                 {Math.abs(growthRate).toFixed(1)}%
               </span>
             </div>
           </div>
           <p className="text-sm text-gray-400 mb-1">Total Visits</p>
-          <p className="text-2xl font-bold text-white">{abbreviateNumber(totalVisits)}</p>
+          <p className="text-2xl font-bold text-white">
+            {abbreviateNumber(totalVisits)}
+          </p>
         </Card>
 
         <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
@@ -111,7 +116,9 @@ export function AnalyticsOverview({
             </div>
           </div>
           <p className="text-sm text-gray-400 mb-1">Page Views</p>
-          <p className="text-2xl font-bold text-white">{abbreviateNumber(pageViews)}</p>
+          <p className="text-2xl font-bold text-white">
+            {abbreviateNumber(pageViews)}
+          </p>
         </Card>
 
         <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
@@ -121,7 +128,9 @@ export function AnalyticsOverview({
             </div>
           </div>
           <p className="text-sm text-gray-400 mb-1">Unique Visitors</p>
-          <p className="text-2xl font-bold text-white">{abbreviateNumber(uniqueVisitors)}</p>
+          <p className="text-2xl font-bold text-white">
+            {abbreviateNumber(uniqueVisitors)}
+          </p>
         </Card>
 
         <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
@@ -129,44 +138,82 @@ export function AnalyticsOverview({
             <div className="p-2 rounded-lg bg-amber-600/10">
               <Monitor className="h-5 w-5 text-amber-500" />
             </div>
+            <div className="flex items-center gap-1 text-sm">
+              <span className="flex items-center text-amber-500">
+                <ArrowUpRight className="h-4 w-4" />
+                {Math.round(avgSessionDuration / 60)}m {Math.round(avgSessionDuration % 60)}s
+              </span>
+            </div>
           </div>
           <p className="text-sm text-gray-400 mb-1">Avg. Session Duration</p>
-          <p className="text-2xl font-bold text-white">3m 12s</p>
+          <p className="text-2xl font-bold text-white">
+            {Math.round(avgSessionDuration / 60)}m {Math.round(avgSessionDuration % 60)}s
+          </p>
+        </Card>
+
+        <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-2 rounded-lg bg-red-600/10">
+              <ArrowUpRight className="h-5 w-5 text-red-500" />
+            </div>
+            <div className="flex items-center gap-1 text-sm">
+              <span className={`flex items-center ${bounceRate > 50 ? "text-red-500" : "text-emerald-500"}`}>
+                {bounceRate > 50 ? (
+                  <ArrowUpRight className="h-4 w-4" />
+                ) : (
+                  <ArrowDownRight className="h-4 w-4" />
+                )}
+                {bounceRate.toFixed(1)}%
+              </span>
+            </div>
+          </div>
+          <p className="text-sm text-gray-400 mb-1">Bounce Rate</p>
+          <p className="text-2xl font-bold text-white">
+            {bounceRate.toFixed(1)}%
+          </p>
         </Card>
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-          <h3 className="text-lg font-semibold text-white mb-4">Traffic Overview</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Traffic Overview
+          </h3>
           <div className="h-[300px] mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
                   </linearGradient>
-                  <linearGradient id="colorVisitors" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient
+                    id="colorVisitors"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <XAxis 
-                  dataKey="name" 
-                  stroke="#525252" 
+                <XAxis
+                  dataKey="name"
+                  stroke="#525252"
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
                 />
-                <YAxis 
+                <YAxis
                   stroke="#525252"
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(value) => abbreviateNumber(value)}
                 />
-                <Tooltip 
+                <Tooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
@@ -184,15 +231,15 @@ export function AnalyticsOverview({
                             ))}
                           </div>
                         </div>
-                      )
+                      );
                     }
-                    return null
+                    return null;
                   }}
                 />
                 <Area
                   type="monotone"
                   dataKey="Page Views"
-                  stroke="#8b5cf6"
+                  stroke="#2563eb"
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#colorViews)"
@@ -211,21 +258,25 @@ export function AnalyticsOverview({
         </Card>
 
         <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-          <h3 className="text-lg font-semibold text-white mb-4">Device Distribution</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Device Distribution
+          </h3>
           <div className="h-[300px] mt-4">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={deviceStats.map(stat => ({
-                name: stat.deviceType,
-                value: stat.visits
-              }))}>
-                <XAxis 
-                  dataKey="name" 
-                  stroke="#525252" 
+              <BarChart
+                data={deviceStats.map((stat) => ({
+                  name: stat.deviceType,
+                  value: stat.visits,
+                }))}
+              >
+                <XAxis
+                  dataKey="name"
+                  stroke="#525252"
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
                 />
-                <YAxis 
+                <YAxis
                   stroke="#525252"
                   fontSize={12}
                   tickLine={false}
@@ -245,16 +296,12 @@ export function AnalyticsOverview({
                             {abbreviateNumber(data.value as number)} visits
                           </p>
                         </div>
-                      )
+                      );
                     }
-                    return null
+                    return null;
                   }}
                 />
-                <Bar
-                  dataKey="value"
-                  fill="#8b5cf6"
-                  radius={[4, 4, 0, 0]}
-                />
+                <Bar dataKey="value" fill="#2563eb" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -268,43 +315,73 @@ export function AnalyticsOverview({
             <h3 className="text-lg font-semibold text-white">Device Types</h3>
           </div>
           <div className="divide-y divide-zinc-800">
-            {deviceStats.map((stat) => (
-              <div key={stat.deviceType} className="p-4 flex justify-between items-center">
-                <div>
-                  <p className="font-medium text-white capitalize">{stat.deviceType}</p>
-                  <p className="text-sm text-gray-400">{stat.visits} visits</p>
+            {deviceStats.map((stat) => {
+              const percentage = calculateNormalizedPercentage(
+                stat.visits,
+                totalVisits,
+                allDeviceVisits
+              );
+              return (
+                <div
+                  key={stat.deviceType}
+                  className="p-4 flex justify-between items-center"
+                >
+                  <div>
+                    <p className="font-medium text-white capitalize">
+                      {stat.deviceType}
+                    </p>
+                    <p className="text-sm text-gray-400">
+                      {stat.visits} visits
+                    </p>
+                  </div>
+                  <p className="text-sm font-mono text-gray-400">
+                    {percentage.toFixed(1)}%
+                  </p>
                 </div>
-                <p className="text-sm font-mono text-gray-400">
-                  {calculatePercentage(stat.visits, totalVisits)}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </Card>
 
         <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
           <div className="p-6 border-b border-zinc-800">
-            <h3 className="text-lg font-semibold text-white">Operating Systems</h3>
+            <h3 className="text-lg font-semibold text-white">
+              Operating Systems
+            </h3>
           </div>
           <div className="divide-y divide-zinc-800">
-            {osStats.map((stat) => (
-              <div key={stat.os} className="p-4 flex justify-between items-center">
-                <div>
-                  <p className="font-medium text-white">{stat.os}</p>
-                  <p className="text-sm text-gray-400">{stat.visits} visits</p>
+            {osStats.map((stat) => {
+              const percentage = calculateNormalizedPercentage(
+                stat.visits,
+                totalVisits,
+                allOsVisits
+              );
+              return (
+                <div
+                  key={stat.os}
+                  className="p-4 flex justify-between items-center"
+                >
+                  <div>
+                    <p className="font-medium text-white">{stat.os}</p>
+                    <p className="text-sm text-gray-400">
+                      {stat.visits} visits
+                    </p>
+                  </div>
+                  <p className="text-sm font-mono text-gray-400">
+                    {percentage.toFixed(1)}%
+                  </p>
                 </div>
-                <p className="text-sm font-mono text-gray-400">
-                  {calculatePercentage(stat.visits, totalVisits)}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </Card>
       </div>
 
       {/* World Map */}
       <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-        <h3 className="text-lg font-semibold text-white mb-4">Geographic Distribution</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">
+          Geographic Distribution
+        </h3>
         <WorldMap data={countryStats} className="h-[400px]" />
       </Card>
     </motion.div>

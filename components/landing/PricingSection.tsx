@@ -81,7 +81,7 @@ const PricingSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-sm uppercase font-semibold tracking-wider text-purple-400 mb-3"
+            className="text-sm uppercase font-semibold tracking-wider text-blue-400 mb-3"
           >
             Pricing Plans
           </motion.p>
@@ -117,12 +117,12 @@ const PricingSection = () => {
               transition={{ duration: 0.7, delay: plan.delay }}
               className={`relative rounded-2xl overflow-hidden h-full ${
                 plan.highlighted 
-                  ? 'border-2 border-purple-500' 
+                  ? 'border-2 border-blue-500' 
                   : 'border border-gray-800'
               }`}
             >
               {plan.highlighted && (
-                <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-center text-xs font-medium py-1.5">
+                <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-center text-xs font-medium py-1.5">
                   MOST POPULAR
                 </div>
               )}
@@ -141,7 +141,7 @@ const PricingSection = () => {
                   {plan.features.map((feature, i) => (
                     <div key={i} className="flex items-start">
                       <div className="flex-shrink-0 mt-1">
-                        <Check className="h-5 w-5 text-purple-500" />
+                        <Check className="h-5 w-5 text-blue-500" />
                       </div>
                       <p className="ml-3 text-gray-300 text-sm">{feature}</p>
                     </div>
@@ -153,7 +153,7 @@ const PricingSection = () => {
                     <Button 
                       className={`w-full ${
                         plan.highlighted 
-                          ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white' 
+                          ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white' 
                           : 'bg-gray-800 hover:bg-gray-700 text-white'
                       } p-6 h-auto rounded-xl font-medium`}
                     >
@@ -184,25 +184,25 @@ const PricingSection = () => {
               <div className="space-y-3">
                 <div className="flex items-start">
                   <div className="flex-shrink-0 mt-1">
-                    <Check className="h-5 w-5 text-purple-500" />
+                    <Check className="h-5 w-5 text-blue-500" />
                   </div>
                   <p className="ml-3 text-gray-300 text-sm">Unlimited pageviews</p>
                 </div>
                 <div className="flex items-start">
                   <div className="flex-shrink-0 mt-1">
-                    <Check className="h-5 w-5 text-purple-500" />
+                    <Check className="h-5 w-5 text-blue-500" />
                   </div>
                   <p className="ml-3 text-gray-300 text-sm">Custom data retention policies</p>
                 </div>
                 <div className="flex items-start">
                   <div className="flex-shrink-0 mt-1">
-                    <Check className="h-5 w-5 text-purple-500" />
+                    <Check className="h-5 w-5 text-blue-500" />
                   </div>
                   <p className="ml-3 text-gray-300 text-sm">Dedicated account manager</p>
                 </div>
                 <div className="flex items-start">
                   <div className="flex-shrink-0 mt-1">
-                    <Check className="h-5 w-5 text-purple-500" />
+                    <Check className="h-5 w-5 text-blue-500" />
                   </div>
                   <p className="ml-3 text-gray-300 text-sm">Custom integrations</p>
                 </div>
@@ -228,11 +228,11 @@ const PricingSection = () => {
           className="mt-20 text-center"
         >
           <h3 className="text-xl font-semibold mb-2 flex items-center justify-center gap-2">
-            <HelpCircle className="h-5 w-5 text-purple-400" />
+            <HelpCircle className="h-5 w-5 text-blue-400" />
             Have questions?
           </h3>
           <p className="text-gray-400 mb-4">
-            Check out our <Link href="/faq" className="text-purple-400 hover:text-purple-300 underline">FAQ</Link> or <Link href="/contact" className="text-purple-400 hover:text-purple-300 underline">contact our team</Link>.
+            Check out our <Link href="/faq" className="text-blue-400 hover:text-blue-300 underline">FAQ</Link> or <Link href="/contact" className="text-blue-400 hover:text-blue-300 underline">contact our team</Link>.
           </p>
         </motion.div>
       </div>

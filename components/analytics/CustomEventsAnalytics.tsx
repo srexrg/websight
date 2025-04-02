@@ -49,7 +49,7 @@ export function CustomEventsAnalytics({ events }: CustomEventsAnalyticsProps) {
                     </p>
                   )}
                 </div>
-                <div className="h-2 w-2 rounded-full bg-violet-500" />
+                <div className="h-2 w-2 rounded-full bg-blue-500" />
               </div>
             ))
           )}
