@@ -11,14 +11,14 @@ const Hero = () => {
     <section className="pt-24 pb-20 md:pt-32 md:pb-32 relative overflow-hidden bg-black">
       {/* Background Elements */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#7c3aed15,transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#2563eb15,transparent)]" />
         <motion.div 
-          className="absolute top-1/4 left-20 w-64 h-64 bg-gradient-to-br from-violet-600/10 to-indigo-600/10 rounded-full filter blur-3xl"
+          className="absolute top-1/4 left-20 w-64 h-64 bg-gradient-to-br from-blue-600/10 to-blue-700/10 rounded-full filter blur-3xl"
           animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div 
-          className="absolute bottom-1/3 right-20 w-72 h-72 bg-gradient-to-br from-indigo-600/10 to-violet-600/10 rounded-full filter blur-3xl"
+          className="absolute bottom-1/3 right-20 w-72 h-72 bg-gradient-to-br from-blue-700/10 to-blue-600/10 rounded-full filter blur-3xl"
           animate={{ scale: [1.2, 1, 1.2], opacity: [0.6, 0.3, 0.6] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -42,7 +42,7 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
           >
-            WebSight makes it easy to collect, analyze, and understand your website data — so you can focus on <span className="text-violet-400">growth</span>
+            WebSight makes it easy to collect, analyze, and understand your website data — so you can focus on <span className="text-blue-400">growth</span>
           </motion.p>
           
           {/* CTA Buttons */}
@@ -70,10 +70,10 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <div className="absolute -z-10 inset-0 bg-gradient-to-tr from-violet-500/30 to-indigo-500/30 blur-2xl rounded-2xl"></div>
+          <div className="absolute -z-10 inset-0 bg-gradient-to-tr from-blue-500/30 to-blue-600/30 blur-2xl rounded-2xl"></div>
           
           <motion.div 
-            className="rounded-2xl overflow-hidden shadow-2xl border border-violet-500/20 backdrop-blur-sm bg-zinc-900/60"
+            className="rounded-2xl overflow-hidden shadow-2xl border border-blue-500/20 backdrop-blur-sm bg-zinc-900/60"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.5 }}
           >
