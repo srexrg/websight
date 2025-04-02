@@ -174,10 +174,12 @@ export async function POST(req: NextRequest) {
                 // Get updated average session duration using the RPC function
                 const { data: avgDurationData } = await supabase
                     .rpc('get_avg_session_duration', { website_domain: domain });
+                console.log('Avg duration data:', avgDurationData);
 
                 // Get updated bounce rate using the RPC function
                 const { data: bounceRateData } = await supabase
                     .rpc('get_bounce_rate', { website_domain: domain });
+                console.log('Bounce rate data:', bounceRateData);
 
                 await supabase
                     .from("daily_stats")
