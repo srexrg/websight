@@ -232,7 +232,7 @@ export default function DomainManager({
                 placeholder="Enter your domain (e.g., example.com)"
                 value={newDomain}
                 onChange={(e) => setNewDomain(e.target.value)}
-                className="w-full bg-zinc-900/60 border-zinc-700 text-white placeholder:text-gray-500 focus:border-violet-500 focus:ring-violet-500/20"
+                className="w-full bg-zinc-900/60 border-zinc-700 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20"
               />
               {error && (
                 <motion.div 
@@ -281,24 +281,24 @@ export default function DomainManager({
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                 >
                   <Card 
-                    className="group relative overflow-hidden transition-all border-zinc-800 bg-zinc-900/40 hover:bg-zinc-900/60 hover:border-violet-500/50"
+                    className="group relative overflow-hidden transition-all border-zinc-800 bg-zinc-900/40 hover:bg-zinc-900/60 hover:border-blue-500/50"
                   >
                     <div 
                       className="p-5 cursor-pointer"
                       onClick={() => handleDomainClick(domain.domain)}
                     >
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2.5 rounded-xl bg-violet-600/10 text-violet-500">
+                        <div className="p-2.5 rounded-xl bg-blue-600/10 text-blue-500">
                           <BarChart3 className="h-5 w-5" />
                         </div>
-                        <h3 className="font-medium text-lg text-white group-hover:text-violet-400 transition-colors">{domain.domain}</h3>
+                        <h3 className="font-medium text-lg text-white group-hover:text-blue-400 transition-colors">{domain.domain}</h3>
                       </div>
                       
                       <div className="text-sm text-gray-500 mb-4">
                         Added on {formatDate(domain.created_at)}
                       </div>
                       
-                      <div className="flex items-center text-violet-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center text-blue-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                         View analytics
                         <ArrowRightIcon className="h-3.5 w-3.5 ml-1" />
                       </div>
@@ -328,7 +328,7 @@ export default function DomainManager({
             <div className="flex items-center gap-3">
               <Button 
                 variant="outline" 
-                className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-violet-500/50 transition-all duration-300"
+                className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-blue-500/50 transition-all duration-300"
                 onClick={() => router.push('/settings')}
               >
                 <BarChart3 className="h-4 w-4 mr-2" />
@@ -336,7 +336,7 @@ export default function DomainManager({
               </Button>
               <Button 
                 variant="ghost" 
-                className="text-gray-400 hover:text-violet-400 hover:bg-violet-400/10"
+                className="text-gray-400 hover:text-blue-400 hover:bg-blue-400/10"
                 asChild
               >
                 <a href="/docs" target="_blank" rel="noopener noreferrer">
