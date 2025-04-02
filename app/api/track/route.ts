@@ -120,6 +120,23 @@ export async function POST(req: NextRequest) {
 
         if (event === "session_start") {
             console.log('Tracking session start...');
+            
+            // First check if this visitor has already visited today
+            const { data: existingVisit, error: visitCheckError } = await supabase
+                .from("visits")
+                .select("visitor_id")
+                .eq("website_id", domain)
+                .eq("visitor_id", visitor_id)
+                .gte("created_at", new Date().toISOString().split('T')[0])
+                .single();
+
+            if (visitCheckError && visitCheckError.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+                throw new DatabaseError(`Failed to check existing visit: ${visitCheckError.message}`, 'VISIT_CHECK_ERROR');
+            }
+
+            const isNewVisitor = !existingVisit;
+
+            // Insert the visit
             const { error: visitError } = await supabase.from("visits").insert([{
                 website_id: domain,
                 source: sourceName,
@@ -160,7 +177,7 @@ export async function POST(req: NextRequest) {
                     .from("daily_stats")
                     .update({
                         visits: existingStats.visits + 1,
-                        unique_visitors: existingStats.unique_visitors + 1
+                        unique_visitors: isNewVisitor ? existingStats.unique_visitors + 1 : existingStats.unique_visitors
                     })
                     .eq("domain", domain)
                     .eq("date", today);
