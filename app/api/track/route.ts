@@ -154,6 +154,15 @@ export async function POST(req: NextRequest) {
             console.log('Tracking session end...');
             const { duration } = payload.data;
             
+            // Update the visit record with end time
+            await supabase
+                .from("visits")
+                .update({
+                    end_time: new Date().toISOString()
+                })
+                .eq("session_id", session_id)
+                .eq("website_id", domain);
+
             const today = new Date().toISOString().split('T')[0];
             const { data: existingStats } = await supabase
                 .from("daily_stats")
@@ -163,22 +172,23 @@ export async function POST(req: NextRequest) {
                 .single();
 
             if (existingStats) {
-                // Calculate new average session duration
-                const currentTotalDuration = existingStats.avg_session_duration * existingStats.visits;
-                console.log('Current total duration:', currentTotalDuration);
-                const newTotalDuration = currentTotalDuration + duration;
-                console.log('New total duration:', newTotalDuration);
-                const newAvgDuration = newTotalDuration / (existingStats.visits + 1);
-                console.log('New average duration:', newAvgDuration);
+                // Get updated average session duration using the RPC function
+                const { data: avgDurationData } = await supabase
+                    .rpc('get_avg_session_duration', { website_domain: domain });
+
+                // Get updated bounce rate using the RPC function
+                const { data: bounceRateData } = await supabase
+                    .rpc('get_bounce_rate', { website_domain: domain });
 
                 await supabase
                     .from("daily_stats")
                     .update({
-                        avg_session_duration: newAvgDuration
+                        avg_session_duration: avgDurationData || 0,
+                        bounce_rate: bounceRateData || 0
                     })
                     .eq("domain", domain)
                     .eq("date", today);
-                console.log('Session duration updated');
+                console.log('Daily stats updated with new metrics');
             }
         }
 
