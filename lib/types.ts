@@ -39,6 +39,8 @@ export interface DailyStats {
   visits: number;
   unique_visitors: number;
   page_views: number;
+  avg_session_duration: number;
+  bounce_rate: number;
 }
 
 export interface TotalStats {
@@ -55,5 +57,6 @@ export interface AnalyticsData {
   countryStats: CountryStat[];
   osStats: OsStat[];
   events: Event[];
-
+  avgSessionDuration: number;
+  bounceRate: number;
 }

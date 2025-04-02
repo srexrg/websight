@@ -44,6 +44,8 @@ export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string
       os: o.os || 'unknown',
       visits: parseInt(o.count)
     })) || [],
-    events: eventsResponse.data || []
+    events: eventsResponse.data || [],
+    avgSessionDuration: dailyStatsResponse.data?.[0]?.avg_session_duration || 0,
+    bounceRate: dailyStatsResponse.data?.[0]?.bounce_rate || 0
   };
 }

@@ -104,8 +104,8 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
       {/* Background Elements */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#7c3aed15,transparent)]" />
-        <div className="absolute top-1/4 left-20 w-64 h-64 bg-gradient-to-br from-violet-600/10 to-indigo-600/10 rounded-full filter blur-3xl" />
-        <div className="absolute bottom-1/3 right-20 w-72 h-72 bg-gradient-to-br from-indigo-600/10 to-violet-600/10 rounded-full filter blur-3xl" />
+        <div className="absolute top-1/4 left-20 w-64 h-64 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 rounded-full filter blur-3xl" />
+        <div className="absolute bottom-1/3 right-20 w-72 h-72 bg-gradient-to-br from-indigo-600/10 to-blue-600/10 rounded-full filter blur-3xl" />
       </div>
 
       <header className="border-b border-zinc-800 py-4 backdrop-blur-xl bg-black/50">
@@ -114,13 +114,13 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-3">
                 <Link href="/dashboard">
-                  <div className="p-1.5 bg-violet-600/10 rounded-lg cursor-pointer hover:bg-violet-600/20 transition-colors">
-                    <GlobeIcon className="h-6 w-6 text-violet-500" />
+                  <div className="p-1.5 bg-blue-600/10 rounded-lg cursor-pointer hover:bg-blue-600/20 transition-colors">
+                    <GlobeIcon className="h-6 w-6 text-blue-500" />
                   </div>
                 </Link>
                 <Link 
                   href="/dashboard" 
-                  className="text-xl font-semibold text-white hover:text-violet-400 transition-colors"
+                  className="text-xl font-semibold text-white hover:text-blue-400 transition-colors"
                 >
                   WebSight
                 </Link>
@@ -156,8 +156,8 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
               <div className="h-8 w-px bg-zinc-800"></div>
               <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-400">{user?.email}</span>
-                <div className="h-8 w-8 rounded-full bg-violet-600/10 flex items-center justify-center">
-                  <span className="text-sm font-medium text-violet-500">
+                <div className="h-8 w-8 rounded-full bg-blue-600/10 flex items-center justify-center">
+                  <span className="text-sm font-medium text-blue-500">
                     {user?.email?.charAt(0).toUpperCase() || 'U'}
                   </span>
                 </div>
@@ -184,12 +184,12 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
             <div className="flex items-center gap-3">
               <Button 
                 variant="outline" 
-                className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-violet-500/50 transition-all duration-300"
+                className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-blue-500/50 transition-all duration-300"
               >
                 Export Data
               </Button>
               <Button 
-                className="bg-violet-600 hover:bg-violet-700 text-white shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40 transition-all duration-300"
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300"
               >
                 View Live Data
               </Button>
@@ -209,6 +209,8 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
               osStats={analytics.osStats}
               totalStats={totalStats}
               events={analytics.events}
+              avgSessionDuration={analytics.avgSessionDuration}
+              bounceRate={analytics.bounceRate}
             />
           </div>
         </div>

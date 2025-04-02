@@ -46,6 +46,8 @@ interface DailyStat {
   visits: number;
   unique_visitors: number;
   page_views: number;
+  avg_session_duration: number;
+  bounce_rate: number;
 }
 
 interface TotalStats {
@@ -66,6 +68,8 @@ interface AnalyticsClientProps {
   osStats: OsStats[];
   totalStats: TotalStats;
   events: TrackedEvent[];
+  avgSessionDuration: number;
+  bounceRate: number;
 }
 
 export function AnalyticsClient({ 
@@ -77,7 +81,9 @@ export function AnalyticsClient({
   osStats,
   events,
   totalStats,
-  initialDailyStats
+  initialDailyStats,
+  avgSessionDuration,
+  bounceRate
 }: AnalyticsClientProps) {
 
   const totalPageViews = totalStats.page_views;
@@ -92,7 +98,7 @@ export function AnalyticsClient({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="w-16 h-16 mb-6 rounded-2xl bg-violet-600/10 flex items-center justify-center">
+        <div className="w-16 h-16 mb-6 rounded-2xl bg-blue-600/10 flex items-center justify-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="28"
@@ -103,7 +109,7 @@ export function AnalyticsClient({
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-violet-500"
+            className="text-blue-500"
           >
             <path d="M3 3v18h18" />
             <path d="m19 9-5 5-4-4-3 3" />
@@ -155,8 +161,7 @@ export function AnalyticsClient({
             deviceStats={deviceStats}
             countryStats={countryStats}
             osStats={osStats}
-            dailyStats={initialDailyStats}
-          />
+            dailyStats={initialDailyStats} avgSessionDuration={0} bounceRate={0}          />
         </TabsContent>
 
         <TabsContent value="pages" className="mt-6">

@@ -2,6 +2,10 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import {
+  abbreviateNumber,
+  calculateNormalizedPercentage,
+} from "@/lib/utils/analytics";
 
 interface PageView {
   page: string;
@@ -20,15 +24,9 @@ interface PageAnalyticsProps {
 }
 
 export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisits }: PageAnalyticsProps) {
-  const abbreviateNumber = (number: number): string => {
-    if (number >= 1000000) {
-      return (number / 1000000).toFixed(1) + "M";
-    } else if (number >= 1000) {
-      return (number / 1000).toFixed(1) + "K";
-    } else {
-      return number.toString();
-    }
-  };
+
+   const allPageVisits = groupedPageViews.map((pv) => pv.visits);
+   const allSourceVisits = groupedPageSources.map((ps) => ps.visits);
 
   return (
     <div className="grid gap-6">
@@ -59,6 +57,11 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       const data = payload[0];
+                        const percentage = calculateNormalizedPercentage(
+                          data.value as number,
+                          totalVisits,
+                          allPageVisits
+                        );
                       return (
                         <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-2 shadow-md">
                           <p className="text-[0.70rem] uppercase text-zinc-400">
@@ -68,7 +71,7 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
                             {abbreviateNumber(data.value as number)} visits
                           </p>
                           <p className="text-xs text-zinc-400">
-                            {((data.value as number / totalVisits) * 100).toFixed(1)}% of total
+                            {percentage.toFixed(1)}% of total
                           </p>
                         </div>
                       )
@@ -78,7 +81,7 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
                 />
                 <Bar
                   dataKey="visits"
-                  fill="#8B5CF6"
+                  fill="#2563eb"
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
@@ -86,6 +89,7 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
           </div>
           <div className="space-y-4">
             {groupedPageViews.map(({ page, visits }) => (
+              
               <div key={page} className="flex items-center justify-between p-2 rounded-lg bg-zinc-900/40">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-white">/{page}</p>
@@ -93,7 +97,9 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
                     {abbreviateNumber(visits)} {visits === 1 ? 'visit' : 'visits'}
                   </p>
                 </div>
-                <div className="font-mono text-sm text-zinc-400">{((visits / totalVisits) * 100).toFixed(1)}%</div>
+                <div className="font-mono text-sm text-zinc-400">
+                  {calculateNormalizedPercentage(visits, totalVisits, allPageVisits).toFixed(1)}%
+                </div>
               </div>
             ))}
           </div>
@@ -127,6 +133,11 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       const data = payload[0];
+                      const percentage = calculateNormalizedPercentage(
+                        data.value as number,
+                        totalVisits,
+                        allSourceVisits
+                      );
                       return (
                         <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-2 shadow-md">
                           <p className="text-[0.70rem] uppercase text-zinc-400">
@@ -136,7 +147,7 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
                             {abbreviateNumber(data.value as number)} visits
                           </p>
                           <p className="text-xs text-zinc-400">
-                            {((data.value as number / totalVisits) * 100).toFixed(1)}% of total
+                            {percentage.toFixed(1)}% of total
                           </p>
                         </div>
                       )
@@ -146,7 +157,7 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
                 />
                 <Bar
                   dataKey="visits"
-                  fill="#8B5CF6"
+                  fill="#2563eb"
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
@@ -161,7 +172,9 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
                     {abbreviateNumber(visits)} {visits === 1 ? 'visit' : 'visits'}
                   </p>
                 </div>
-                <div className="font-mono text-sm text-zinc-400">{((visits / totalVisits) * 100).toFixed(1)}%</div>
+                <div className="font-mono text-sm text-zinc-400">
+                  {calculateNormalizedPercentage(visits, totalVisits, allSourceVisits).toFixed(1)}%
+                </div>
               </div>
             ))}
           </div>

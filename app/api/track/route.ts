@@ -113,7 +113,6 @@ export async function POST(req: NextRequest) {
             }]);
             console.log('Session start tracked');
 
-           
             const today = new Date().toISOString().split('T')[0];
             console.log('Updating daily stats for session start...');
             const { data: existingStats } = await supabase
@@ -143,12 +142,42 @@ export async function POST(req: NextRequest) {
                         date: today,
                         visits: 1,
                         unique_visitors: 1,
-                        page_views: 0
+                        page_views: 0,
+                        avg_session_duration: 0,
+                        bounce_rate: 0
                     });
                 console.log('New daily stats inserted');
             }
         }
 
+        if (event === "session_end") {
+            console.log('Tracking session end...');
+            const { duration } = payload.data;
+            
+            const today = new Date().toISOString().split('T')[0];
+            const { data: existingStats } = await supabase
+                .from("daily_stats")
+                .select()
+                .eq("domain", domain)
+                .eq("date", today)
+                .single();
+
+            if (existingStats) {
+                // Calculate new average session duration
+                const currentTotalDuration = existingStats.avg_session_duration * existingStats.visits;
+                const newTotalDuration = currentTotalDuration + duration;
+                const newAvgDuration = newTotalDuration / (existingStats.visits + 1);
+
+                await supabase
+                    .from("daily_stats")
+                    .update({
+                        avg_session_duration: newAvgDuration
+                    })
+                    .eq("domain", domain)
+                    .eq("date", today);
+                console.log('Session duration updated');
+            }
+        }
 
         if (event === "pageview") {
             console.log('Tracking page view...');
@@ -163,7 +192,6 @@ export async function POST(req: NextRequest) {
             }]);
             console.log('Page view tracked');
 
-            
             const today = new Date().toISOString().split('T')[0];
             console.log('Updating daily stats for page view...');
             const { data: existingStats } = await supabase
@@ -174,14 +202,37 @@ export async function POST(req: NextRequest) {
                 .single();
 
             if (existingStats) {
-                console.log('Existing stats found, updating...');
-                await supabase
-                    .from("daily_stats")
-                    .update({
-                        page_views: existingStats.page_views + 1
-                    })
-                    .eq("domain", domain)
-                    .eq("date", today);
+                // Get page views for this session
+                const { data: sessionPageViews } = await supabase
+                    .from("page_views")
+                    .select("id")
+                    .eq("session_id", session_id)
+                    .eq("domain", domain);
+
+                const pageViewsInSession = sessionPageViews?.length || 0;
+
+                // If this is the first page view in the session, it's not a bounce
+                if (pageViewsInSession === 1) {
+                    const currentBounces = existingStats.bounce_rate * existingStats.visits / 100;
+                    const newBounceRate = (currentBounces / existingStats.visits) * 100;
+
+                    await supabase
+                        .from("daily_stats")
+                        .update({
+                            page_views: existingStats.page_views + 1,
+                            bounce_rate: newBounceRate
+                        })
+                        .eq("domain", domain)
+                        .eq("date", today);
+                } else {
+                    await supabase
+                        .from("daily_stats")
+                        .update({
+                            page_views: existingStats.page_views + 1
+                        })
+                        .eq("domain", domain)
+                        .eq("date", today);
+                }
                 console.log('Daily stats updated');
             } else {
                 console.log('No existing stats found, inserting new stats...');
@@ -192,7 +243,9 @@ export async function POST(req: NextRequest) {
                         date: today,
                         visits: 0,
                         unique_visitors: 0,
-                        page_views: 1
+                        page_views: 1,
+                        avg_session_duration: 0,
+                        bounce_rate: 0
                     });
                 console.log('New daily stats inserted');
             }
