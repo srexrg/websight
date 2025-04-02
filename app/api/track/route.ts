@@ -41,22 +41,22 @@ export async function POST(req: NextRequest) {
     try {
         console.log('=== Starting Analytics Processing ===');
         console.log('Timestamp:', new Date().toISOString());
-        
+
         const supabase = await createClient();
         console.log('Supabase client initialized');
-        
+
         const payload = await req.json();
         console.log('Request payload received:', JSON.stringify(payload));
-        
-        const { 
-            domain, 
-            url, 
+
+        const {
+            domain,
+            url,
             path,
-            event, 
-            utm, 
+            event,
+            utm,
             source,
             user_agent,
-            visitor_id, 
+            visitor_id,
             session_id,
             screen,
             language
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
         console.log("UTM Parameters:", utm);
         console.log("========================");
 
-   
+
         if (event === "session_start") {
             console.log('Tracking session start...');
             await supabase.from("visits").insert([{
@@ -112,6 +112,7 @@ export async function POST(req: NextRequest) {
                 utm_campaign: utm?.campaign
             }]);
             console.log('Session start tracked');
+
 
             const today = new Date().toISOString().split('T')[0];
             console.log('Updating daily stats for session start...');
@@ -142,90 +143,12 @@ export async function POST(req: NextRequest) {
                         date: today,
                         visits: 1,
                         unique_visitors: 1,
-                        page_views: 0,
-                        avg_session_duration: 0,
-                        bounce_rate: 0
+                        page_views: 0
                     });
                 console.log('New daily stats inserted');
             }
         }
 
-        if (event === "session_end") {
-            console.log('Tracking session end...');
-            const { duration } = payload.data;
-            
-            await supabase
-                .from("visits")
-                .update({
-                    end_time: new Date().toISOString()
-                })
-                .eq("session_id", session_id)
-                .eq("website_id", domain);
-
-            const today = new Date().toISOString().split('T')[0];
-            const { data: existingStats } = await supabase
-                .from("daily_stats")
-                .select()
-                .eq("domain", domain)
-                .eq("date", today)
-                .single();
-
-            if (existingStats) {
-                // Get the current session's visit record to calculate duration
-                const { data: currentVisit } = await supabase
-                    .from("visits")
-                    .select("start_time")
-                    .eq("session_id", session_id)
-                    .eq("website_id", domain)
-                    .single();
-
-                if (currentVisit) {
-                    const sessionStart = new Date(currentVisit.start_time);
-                    const sessionEnd = new Date();
-                    const currentSessionDuration = Math.round((sessionEnd.getTime() - sessionStart.getTime()) / 1000); // in seconds
-                    console.log('Current session duration:', currentSessionDuration);
-
-                    // Calculate new average session duration
-                    const newAvgDuration = ((existingStats.avg_session_duration * (existingStats.visits - 1)) + currentSessionDuration) / existingStats.visits;
-                    console.log('New average session duration:', newAvgDuration);
-
-                    // Get all page views for this session to determine if it's a bounce
-                    const { data: sessionPageViews } = await supabase
-                        .from("page_views")
-                        .select("id")
-                        .eq("session_id", session_id)
-                        .eq("domain", domain);
-
-                    const pageViewsInSession = sessionPageViews?.length || 0;
-                    console.log('Page views in current session:', pageViewsInSession);
-                    const isBounce = pageViewsInSession <= 1;
-                    console.log('Is bounce:', isBounce);
-
-                    // Calculate new bounce rate
-                    const currentBounces = Math.round((existingStats.bounce_rate * (existingStats.visits - 1)) / 100);
-                    console.log('Current number of bounces:', currentBounces);
-                    const newBounceRate = ((currentBounces + (isBounce ? 1 : 0)) / existingStats.visits) * 100;
-                    console.log('New bounce rate:', newBounceRate);
-
-                    await supabase
-                        .from("daily_stats")
-                        .update({
-                            avg_session_duration: newAvgDuration,
-                            bounce_rate: newBounceRate
-                        })
-                        .eq("domain", domain)
-                        .eq("date", today);
-
-                    console.log('Daily stats updated with new metrics:', {
-                        avgDuration: newAvgDuration,
-                        bounceRate: newBounceRate,
-                        currentSessionDuration,
-                        isBounce,
-                        pageViewsInSession
-                    });
-                }
-            }
-        }
 
         if (event === "pageview") {
             console.log('Tracking page view...');
@@ -240,6 +163,7 @@ export async function POST(req: NextRequest) {
             }]);
             console.log('Page view tracked');
 
+
             const today = new Date().toISOString().split('T')[0];
             console.log('Updating daily stats for page view...');
             const { data: existingStats } = await supabase
@@ -250,45 +174,14 @@ export async function POST(req: NextRequest) {
                 .single();
 
             if (existingStats) {
-                // Get page views for this session
-                const { data: sessionPageViews } = await supabase
-                    .from("page_views")
-                    .select("id")
-                    .eq("session_id", session_id)
-                    .eq("domain", domain);
-
-                const pageViewsInSession = sessionPageViews?.length || 0;
-                console.log('Page views in current session:', pageViewsInSession);
-
-                // If this is the first page view in the session, it's not a bounce
-                if (pageViewsInSession === 1) {
-                    console.log('First page view in session, updating bounce rate...');
-                    const currentBounces = Math.round((existingStats.bounce_rate * existingStats.visits) / 100);
-                    console.log('Current number of bounces:', currentBounces);
-                    
-                    // Calculate new bounce rate
-                    const newBounceRate = (currentBounces / existingStats.visits) * 100;
-                    console.log('New bounce rate:', newBounceRate);
-
-                    await supabase
-                        .from("daily_stats")
-                        .update({
-                            page_views: existingStats.page_views + 1,
-                            bounce_rate: newBounceRate
-                        })
-                        .eq("domain", domain)
-                        .eq("date", today);
-                    console.log('Daily stats updated with new bounce rate');
-                } else {
-                    console.log('Not a bounce, just updating page views');
-                    await supabase
-                        .from("daily_stats")
-                        .update({
-                            page_views: existingStats.page_views + 1
-                        })
-                        .eq("domain", domain)
-                        .eq("date", today);
-                }
+                console.log('Existing stats found, updating...');
+                await supabase
+                    .from("daily_stats")
+                    .update({
+                        page_views: existingStats.page_views + 1
+                    })
+                    .eq("domain", domain)
+                    .eq("date", today);
                 console.log('Daily stats updated');
             } else {
                 console.log('No existing stats found, inserting new stats...');
@@ -299,9 +192,7 @@ export async function POST(req: NextRequest) {
                         date: today,
                         visits: 0,
                         unique_visitors: 0,
-                        page_views: 1,
-                        avg_session_duration: 0,
-                        bounce_rate: 0
+                        page_views: 1
                     });
                 console.log('New daily stats inserted');
             }

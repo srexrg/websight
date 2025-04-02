@@ -46,8 +46,6 @@ interface DailyStat {
   visits: number;
   unique_visitors: number;
   page_views: number;
-  avg_session_duration: number;
-  bounce_rate: number;
 }
 
 interface TotalStats {
@@ -68,8 +66,6 @@ interface AnalyticsClientProps {
   osStats: OsStats[];
   totalStats: TotalStats;
   events: TrackedEvent[];
-  avgSessionDuration: number;
-  bounceRate: number;
 }
 
 export function AnalyticsClient({ 
@@ -82,8 +78,6 @@ export function AnalyticsClient({
   events,
   totalStats,
   initialDailyStats,
-  avgSessionDuration,
-  bounceRate
 }: AnalyticsClientProps) {
 
   const totalPageViews = totalStats.page_views;
@@ -162,8 +156,6 @@ export function AnalyticsClient({
             countryStats={countryStats}
             osStats={osStats}
             dailyStats={initialDailyStats}
-            avgSessionDuration={avgSessionDuration}
-            bounceRate={bounceRate}
           />
         </TabsContent>
 

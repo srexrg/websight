@@ -27,16 +27,12 @@ interface DailyStat {
   visits: number;
   unique_visitors: number;
   page_views: number;
-  avg_session_duration: number;
-  bounce_rate: number;
 }
 
 interface AnalyticsOverviewProps {
   pageViews: number;
   totalVisits: number;
   uniqueVisitors: number;
-  avgSessionDuration: number;
-  bounceRate: number;
   deviceStats?: DeviceStats[];
   countryStats?: CountryStats[];
   osStats?: OsStats[];
@@ -47,8 +43,6 @@ export function AnalyticsOverview({
   pageViews, 
   totalVisits, 
   uniqueVisitors,
-  avgSessionDuration,
-  bounceRate,
   deviceStats = [],
   countryStats = [],
   osStats = [],
@@ -133,45 +127,7 @@ export function AnalyticsOverview({
           </p>
         </Card>
 
-        <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-2 rounded-lg bg-amber-600/10">
-              <Monitor className="h-5 w-5 text-amber-500" />
-            </div>
-            <div className="flex items-center gap-1 text-sm">
-              <span className="flex items-center text-amber-500">
-                <ArrowUpRight className="h-4 w-4" />
-                {Math.round(avgSessionDuration / 60)}m {Math.round(avgSessionDuration % 60)}s
-              </span>
-            </div>
-          </div>
-          <p className="text-sm text-gray-400 mb-1">Avg. Session Duration</p>
-          <p className="text-2xl font-bold text-white">
-            {Math.round(avgSessionDuration / 60)}m {Math.round(avgSessionDuration % 60)}s
-          </p>
-        </Card>
 
-        <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-2 rounded-lg bg-red-600/10">
-              <ArrowUpRight className="h-5 w-5 text-red-500" />
-            </div>
-            <div className="flex items-center gap-1 text-sm">
-              <span className={`flex items-center ${bounceRate > 50 ? "text-red-500" : "text-emerald-500"}`}>
-                {bounceRate > 50 ? (
-                  <ArrowUpRight className="h-4 w-4" />
-                ) : (
-                  <ArrowDownRight className="h-4 w-4" />
-                )}
-                {bounceRate.toFixed(1)}%
-              </span>
-            </div>
-          </div>
-          <p className="text-sm text-gray-400 mb-1">Bounce Rate</p>
-          <p className="text-2xl font-bold text-white">
-            {bounceRate.toFixed(1)}%
-          </p>
-        </Card>
       </div>
 
       {/* Charts */}
