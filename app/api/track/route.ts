@@ -3,6 +3,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { corsHeaders } from "@/utils/cors";
 import { UAParser } from "ua-parser-js";
 
+// Custom error types for better error handling
+class DatabaseError extends Error {
+    constructor(message: string, public readonly code: string) {
+        super(message);
+        this.name = 'DatabaseError';
+    }
+}
+
+class ValidationError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'ValidationError';
+    }
+}
 
 function getDeviceType(userAgent: string) {
     const parser = new UAParser(userAgent);
@@ -48,6 +62,11 @@ export async function POST(req: NextRequest) {
         const payload = await req.json();
         console.log('Request payload received:', JSON.stringify(payload));
 
+        // Validate required fields
+        if (!payload.domain || !payload.url) {
+            throw new ValidationError('Missing required fields: domain and url are required');
+        }
+
         const {
             domain,
             url,
@@ -61,6 +80,11 @@ export async function POST(req: NextRequest) {
             screen,
             language
         } = payload;
+
+        // Validate event type
+        if (!['session_start', 'pageview'].includes(event)) {
+            throw new ValidationError('Invalid event type');
+        }
 
         console.log('Domain validation check...');
         if (!url.includes(domain)) {
@@ -96,7 +120,7 @@ export async function POST(req: NextRequest) {
 
         if (event === "session_start") {
             console.log('Tracking session start...');
-            await supabase.from("visits").insert([{
+            const { error: visitError } = await supabase.from("visits").insert([{
                 website_id: domain,
                 source: sourceName,
                 visitor_id,
@@ -111,21 +135,28 @@ export async function POST(req: NextRequest) {
                 utm_medium: utm?.medium,
                 utm_campaign: utm?.campaign
             }]);
-            console.log('Session start tracked');
 
+            if (visitError) {
+                throw new DatabaseError(`Failed to insert visit: ${visitError.message}`, 'VISIT_INSERT_ERROR');
+            }
+            console.log('Session start tracked');
 
             const today = new Date().toISOString().split('T')[0];
             console.log('Updating daily stats for session start...');
-            const { data: existingStats } = await supabase
+            const { data: existingStats, error: statsError } = await supabase
                 .from("daily_stats")
                 .select()
                 .eq("domain", domain)
                 .eq("date", today)
                 .single();
 
+            if (statsError && statsError.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+                throw new DatabaseError(`Failed to fetch daily stats: ${statsError.message}`, 'STATS_FETCH_ERROR');
+            }
+
             if (existingStats) {
                 console.log('Existing stats found, updating...');
-                await supabase
+                const { error: updateError } = await supabase
                     .from("daily_stats")
                     .update({
                         visits: existingStats.visits + 1,
@@ -133,10 +164,14 @@ export async function POST(req: NextRequest) {
                     })
                     .eq("domain", domain)
                     .eq("date", today);
+
+                if (updateError) {
+                    throw new DatabaseError(`Failed to update daily stats: ${updateError.message}`, 'STATS_UPDATE_ERROR');
+                }
                 console.log('Daily stats updated');
             } else {
                 console.log('No existing stats found, inserting new stats...');
-                await supabase
+                const { error: insertError } = await supabase
                     .from("daily_stats")
                     .insert({
                         domain,
@@ -145,14 +180,17 @@ export async function POST(req: NextRequest) {
                         unique_visitors: 1,
                         page_views: 0
                     });
+
+                if (insertError) {
+                    throw new DatabaseError(`Failed to insert daily stats: ${insertError.message}`, 'STATS_INSERT_ERROR');
+                }
                 console.log('New daily stats inserted');
             }
         }
 
-
         if (event === "pageview") {
             console.log('Tracking page view...');
-            await supabase.from("page_views").insert([{
+            const { error: pageViewError } = await supabase.from("page_views").insert([{
                 domain,
                 page: path || url,
                 visitor_id,
@@ -161,31 +199,42 @@ export async function POST(req: NextRequest) {
                 os: osInfo.name,
                 country: countryCode
             }]);
-            console.log('Page view tracked');
 
+            if (pageViewError) {
+                throw new DatabaseError(`Failed to insert page view: ${pageViewError.message}`, 'PAGEVIEW_INSERT_ERROR');
+            }
+            console.log('Page view tracked');
 
             const today = new Date().toISOString().split('T')[0];
             console.log('Updating daily stats for page view...');
-            const { data: existingStats } = await supabase
+            const { data: existingStats, error: statsError } = await supabase
                 .from("daily_stats")
                 .select()
                 .eq("domain", domain)
                 .eq("date", today)
                 .single();
 
+            if (statsError && statsError.code !== 'PGRST116') {
+                throw new DatabaseError(`Failed to fetch daily stats: ${statsError.message}`, 'STATS_FETCH_ERROR');
+            }
+
             if (existingStats) {
                 console.log('Existing stats found, updating...');
-                await supabase
+                const { error: updateError } = await supabase
                     .from("daily_stats")
                     .update({
                         page_views: existingStats.page_views + 1
                     })
                     .eq("domain", domain)
                     .eq("date", today);
+
+                if (updateError) {
+                    throw new DatabaseError(`Failed to update daily stats: ${updateError.message}`, 'STATS_UPDATE_ERROR');
+                }
                 console.log('Daily stats updated');
             } else {
                 console.log('No existing stats found, inserting new stats...');
-                await supabase
+                const { error: insertError } = await supabase
                     .from("daily_stats")
                     .insert({
                         domain,
@@ -194,6 +243,10 @@ export async function POST(req: NextRequest) {
                         unique_visitors: 0,
                         page_views: 1
                     });
+
+                if (insertError) {
+                    throw new DatabaseError(`Failed to insert daily stats: ${insertError.message}`, 'STATS_INSERT_ERROR');
+                }
                 console.log('New daily stats inserted');
             }
         }
@@ -205,8 +258,25 @@ export async function POST(req: NextRequest) {
         );
     } catch (error) {
         console.error("Analytics error:", error);
+        
+        // Handle specific error types
+        if (error instanceof ValidationError) {
+            return NextResponse.json(
+                { error: error.message },
+                { status: 400, headers: corsHeaders }
+            );
+        }
+        
+        if (error instanceof DatabaseError) {
+            return NextResponse.json(
+                { error: "Database operation failed", code: error.code },
+                { status: 500, headers: corsHeaders }
+            );
+        }
+
+        // Handle unknown errors
         return NextResponse.json(
-            { error: "Failed to process analytics" },
+            { error: "An unexpected error occurred" },
             { status: 500, headers: corsHeaders }
         );
     }

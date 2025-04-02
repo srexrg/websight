@@ -74,6 +74,7 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
   }
 
   const analytics = await fetchEnhancedAnalytics(supabase, domain);
+  console.log(analytics.visits);
 
   const groupedPageViews = groupPageViews(analytics.pageViews);
   const groupedPageSources = groupPageSources(analytics.visits);
