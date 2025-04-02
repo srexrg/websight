@@ -165,8 +165,11 @@ export async function POST(req: NextRequest) {
             if (existingStats) {
                 // Calculate new average session duration
                 const currentTotalDuration = existingStats.avg_session_duration * existingStats.visits;
+                console.log('Current total duration:', currentTotalDuration);
                 const newTotalDuration = currentTotalDuration + duration;
+                console.log('New total duration:', newTotalDuration);
                 const newAvgDuration = newTotalDuration / (existingStats.visits + 1);
+                console.log('New average duration:', newAvgDuration);
 
                 await supabase
                     .from("daily_stats")
@@ -214,7 +217,9 @@ export async function POST(req: NextRequest) {
                 // If this is the first page view in the session, it's not a bounce
                 if (pageViewsInSession === 1) {
                     const currentBounces = existingStats.bounce_rate * existingStats.visits / 100;
+                    console.log('Current bounces:', currentBounces);
                     const newBounceRate = (currentBounces / existingStats.visits) * 100;
+                    console.log('New bounce rate:', newBounceRate);
 
                     await supabase
                         .from("daily_stats")
