@@ -51,7 +51,7 @@ export type paramsType = Promise<{ domain: string }>;
 
 interface PageProps {
   params: paramsType;
-  searchParams: { timeRange?: TimeRange };
+  searchParams: Promise<{ timeRange?: TimeRange }>;
 }
 
 export default async function WebsiteDetailPage({ params, searchParams }: PageProps) {
