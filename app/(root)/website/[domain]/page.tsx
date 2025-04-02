@@ -74,8 +74,6 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
   }
 
   const analytics = await fetchEnhancedAnalytics(supabase, domain);
-  console.log(analytics.avgSessionDuration);
-  console.log(analytics.bounceRate);
 
   const groupedPageViews = groupPageViews(analytics.pageViews);
   const groupedPageSources = groupPageSources(analytics.visits);
@@ -211,8 +209,6 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
               osStats={analytics.osStats}
               totalStats={totalStats}
               events={analytics.events}
-              avgSessionDuration={analytics.avgSessionDuration}
-              bounceRate={analytics.bounceRate}
             />
           </div>
         </div>
