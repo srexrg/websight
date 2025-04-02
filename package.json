@@ -39,11 +39,27 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "19.0.2",
+    "@types/react-dom": "19.0.2",
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "react-simple-maps": {
+      "d3-geo": "^3.1.0",
+      "d3-color": "^3.1.0",
+      "d3-selection": "^3.0.0",
+      "d3-zoom": "^3.0.0",
+      "react": "^16.8.0 || 17.x || 18.x || 19.x",
+      "react-dom": "^16.8.0 || 17.x || 18.x || 19.x"
+    },
+    "d3-interpolate": {
+      "d3-color": "^3.1.0"
+    },
+    "d3-transition": {
+      "d3-color": "^3.1.0"
+    }
   }
 }

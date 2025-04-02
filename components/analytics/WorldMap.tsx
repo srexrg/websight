@@ -81,13 +81,13 @@ export function WorldMap({ data, className }: WorldMapProps) {
         projectionConfig={{
           rotate: [0, 0, 0],
           scale: 170,
-          center: [0, 0]
+          center: [0, 0],
         }}
         width={800}
         height={400}
         style={{
           width: "100%",
-          height: "100%"
+          height: "100%",
         }}
       >
         <ZoomableGroup>
@@ -122,7 +122,7 @@ export function WorldMap({ data, className }: WorldMapProps) {
                   <Marker coordinates={coordinates}>
                     <circle
                       r={radius}
-                      fill="#8B5CF6"
+                      fill="#2563eb"
                       fillOpacity={0.6}
                       stroke="#fff"
                       strokeWidth={1}
@@ -130,7 +130,9 @@ export function WorldMap({ data, className }: WorldMapProps) {
                   </Marker>
                 </TooltipTrigger>
                 <TooltipContent className="bg-zinc-950 border-zinc-800">
-                  <p className="text-sm text-zinc-50">{countryCode}: {visits} visits</p>
+                  <p className="text-sm text-zinc-50">
+                    {countryCode}: {visits} visits
+                  </p>
                 </TooltipContent>
               </Tooltip>
             ))}
@@ -138,5 +140,5 @@ export function WorldMap({ data, className }: WorldMapProps) {
         </ZoomableGroup>
       </ComposableMap>
     </div>
-  )
+  );
 }
