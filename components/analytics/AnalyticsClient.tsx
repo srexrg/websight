@@ -129,19 +129,19 @@ export function AnalyticsClient({
         <TabsList className="bg-zinc-900/40 border border-zinc-800 p-1">
           <TabsTrigger 
             value="overview"
-            className="data-[state=active]:bg-violet-600 data-[state=active]:text-white text-zinc-400 hover:text-white transition-colors"
+            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-zinc-400 hover:text-white transition-colors"
           >
             Overview
           </TabsTrigger>
           <TabsTrigger 
             value="pages"
-            className="data-[state=active]:bg-violet-600 data-[state=active]:text-white text-zinc-400 hover:text-white transition-colors"
+            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-zinc-400 hover:text-white transition-colors"
           >
             Pages & Sources
           </TabsTrigger>
           <TabsTrigger 
             value="events"
-            className="data-[state=active]:bg-violet-600 data-[state=active]:text-white text-zinc-400 hover:text-white transition-colors"
+            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-zinc-400 hover:text-white transition-colors"
           >
             Events
           </TabsTrigger>

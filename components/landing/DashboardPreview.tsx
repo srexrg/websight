@@ -123,7 +123,7 @@ const DashboardPreview = () => {
                 <div className="flex items-center space-x-3 mt-4 md:mt-0">
                   <div className="h-8 w-24 bg-gray-800 rounded-md"></div>
                   <div className="h-8 w-20 bg-gray-800 rounded-md"></div>
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white rounded-md">
+                  <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-md">
                     Export
                   </Button>
                 </div>
@@ -135,10 +135,10 @@ const DashboardPreview = () => {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
               >
                 {[
-                  { label: "Total Visitors", value: "2,451", icon: <Users className="h-5 w-5" />, change: "+12.5%", color: "text-purple-500 bg-purple-500/10" },
+                  { label: "Total Visitors", value: "2,451", icon: <Users className="h-5 w-5" />, change: "+12.5%", color: "text-blue-500 bg-blue-500/10" },
                   { label: "Page Views", value: "4,872", icon: <Globe className="h-5 w-5" />, change: "+8.2%", color: "text-blue-500 bg-blue-500/10" },
-                  { label: "Avg. Time on Site", value: "3:42", icon: <Clock className="h-5 w-5" />, change: "+2.1%", color: "text-teal-500 bg-teal-500/10" },
-                  { label: "Conversion Rate", value: "3.8%", icon: <MousePointer className="h-5 w-5" />, change: "+5.3%", color: "text-amber-500 bg-amber-500/10" }
+                  { label: "Avg. Time on Site", value: "3:42", icon: <Clock className="h-5 w-5" />, change: "+2.1%", color: "text-blue-500 bg-blue-500/10" },
+                  { label: "Conversion Rate", value: "3.8%", icon: <MousePointer className="h-5 w-5" />, change: "+5.3%", color: "text-blue-500 bg-blue-500/10" }
                 ].map((stat, i) => (
                   <div key={i} className="bg-gray-800 rounded-xl p-5 border border-gray-700">
                     <div className="flex justify-between items-start mb-3">
@@ -197,7 +197,7 @@ const DashboardPreview = () => {
                               ease: "easeOut" 
                             }}
                           >
-                            <div className="w-4 bg-purple-500 rounded-t-sm mx-0.5" style={{ height: `${(value / 120) * 100}%` }}></div>
+                            <div className="w-4 bg-blue-500 rounded-t-sm mx-0.5" style={{ height: `${(value / 120) * 100}%` }}></div>
                           </motion.div>
                         ))}
                       </div>
@@ -234,7 +234,7 @@ const DashboardPreview = () => {
                   {/* Chart legend */}
                   <div className="flex items-center justify-center space-x-6 mt-4">
                     <div className="flex items-center">
-                      <div className="w-3 h-3 bg-purple-500 rounded-sm mr-2"></div>
+                      <div className="w-3 h-3 bg-blue-500 rounded-sm mr-2"></div>
                       <span className="text-sm text-gray-400">Visitors</span>
                     </div>
                     <div className="flex items-center">

@@ -253,7 +253,7 @@ export default function DomainManager({
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className="bg-violet-600 hover:bg-violet-700 text-white shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40 transition-all duration-300"
+              className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300"
             >
               <PlusIcon className="h-4 w-4 mr-2" />
               Add Domain
