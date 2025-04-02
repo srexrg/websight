@@ -161,7 +161,10 @@ export function AnalyticsClient({
             deviceStats={deviceStats}
             countryStats={countryStats}
             osStats={osStats}
-            dailyStats={initialDailyStats} avgSessionDuration={0} bounceRate={0}          />
+            dailyStats={initialDailyStats}
+            avgSessionDuration={avgSessionDuration}
+            bounceRate={bounceRate}
+          />
         </TabsContent>
 
         <TabsContent value="pages" className="mt-6">

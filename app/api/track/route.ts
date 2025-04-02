@@ -171,25 +171,59 @@ export async function POST(req: NextRequest) {
                 .single();
 
             if (existingStats) {
-                // Get updated average session duration using the RPC function
-                const { data: avgDurationData } = await supabase
-                    .rpc('get_avg_session_duration', { website_domain: domain });
-                console.log('Avg duration data:', avgDurationData);
+                // Get the current session's visit record to calculate duration
+                const { data: currentVisit } = await supabase
+                    .from("visits")
+                    .select("start_time")
+                    .eq("session_id", session_id)
+                    .eq("website_id", domain)
+                    .single();
 
-                // Get updated bounce rate using the RPC function
-                const { data: bounceRateData } = await supabase
-                    .rpc('get_bounce_rate', { website_domain: domain });
-                console.log('Bounce rate data:', bounceRateData);
+                if (currentVisit) {
+                    const sessionStart = new Date(currentVisit.start_time);
+                    const sessionEnd = new Date();
+                    const currentSessionDuration = Math.round((sessionEnd.getTime() - sessionStart.getTime()) / 1000); // in seconds
+                    console.log('Current session duration:', currentSessionDuration);
 
-                await supabase
-                    .from("daily_stats")
-                    .update({
-                        avg_session_duration: avgDurationData || 0,
-                        bounce_rate: bounceRateData || 0
-                    })
-                    .eq("domain", domain)
-                    .eq("date", today);
-                console.log('Daily stats updated with new metrics');
+                    // Calculate new average session duration
+                    const newAvgDuration = ((existingStats.avg_session_duration * (existingStats.visits - 1)) + currentSessionDuration) / existingStats.visits;
+                    console.log('New average session duration:', newAvgDuration);
+
+                    // Get all page views for this session to determine if it's a bounce
+                    const { data: sessionPageViews } = await supabase
+                        .from("page_views")
+                        .select("id")
+                        .eq("session_id", session_id)
+                        .eq("domain", domain);
+
+                    const pageViewsInSession = sessionPageViews?.length || 0;
+                    console.log('Page views in current session:', pageViewsInSession);
+                    const isBounce = pageViewsInSession <= 1;
+                    console.log('Is bounce:', isBounce);
+
+                    // Calculate new bounce rate
+                    const currentBounces = Math.round((existingStats.bounce_rate * (existingStats.visits - 1)) / 100);
+                    console.log('Current number of bounces:', currentBounces);
+                    const newBounceRate = ((currentBounces + (isBounce ? 1 : 0)) / existingStats.visits) * 100;
+                    console.log('New bounce rate:', newBounceRate);
+
+                    await supabase
+                        .from("daily_stats")
+                        .update({
+                            avg_session_duration: newAvgDuration,
+                            bounce_rate: newBounceRate
+                        })
+                        .eq("domain", domain)
+                        .eq("date", today);
+
+                    console.log('Daily stats updated with new metrics:', {
+                        avgDuration: newAvgDuration,
+                        bounceRate: newBounceRate,
+                        currentSessionDuration,
+                        isBounce,
+                        pageViewsInSession
+                    });
+                }
             }
         }
 
