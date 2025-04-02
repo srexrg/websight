@@ -213,11 +213,15 @@ export async function POST(req: NextRequest) {
                     .eq("domain", domain);
 
                 const pageViewsInSession = sessionPageViews?.length || 0;
+                console.log('Page views in current session:', pageViewsInSession);
 
                 // If this is the first page view in the session, it's not a bounce
                 if (pageViewsInSession === 1) {
-                    const currentBounces = existingStats.bounce_rate * existingStats.visits / 100;
-                    console.log('Current bounces:', currentBounces);
+                    console.log('First page view in session, updating bounce rate...');
+                    const currentBounces = Math.round((existingStats.bounce_rate * existingStats.visits) / 100);
+                    console.log('Current number of bounces:', currentBounces);
+                    
+                    // Calculate new bounce rate
                     const newBounceRate = (currentBounces / existingStats.visits) * 100;
                     console.log('New bounce rate:', newBounceRate);
 
@@ -229,7 +233,9 @@ export async function POST(req: NextRequest) {
                         })
                         .eq("domain", domain)
                         .eq("date", today);
+                    console.log('Daily stats updated with new bounce rate');
                 } else {
+                    console.log('Not a bounce, just updating page views');
                     await supabase
                         .from("daily_stats")
                         .update({
