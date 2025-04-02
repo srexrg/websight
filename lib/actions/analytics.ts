@@ -10,6 +10,9 @@ export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string
     deviceStatsPromise,
     countryStatsPromise,
     osStatsPromise,
+    avgSessionDuration,
+    bounceRate
+
   ] = await Promise.all([
     supabaseClient.from("page_views").select("*").eq("domain", domain),
     supabaseClient.from("visits").select("*").eq("website_id", domain),
@@ -24,7 +27,9 @@ export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string
       .eq("website_id", domain),
     supabaseClient.rpc('get_device_stats', { website_domain: domain }),
     supabaseClient.rpc('get_country_stats', { website_domain: domain }),
-    supabaseClient.rpc('get_os_stats', { website_domain: domain })
+    supabaseClient.rpc('get_os_stats', { website_domain: domain }),
+    supabaseClient.rpc('get_avg_session_duration', { website_domain: domain }),
+    supabaseClient.rpc('get_bounce_rate', { website_domain: domain })
   ]);
 
  
@@ -45,7 +50,7 @@ export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string
       visits: parseInt(o.count)
     })) || [],
     events: eventsResponse.data || [],
-    avgSessionDuration: dailyStatsResponse.data?.[0]?.avg_session_duration || 0,
-    bounceRate: dailyStatsResponse.data?.[0]?.bounce_rate || 0
+    avgSessionDuration: avgSessionDuration.data || 0,
+    bounceRate: bounceRate.data || 0
   };
 }
