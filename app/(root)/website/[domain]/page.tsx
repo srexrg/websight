@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { GlobeIcon, ArrowLeftIcon, Settings, Bell } from "lucide-react";
 import { AnalyticsClient } from "@/components/analytics/AnalyticsClient";
-import { fetchEnhancedAnalytics } from "@/lib/actions/analytics";
+import { fetchEnhancedAnalytics, TimeRange } from "@/lib/actions/analytics";
 import {
   GroupedPageView,
   GroupedSource,
@@ -49,8 +49,14 @@ export const metadata = {
 
 export type paramsType = Promise<{ domain: string }>;
 
-export default async function WebsiteDetailPage(props: { params: paramsType }) {
-  const { domain } = await props.params;
+interface PageProps {
+  params: paramsType;
+  searchParams: Promise<{ timeRange?: TimeRange }>;
+}
+
+export default async function WebsiteDetailPage({ params, searchParams }: PageProps) {
+  const { domain } = await params;
+  const { timeRange = 'last30days' } = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -73,9 +79,7 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
     notFound();
   }
 
-  const analytics = await fetchEnhancedAnalytics(supabase, domain);
-  console.log(analytics.visits);
-
+  const analytics = await fetchEnhancedAnalytics(supabase, domain, timeRange);
   const groupedPageViews = groupPageViews(analytics.pageViews);
   const groupedPageSources = groupPageSources(analytics.visits);
 
@@ -210,6 +214,7 @@ export default async function WebsiteDetailPage(props: { params: paramsType }) {
               osStats={analytics.osStats}
               totalStats={totalStats}
               events={analytics.events}
+              timeRange={timeRange}
             />
           </div>
         </div>
