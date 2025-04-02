@@ -154,7 +154,6 @@ export async function POST(req: NextRequest) {
             console.log('Tracking session end...');
             const { duration } = payload.data;
             
-            // Update the visit record with end time
             await supabase
                 .from("visits")
                 .update({
