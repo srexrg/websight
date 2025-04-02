@@ -1,7 +1,61 @@
 "use server"
 import { DailyStats, AnalyticsData } from "../types";
 
-export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string): Promise<AnalyticsData> {
+export type TimeRange = 'today' | 'yesterday' | 'last7days' | 'last30days' | 'last90days';
+
+function getDateRange(timeRange: TimeRange) {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  
+  switch (timeRange) {
+    case 'today':
+      return {
+        start: today,
+        end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+      };
+    case 'yesterday':
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      return {
+        start: yesterday,
+        end: today
+      };
+    case 'last7days':
+      const last7Days = new Date(today);
+      last7Days.setDate(last7Days.getDate() - 7);
+      return {
+        start: last7Days,
+        end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+      };
+    case 'last30days':
+      const last30Days = new Date(today);
+      last30Days.setDate(last30Days.getDate() - 30);
+      return {
+        start: last30Days,
+        end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+      };
+    case 'last90days':
+      const last90Days = new Date(today);
+      last90Days.setDate(last90Days.getDate() - 90);
+      return {
+        start: last90Days,
+        end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+      };
+    default:
+      return {
+        start: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000),
+        end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+      };
+  }
+}
+
+export async function fetchEnhancedAnalytics(
+  supabaseClient: any, 
+  domain: string,
+  timeRange: TimeRange = 'last30days'
+): Promise<AnalyticsData> {
+  const dateRange = getDateRange(timeRange);
+  
   const [
     pageViewsResponse,
     visitsResponse,
@@ -11,22 +65,47 @@ export async function fetchEnhancedAnalytics(supabaseClient: any, domain: string
     countryStatsPromise,
     osStatsPromise,
   ] = await Promise.all([
-    supabaseClient.from("page_views").select("*").eq("domain", domain),
-    supabaseClient.from("visits").select("*").eq("website_id", domain),
-    supabaseClient.from("daily_stats")
+    supabaseClient
+      .from("page_views")
       .select("*")
       .eq("domain", domain)
-      .order('date', { ascending: false })
-      .limit(30),
+      .gte("created_at", dateRange.start.toISOString())
+      .lte("created_at", dateRange.end.toISOString()),
+    supabaseClient
+      .from("visits")
+      .select("*")
+      .eq("website_id", domain)
+      .gte("created_at", dateRange.start.toISOString())
+      .lte("created_at", dateRange.end.toISOString()),
+    supabaseClient
+      .from("daily_stats")
+      .select("*")
+      .eq("domain", domain)
+      .gte("date", dateRange.start.toISOString().split('T')[0])
+      .lte("date", dateRange.end.toISOString().split('T')[0])
+      .order('date', { ascending: false }),
     supabaseClient
       .from("events")
       .select('*')
-      .eq("website_id", domain),
-    supabaseClient.rpc('get_device_stats', { website_domain: domain }),
-    supabaseClient.rpc('get_country_stats', { website_domain: domain }),
-    supabaseClient.rpc('get_os_stats', { website_domain: domain })
+      .eq("website_id", domain)
+      .gte("created_at", dateRange.start.toISOString())
+      .lte("created_at", dateRange.end.toISOString()),
+    supabaseClient.rpc('get_device_stats', { 
+      website_domain: domain,
+      start_date: dateRange.start.toISOString(),
+      end_date: dateRange.end.toISOString()
+    }),
+    supabaseClient.rpc('get_country_stats', { 
+      website_domain: domain,
+      start_date: dateRange.start.toISOString(),
+      end_date: dateRange.end.toISOString()
+    }),
+    supabaseClient.rpc('get_os_stats', { 
+      website_domain: domain,
+      start_date: dateRange.start.toISOString(),
+      end_date: dateRange.end.toISOString()
+    })
   ]);
-
 
   return {
     pageViews: pageViewsResponse.data || [],
