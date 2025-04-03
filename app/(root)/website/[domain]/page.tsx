@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Header } from "@/components/ui/header";
 import { GlobeIcon, ArrowLeftIcon, Settings, Bell } from "lucide-react";
 import { AnalyticsClient } from "@/components/analytics/AnalyticsClient";
 import { fetchEnhancedAnalytics, TimeRange } from "@/lib/actions/analytics";
@@ -113,64 +114,7 @@ export default async function WebsiteDetailPage({ params, searchParams }: PagePr
         <div className="absolute bottom-1/3 right-20 w-72 h-72 bg-gradient-to-br from-indigo-600/10 to-blue-600/10 rounded-full filter blur-3xl" />
       </div>
 
-      <header className="border-b border-zinc-800 py-4 backdrop-blur-xl bg-black/50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-8">
-              <div className="flex items-center gap-3">
-                <Link href="/dashboard">
-                  <div className="p-1.5 bg-blue-600/10 rounded-lg cursor-pointer hover:bg-blue-600/20 transition-colors">
-                    <GlobeIcon className="h-6 w-6 text-blue-500" />
-                  </div>
-                </Link>
-                <Link 
-                  href="/dashboard" 
-                  className="text-xl font-semibold text-white hover:text-blue-400 transition-colors"
-                >
-                  WebSight
-                </Link>
-              </div>
-              
-              <div className="hidden md:flex items-center gap-1">
-                <Link href="/dashboard">
-                  <Button 
-                    variant="ghost" 
-                    className="text-gray-400 hover:text-white"
-                  >
-                    Dashboard
-                  </Button>
-                </Link>
-                <Link href="/settings">
-                  <Button 
-                    variant="ghost" 
-                    className="text-gray-400 hover:text-white"
-                  >
-                    Settings
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                <Bell className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                <Settings className="h-5 w-5" />
-              </Button>
-              <div className="h-8 w-px bg-zinc-800"></div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-400">{user?.email}</span>
-                <div className="h-8 w-8 rounded-full bg-blue-600/10 flex items-center justify-center">
-                  <span className="text-sm font-medium text-blue-500">
-                    {user?.email?.charAt(0).toUpperCase() || 'U'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header user={user} />
 
       <main className="flex-1 py-8 relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -185,15 +129,15 @@ export default async function WebsiteDetailPage({ params, searchParams }: PagePr
               </div>
               <h1 className="text-2xl font-bold text-white">Analytics Overview</h1>
             </div>
-            
+
             <div className="flex items-center gap-3">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-blue-500/50 transition-all duration-300"
               >
                 Export Data
               </Button>
-              <Button 
+              <Button
                 className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300"
               >
                 View Live Data
