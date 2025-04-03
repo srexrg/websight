@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import SettingsClient from "@/components/settings/SettingsClient";
-import Link from "next/link";
+import { Header } from "@/components/ui/header";
 
 export const metadata = {
   title: "Settings"
@@ -24,27 +24,15 @@ export default async function SettingsPage() {
     .eq("id", user.id)
     .single();
 
-
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <header className="border-b py-6">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <Link 
-                href="/dashboard" 
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                ← Back to Dashboard
-              </Link>
-              <h1 className="text-xl font-semibold">Settings</h1>
-            </div>
-            <div>
-              <span className="text-sm text-muted-foreground">{user.email}</span>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="flex flex-col min-h-screen bg-black">
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#7c3aed15,transparent)]" />
+        <div className="absolute top-1/4 left-20 w-64 h-64 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 rounded-full filter blur-3xl" />
+        <div className="absolute bottom-1/3 right-20 w-72 h-72 bg-gradient-to-br from-indigo-600/10 to-blue-600/10 rounded-full filter blur-3xl" />
+      </div>
+
+      <Header user={user} />
       
       <main className="flex-1 py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
