@@ -11,40 +11,40 @@ function getDateRange(timeRange: TimeRange) {
     case 'today':
       return {
         start: today,
-        end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+        end: new Date(now.getTime()) 
       };
     case 'yesterday':
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - 1);
       return {
         start: yesterday,
-        end: today
+        end: today 
       };
     case 'last7days':
       const last7Days = new Date(today);
       last7Days.setDate(last7Days.getDate() - 7);
       return {
         start: last7Days,
-        end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+        end: new Date(now.getTime())
       };
     case 'last30days':
       const last30Days = new Date(today);
       last30Days.setDate(last30Days.getDate() - 30);
       return {
         start: last30Days,
-        end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+        end: new Date(now.getTime()) 
       };
     case 'last90days':
       const last90Days = new Date(today);
       last90Days.setDate(last90Days.getDate() - 90);
       return {
         start: last90Days,
-        end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+        end: new Date(now.getTime()) 
       };
     default:
       return {
         start: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000),
-        end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+        end: new Date(now.getTime()) 
       };
   }
 }
