@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "./button";
 import { Bell, GlobeIcon, ImageIcon, Settings } from "lucide-react";
+import SignOutButton from "../auth/sign-out-button";
 
 interface HeaderProps {
     user: {
@@ -49,6 +50,12 @@ export function Header({ user }: HeaderProps) {
                     </div>
 
                     <div className="flex items-center gap-4">
+                        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white cursor-pointer">
+                            <Bell className="h-5 w-5" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white cursor-pointer">
+                            <Settings className="h-5 w-5" />
+                        </Button>
                         <div className="h-8 w-px bg-zinc-800"></div>
                         <div className="flex items-center gap-3">
                             <span className="text-sm text-gray-400">{user?.email}</span>
@@ -57,6 +64,7 @@ export function Header({ user }: HeaderProps) {
                                     {user?.email?.charAt(0).toUpperCase() || 'U'}
                                 </span>
                             </div>
+                            <SignOutButton />
                         </div>
                     </div>
                 </div>

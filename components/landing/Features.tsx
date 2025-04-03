@@ -83,7 +83,7 @@ const Features = () => {
                 ease: "easeOut"
               }}
             >
-              <Card className="group h-full bg-zinc-900/40 hover:bg-zinc-900/60 transition-all duration-500 backdrop-blur-xl border border-zinc-800 rounded-lg overflow-hidden">
+              <Card className="group h-full bg-zinc-900/40 hover:bg-zinc-900/60 transition-all duration-500 backdrop-blur-xl border border-zinc-800 rounded-lg overflow-hidden cursor-pointer">
                 <CardContent className="p-8">
                   <div className="mb-6">
                     <div className="h-12 w-12 rounded-lg bg-blue-500/10 flex items-center justify-center">

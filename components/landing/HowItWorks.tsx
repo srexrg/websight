@@ -72,7 +72,7 @@ const HowItWorks = () => {
                 ease: "easeOut"
               }}
             >
-              <div className="group h-full bg-zinc-900/40 hover:bg-zinc-900/60 transition-all duration-500 backdrop-blur-xl border border-zinc-800 rounded-lg p-6">
+              <div className="group h-full bg-zinc-900/40 hover:bg-zinc-900/60 transition-all duration-500 backdrop-blur-xl border border-zinc-800 rounded-lg p-6 cursor-pointer">
                 <div className="flex flex-col gap-6">
                   <div className="relative">
                     <div className="h-12 w-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -125,7 +125,7 @@ const HowItWorks = () => {
                 <span className="text-green-400">"https://WebSight.io/tracker.js"</span> 
                 <span className="text-blue-300">{" data-key"}</span>
                 <span className="text-blue-400">{"="}</span>
-                <span className="text-green-400">"YOUR_API_KEY"</span>
+                <span className="text-green-400">"YOUR_SITE_ID"</span>
                 <span className="text-blue-400">{"></script>"}</span>
               </pre>
             </div>
