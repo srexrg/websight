@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail, Instagram, Twitter, Facebook, Linkedin, ArrowRight, Globe } from "lucide-react";
+import { Globe } from "lucide-react";
 import { motion } from "framer-motion";
+import { FaTwitter,FaInstagram,FaLinkedin } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -52,10 +53,9 @@ const Footer = () => {
             </p>
             
             <div className="flex gap-4 mb-6">
-              <SocialLink icon={<Twitter className="h-4 w-4" />} href="https://twitter.com" />
-              <SocialLink icon={<Linkedin className="h-4 w-4" />} href="https://linkedin.com" />
-              <SocialLink icon={<Instagram className="h-4 w-4" />} href="https://instagram.com" />
-              <SocialLink icon={<Facebook className="h-4 w-4" />} href="https://facebook.com" />
+              <SocialLink icon={<FaTwitter className="h-4 w-4" />} href="https://twitter.com" />
+              <SocialLink icon={<FaLinkedin className="h-4 w-4" />} href="https://linkedin.com" />
+              <SocialLink icon={<FaInstagram className="h-4 w-4" />} href="https://instagram.com" />
             </div>
           </div>
           
@@ -84,28 +84,6 @@ const Footer = () => {
           </div>
         </div>
         
-        {/* Newsletter */}
-        <div className="py-10 px-6 md:px-12 bg-zinc-900/40 backdrop-blur-xl border border-zinc-800 rounded-lg mb-16">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h3 className="text-xl font-semibold text-white mb-2">Stay up to date</h3>
-              <p className="text-gray-400">
-                Get the latest news and articles to your inbox every month.
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Input 
-                type="email" 
-                placeholder="Enter your email" 
-                className="bg-zinc-900/40 backdrop-blur-sm border-zinc-800 rounded-md text-gray-300 placeholder:text-gray-500 focus:border-blue-500/50 focus:ring-blue-500/50"
-              />
-              <Button className="rounded-md bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300">
-                Subscribe
-                <ArrowRight className="h-4 w-4 ml-1.5" />
-              </Button>
-            </div>
-          </div>
-        </div>
         
         {/* Bottom */}
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-zinc-800">
@@ -119,9 +97,6 @@ const Footer = () => {
             </Link>
             <Link href="/terms" className="text-sm text-gray-400 hover:text-blue-400 transition-colors">
               Terms
-            </Link>
-            <Link href="/cookies" className="text-sm text-gray-400 hover:text-blue-400 transition-colors">
-              Cookies
             </Link>
           </div>
         </div>
