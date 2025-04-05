@@ -71,7 +71,7 @@ const Hero = () => {
         </div>
 
         {/* Dashboard Preview */}
-        <motion.div
+        {/* <motion.div
           className="relative mx-auto max-w-5xl mb-16"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -91,31 +91,8 @@ const Hero = () => {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
           </motion.div>
-        </motion.div>
+        </motion.div> */}
 
-        {/* Company Logos */}
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          <p className="text-sm text-gray-400 mb-8">
-            Trusted by thousands of companies
-          </p>
-          <div className="flex justify-center items-center gap-12 flex-wrap opacity-60">
-            <img src="/logos/espn.svg" alt="ESPN" className="h-6 grayscale " />
-            <img
-              src="/logos/siemens.svg"
-              alt="Siemens"
-              className="h-8 grayscale"
-            />
-            <img src="/logos/intel.svg" alt="Intel" className="h-8 grayscale" />
-            <img src="/logos/hulu.svg" alt="Hulu" className="h-6 grayscale" />
-            <img src="/logos/vsp.svg" alt="VSP" className="h-6 grayscale" />
-            <img src="/logos/amd.svg" alt="AMD" className="h-6 grayscale" />
-          </div>
-        </motion.div>
       </div>
     </section>
   );
