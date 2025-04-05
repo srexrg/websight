@@ -7,6 +7,7 @@ import {
   Activity,
   Bell,
   Globe,
+  File
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,9 +34,9 @@ const featuresData = [
     icon: <Activity className="w-6 h-6" />,
   },
   {
-    title: "Smart Alerts",
-    description: "Get instant notifications for important metrics and events that require attention.",
-    icon: <Bell className="w-6 h-6" />,
+    title: "Data Export",
+    description: "Export your data to PDF for offline analysis and sharing.",
+    icon: <File className="w-6 h-6" />,
   },
   {
     title: "Global Tracking",

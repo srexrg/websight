@@ -9,20 +9,18 @@ const ComparisonSection = () => {
       title: "Traditional Analytics",
       points: [
         "Complex dashboards with steep learning curves",
-        "Limited data retention without premium plans",
+        "Data export features locked behind premium paywalls",
         "Requires technical expertise to implement",
         "Data silos across different platforms",
-        "Limited customization options"
       ]
     },
     websight: {
       title: "WebSight",
       points: [
         "Intuitive interface designed for all skill levels",
-        "Unlimited data retention with one-time payment",
+        "Free data export with no hidden paywalls",
         "Simple one-line code snippet for implementation",
         "Unified analytics across all your properties",
-        "Fully customizable reports and dashboards"
       ]
     }
   };
