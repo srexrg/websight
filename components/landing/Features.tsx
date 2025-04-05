@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   LineChart,
@@ -7,7 +7,7 @@ import {
   Activity,
   Bell,
   Globe,
-  File
+  File,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,22 +15,26 @@ import { Card, CardContent } from "@/components/ui/card";
 const featuresData = [
   {
     title: "Real-time Analytics",
-    description: "Track website performance as it happens with live updates and instant insights.",
+    description:
+      "Track website performance as it happens with live updates and instant insights.",
     icon: <LineChart className="w-6 h-6" />,
   },
   {
     title: "Visitor Insights",
-    description: "Understand your audience with detailed breakdowns of visitor behavior and demographics.",
+    description:
+      "Understand your audience with detailed breakdowns of visitor behavior and demographics.",
     icon: <Users className="w-6 h-6" />,
   },
   {
     title: "Custom Events",
-    description: "Track specific user interactions and conversions that matter most to your business.",
+    description:
+      "Track specific user interactions and conversions that matter most to your business.",
     icon: <BarChart className="w-6 h-6" />,
   },
   {
     title: "Performance Monitoring",
-    description: "Identify bottlenecks and optimize your website's speed and responsiveness.",
+    description:
+      "Identify bottlenecks and optimize your website's speed and responsiveness.",
     icon: <Activity className="w-6 h-6" />,
   },
   {
@@ -40,9 +44,10 @@ const featuresData = [
   },
   {
     title: "Global Tracking",
-    description: "Monitor visitor locations and understand your worldwide audience distribution.",
+    description:
+      "Monitor visitor locations and understand your worldwide audience distribution.",
     icon: <Globe className="w-6 h-6" />,
-  }
+  },
 ];
 
 const Features = () => {
@@ -68,7 +73,8 @@ const Features = () => {
             </span>
           </h2>
           <p className="text-gray-400 text-lg md:text-xl font-light max-w-2xl mx-auto">
-            Transform your website data into actionable insights with our comprehensive analytics suite
+            Transform your website data into actionable insights with our
+            comprehensive analytics suite
           </p>
         </motion.div>
 
@@ -81,7 +87,7 @@ const Features = () => {
               transition={{
                 duration: 0.5,
                 delay: index * 0.1,
-                ease: "easeOut"
+                ease: "easeOut",
               }}
             >
               <Card className="group h-full bg-zinc-900/40 hover:bg-zinc-900/60 transition-all duration-500 backdrop-blur-xl border border-zinc-800 rounded-lg overflow-hidden cursor-pointer">

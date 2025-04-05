@@ -151,7 +151,7 @@ export default function DomainManager({
           setError('You have already added this domain');
         }
       } else {
-        setError('This domain has already been registered by another user');
+        setError('This domain has already been registered');
       }
       setIsSubmitting(false)
       return
