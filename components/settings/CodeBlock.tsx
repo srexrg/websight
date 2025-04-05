@@ -66,12 +66,12 @@ await fetch(url, {
 
   return (
     <div className="relative space-y-4">
-      <Tabs defaultValue="typescript">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="typescript">TypeScript</TabsTrigger>
-          <TabsTrigger value="javascript">JavaScript</TabsTrigger>
+      <Tabs defaultValue="typescript" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 bg-zinc-900/50 border border-zinc-800">
+          <TabsTrigger value="typescript" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-blue-400 text-gray-300">TypeScript</TabsTrigger>
+          <TabsTrigger value="javascript" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-blue-400 text-gray-300">JavaScript</TabsTrigger>
         </TabsList>
-        <TabsContent value="typescript" className="relative">
+        <TabsContent value="typescript" className="relative mt-0">
           <SyntaxHighlighter
             language="typescript"
             style={oneDark}
@@ -79,6 +79,10 @@ await fetch(url, {
               padding: '1rem',
               borderRadius: '0.5rem',
               margin: 0,
+              background: 'rgba(24, 24, 27, 0.5)',
+              border: '1px solid rgba(39, 39, 42, 0.8)',
+              fontSize: '0.9rem',
+              lineHeight: '1.5',
             }}
           >
             {tsCode}
@@ -86,17 +90,17 @@ await fetch(url, {
           <Button
             size="icon"
             variant="ghost"
-            className="absolute top-2 right-2 h-8 w-8"
+            className="absolute top-2 right-2 h-8 w-8 bg-zinc-800/50 hover:bg-zinc-700/50"
             onClick={() => handleCopy(tsCode)}
           >
             {copied ? (
-              <Check className="h-4 w-4" />
+              <Check className="h-4 w-4 text-green-500" />
             ) : (
-              <Copy className="h-4 w-4" />
+              <Copy className="h-4 w-4 text-gray-400" />
             )}
           </Button>
         </TabsContent>
-        <TabsContent value="javascript" className="relative">
+        <TabsContent value="javascript" className="relative mt-0">
           <SyntaxHighlighter
             language="javascript"
             style={oneDark}
@@ -104,6 +108,10 @@ await fetch(url, {
               padding: '1rem',
               borderRadius: '0.5rem',
               margin: 0,
+              background: 'rgba(24, 24, 27, 0.5)',
+              border: '1px solid rgba(39, 39, 42, 0.8)',
+              fontSize: '0.9rem',
+              lineHeight: '1.5',
             }}
           >
             {jsCode}
@@ -111,13 +119,13 @@ await fetch(url, {
           <Button
             size="icon"
             variant="ghost"
-            className="absolute top-2 right-2 h-8 w-8"
+            className="absolute top-2 right-2 h-8 w-8 bg-zinc-800/50 hover:bg-zinc-700/50"
             onClick={() => handleCopy(jsCode)}
           >
             {copied ? (
-              <Check className="h-4 w-4" />
+              <Check className="h-4 w-4 text-green-500" />
             ) : (
-              <Copy className="h-4 w-4" />
+              <Copy className="h-4 w-4 text-gray-400" />
             )}
           </Button>
         </TabsContent>
