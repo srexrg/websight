@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "./button";
-import { Bell, GlobeIcon, ImageIcon, Settings } from "lucide-react";
+import { GlobeIcon } from "lucide-react";
 import SignOutButton from "../auth/sign-out-button";
 
 interface HeaderProps {

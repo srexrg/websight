@@ -1,10 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Header } from "@/components/ui/header";
-import { GlobeIcon, ArrowLeftIcon, Settings, Bell } from "lucide-react";
 import { AnalyticsClient } from "@/components/analytics/AnalyticsClient";
 import { ExportButton } from "@/components/analytics/ExportButton";
 import { fetchEnhancedAnalytics, TimeRange } from "@/lib/actions/analytics";
@@ -97,14 +94,7 @@ export default async function WebsiteDetailPage({ params, searchParams }: PagePr
     { visits: 0, unique_visitors: 0, page_views: 0 }
   );
 
-  const createdAt = new Date(domainData.created_at).toLocaleDateString(
-    "en-US",
-    {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }
-  );
+
 
   return (
     <div className="flex flex-col min-h-screen bg-black">

@@ -3,7 +3,7 @@
 import { Card } from "@/components/ui/card";
 import { WorldMap } from "./WorldMap";
 import { motion } from "framer-motion";
-import { Users, Globe2, Monitor, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Users, Globe2, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 import { calculateGrowth, abbreviateNumber, calculateNormalizedPercentage } from "@/lib/utils/analytics";
 

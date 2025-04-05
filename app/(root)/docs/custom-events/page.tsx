@@ -49,7 +49,7 @@ export default function CustomEventsPage() {
                 </h2>
                 <p className="text-gray-300 text-lg mb-8">
                   Learn how to track specific user interactions and events that
-                  matter most to your business using WebSight's custom events
+                  matter most to your business using WebSight&apos;s custom events
                   API.
                 </p>
 
