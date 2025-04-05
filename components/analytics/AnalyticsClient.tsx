@@ -9,13 +9,14 @@ import { motion } from "framer-motion"
 import { TimeRange } from '@/lib/actions/analytics'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { CalendarIcon, ChevronDownIcon } from 'lucide-react'
+import { CalendarIcon, ChevronDownIcon, BarChart3, FileText, Bell } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useState, useEffect } from 'react'
 
 type PageView = Database['public']['Tables']['page_views']['Row']
 type Visit = Database['public']['Tables']['visits']['Row']
@@ -96,6 +97,33 @@ function getRangeLabel(range: TimeRange) {
   }
 }
 
+// Add a loading skeleton component
+function AnalyticsSkeleton() {
+  return (
+    <div className="space-y-6 animate-pulse">
+      <div className="flex justify-end">
+        <div className="h-10 w-40 bg-zinc-800 rounded-md"></div>
+      </div>
+      
+      <div className="bg-zinc-900/40 border border-zinc-800 p-1 rounded-md h-10"></div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-zinc-900/40 border border-zinc-800 rounded-lg p-6 h-32"></div>
+        ))}
+      </div>
+      
+      <div className="bg-zinc-900/40 border border-zinc-800 rounded-lg p-6 h-80"></div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {[1, 2].map((i) => (
+          <div key={i} className="bg-zinc-900/40 border border-zinc-800 rounded-lg p-6 h-64"></div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function AnalyticsClient({ 
   domain,
   initialPageViews, 
@@ -112,8 +140,16 @@ export function AnalyticsClient({
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentTimeRange = searchParams.get('timeRange') as TimeRange || initialTimeRange;
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+
+  // Reset loading state when data changes
+  useEffect(() => {
+    setIsLoading(false);
+  }, [initialPageViews, initialDailyStats, initialGroupedPageViews, initialGroupedPageSources]);
 
   const handleTimeRangeChange = (range: TimeRange) => {
+    setIsLoading(true);
     const params = new URLSearchParams(searchParams.toString());
     params.set('timeRange', range);
     router.push(`?${params.toString()}`);
@@ -158,7 +194,7 @@ export function AnalyticsClient({
   }
 
   return (
-    <motion.div 
+    <motion.div
       className="space-y-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -167,42 +203,46 @@ export function AnalyticsClient({
       <div className="flex justify-end">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-blue-500/50 transition-all duration-300"
+              disabled={isLoading}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {getRangeLabel(currentTimeRange)}
               <ChevronDownIcon className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-zinc-950 border-zinc-800">
-            <DropdownMenuItem 
-              onClick={() => handleTimeRangeChange('today')}
+          <DropdownMenuContent
+            align="end"
+            className="bg-zinc-950 border-zinc-800"
+          >
+            <DropdownMenuItem
+              onClick={() => handleTimeRangeChange("today")}
               className="text-gray-300 hover:text-white hover:bg-zinc-800 cursor-pointer"
             >
               Today
             </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => handleTimeRangeChange('yesterday')}
+            <DropdownMenuItem
+              onClick={() => handleTimeRangeChange("yesterday")}
               className="text-gray-300 hover:text-white hover:bg-zinc-800 cursor-pointer"
             >
               Yesterday
             </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => handleTimeRangeChange('last7days')}
+            <DropdownMenuItem
+              onClick={() => handleTimeRangeChange("last7days")}
               className="text-gray-300 hover:text-white hover:bg-zinc-800 cursor-pointer"
             >
               Last 7 days
             </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => handleTimeRangeChange('last30days')}
+            <DropdownMenuItem
+              onClick={() => handleTimeRangeChange("last30days")}
               className="text-gray-300 hover:text-white hover:bg-zinc-800 cursor-pointer"
             >
               Last 30 days
             </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => handleTimeRangeChange('last90days')}
+            <DropdownMenuItem
+              onClick={() => handleTimeRangeChange("last90days")}
               className="text-gray-300 hover:text-white hover:bg-zinc-800 cursor-pointer"
             >
               Last 90 days
@@ -211,52 +251,86 @@ export function AnalyticsClient({
         </DropdownMenu>
       </div>
 
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="bg-zinc-900/40 border border-zinc-800 p-1">
-          <TabsTrigger 
-            value="overview"
-            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-zinc-400 hover:text-white transition-colors"
-          >
-            Overview
-          </TabsTrigger>
-          <TabsTrigger 
-            value="pages"
-            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-zinc-400 hover:text-white transition-colors"
-          >
-            Pages & Sources
-          </TabsTrigger>
-          <TabsTrigger 
-            value="events"
-            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-zinc-400 hover:text-white transition-colors"
-          >
-            Events
-          </TabsTrigger>
-        </TabsList>
+      {isLoading ? (
+        <AnalyticsSkeleton />
+      ) : (
+        <Tabs
+          defaultValue="overview"
+          className="w-full"
+          onValueChange={setActiveTab}
+        >
+          <div className="relative mb-6">
+            <TabsList className="bg-zinc-900/40 border border-zinc-800 p-1 rounded-lg w-full flex justify-between">
+              <TabsTrigger
+                value="overview"
+                className="flex-1 cursor-pointer data-[state=active]:bg-blue-600/20 data-[state=active]:text-white text-zinc-400 hover:text-white transition-all duration-300 rounded-md py-2 px-4 flex items-center justify-center gap-2 relative"
+              >
+                <BarChart3 className="h-4 w-4" />
+                <span>Overview</span>
+                {activeTab === "overview" && (
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full"
+                    layoutId="activeTabIndicator"
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
+              </TabsTrigger>
+              <TabsTrigger
+                value="pages"
+                className="flex-1 cursor-pointer data-[state=active]:bg-blue-600/20 data-[state=active]:text-white text-zinc-400 hover:text-white transition-all duration-300 rounded-md py-2 px-4 flex items-center justify-center gap-2 relative"
+              >
+                <FileText className="h-4 w-4" />
+                <span>Pages & Sources</span>
+                {activeTab === "pages" && (
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full"
+                    layoutId="activeTabIndicator"
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
+              </TabsTrigger>
+              <TabsTrigger
+                value="events"
+                className="flex-1 cursor-pointer data-[state=active]:bg-blue-600/20 data-[state=active]:text-white text-zinc-400 hover:text-white transition-all duration-300 rounded-md py-2 px-4 flex items-center justify-center gap-2 relative"
+              >
+                <Bell className="h-4 w-4" />
+                <span>Events</span>
+                {activeTab === "events" && (
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full"
+                    layoutId="activeTabIndicator"
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
-        <TabsContent value="overview" className="mt-6">
-          <AnalyticsOverview
-            pageViews={totalPageViews}
-            totalVisits={totalVisits}
-            uniqueVisitors={totalVisitors}
-            deviceStats={deviceStats}
-            countryStats={countryStats}
-            osStats={osStats}
-            dailyStats={initialDailyStats}
-          />
-        </TabsContent>
+          <TabsContent value="overview" className="mt-6">
+            <AnalyticsOverview
+              pageViews={totalPageViews}
+              totalVisits={totalVisits}
+              uniqueVisitors={totalVisitors}
+              deviceStats={deviceStats}
+              countryStats={countryStats}
+              osStats={osStats}
+              dailyStats={initialDailyStats}
+            />
+          </TabsContent>
 
-        <TabsContent value="pages" className="mt-6">
-          <PageAnalytics
-            groupedPageViews={initialGroupedPageViews}
-            groupedPageSources={initialGroupedPageSources}
-            totalVisits={totalVisits}
-          />
-        </TabsContent>
+          <TabsContent value="pages" className="mt-6">
+            <PageAnalytics
+              groupedPageViews={initialGroupedPageViews}
+              groupedPageSources={initialGroupedPageSources}
+              totalVisits={totalVisits}
+            />
+          </TabsContent>
 
-        <TabsContent value="events" className="mt-6">
-          <CustomEventsAnalytics events={events} />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="events" className="mt-6">
+            <CustomEventsAnalytics events={events} />
+          </TabsContent>
+        </Tabs>
+      )}
     </motion.div>
   );
 }
