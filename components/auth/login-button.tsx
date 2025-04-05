@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button' 
 import { FaGoogle } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 
 export default function LoginButton() {
   const supabase = createClient()
@@ -27,11 +28,17 @@ export default function LoginButton() {
   }
 
   return (
-    <Button
-      onClick={handleGoogleLogin}
-      className="w-full cursor-pointer"
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
     >
-      <FaGoogle className="mr-2" />  <p className="font-text ">Sign in with Google</p>
-    </Button>
+      <Button
+        onClick={handleGoogleLogin}
+        className="w-full py-6 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-3 shadow-lg shadow-blue-500/20 cursor-pointer"
+      >
+        <FaGoogle className="text-xl" />
+        <span className="text-base">Sign in with Google</span>
+      </Button>
+    </motion.div>
   )
 }
