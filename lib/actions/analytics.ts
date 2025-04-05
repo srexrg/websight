@@ -1,4 +1,5 @@
 "use server"
+import { SupabaseAuthClient } from "@supabase/supabase-js/dist/module/lib/SupabaseAuthClient";
 import { DailyStats, AnalyticsData } from "../types";
 
 export type TimeRange = 'today' | 'yesterday' | 'last7days' | 'last30days' | 'last90days';

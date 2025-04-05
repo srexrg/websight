@@ -1,8 +1,6 @@
 "use client"
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Globe } from "lucide-react";
 import { motion } from "framer-motion";
 import { FaTwitter,FaInstagram,FaLinkedin } from "react-icons/fa";
