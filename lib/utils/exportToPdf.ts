@@ -11,6 +11,25 @@ import {
   TrackedEvent
 } from '@/lib/types';
 
+// Define the autoTable options type
+interface AutoTableOptions {
+  startY: number;
+  head: string[][];
+  body: string[][];
+  theme?: string;
+  headStyles?: {
+    fillColor?: number[];
+  };
+  alternateRowStyles?: {
+    fillColor?: number[];
+  };
+}
+
+// Extend jsPDF type to include autoTable
+interface JsPDFWithAutoTable extends jsPDF {
+  autoTable: (options: AutoTableOptions) => void;
+}
+
 interface ExportData {
   domain: string;
   timeRange: string;
@@ -39,7 +58,7 @@ export function exportAnalyticsToPdf(data: ExportData): void {
   } = data;
 
   
-  const doc = new jsPDF();
+  const doc = new jsPDF() as JsPDFWithAutoTable;
   
   
   doc.setProperties({
@@ -92,7 +111,7 @@ export function exportAnalyticsToPdf(data: ExportData): void {
     ]);
     
     
-    (doc as any).autoTable({
+    doc.autoTable({
       startY: 30,
       head: [['Date', 'Visits', 'Unique Visitors', 'Page Views']],
       body: tableData,
@@ -114,7 +133,7 @@ export function exportAnalyticsToPdf(data: ExportData): void {
       .map(view => [view.page, view.visits.toString()]);
     
     
-    (doc as any).autoTable({
+    doc.autoTable({
       startY: 30,
       head: [['Page', 'Visits']],
       body: tableData,
@@ -135,7 +154,7 @@ export function exportAnalyticsToPdf(data: ExportData): void {
       .slice(0, 20)
       .map(source => [source.source, source.visits.toString()]);
     
-    (doc as any).autoTable({
+    doc.autoTable({
       startY: 30,
       head: [['Source', 'Visits']],
       body: tableData,
@@ -155,7 +174,7 @@ export function exportAnalyticsToPdf(data: ExportData): void {
       .sort((a, b) => b.visits - a.visits)
       .map(stat => [stat.deviceType, stat.visits.toString()]);
     
-    (doc as any).autoTable({
+    doc.autoTable({
       startY: 30,
       head: [['Device Type', 'Visits']],
       body: tableData,
@@ -175,7 +194,7 @@ export function exportAnalyticsToPdf(data: ExportData): void {
       .slice(0, 20)
       .map(stat => [stat.country, stat.visits.toString()]);
     
-    (doc as any).autoTable({
+    doc.autoTable({
       startY: 30,
       head: [['Country', 'Visits']],
       body: tableData,
@@ -196,7 +215,7 @@ export function exportAnalyticsToPdf(data: ExportData): void {
       .map(stat => [stat.os, stat.visits.toString()]);
     
     
-    (doc as any).autoTable({
+    doc.autoTable({
       startY: 30,
       head: [['Operating System', 'Visits']],
       body: tableData,
@@ -223,7 +242,7 @@ export function exportAnalyticsToPdf(data: ExportData): void {
       ]);
     
 
-    (doc as any).autoTable({
+    doc.autoTable({
       startY: 30,
       head: [['Event Name', 'Message', 'Date']],
       body: tableData,

@@ -17,53 +17,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useState, useEffect } from 'react'
+import { DailyStat, GroupedPageView, GroupedSource, DeviceStats, CountryStats, OsStats, TotalStats, TrackedEvent } from "@/lib/types"
 
 type PageView = Database['public']['Tables']['page_views']['Row']
 type Visit = Database['public']['Tables']['visits']['Row']
 
-interface TrackedEvent {
-  event_name: string
-  message?: string
-  created_at: string
-}
 
-interface GroupedPageView {
-  page: string;
-  visits: number;
-}
 
-interface GroupedSource {
-  source: string;
-  visits: number;
-}
 
-interface DeviceStats {
-  deviceType: string;
-  visits: number;
-}
 
-interface CountryStats {
-  country: string;
-  visits: number;
-}
-
-interface OsStats {
-  os: string;
-  visits: number;
-}
-
-interface DailyStat {
-  date: string;
-  visits: number;
-  unique_visitors: number;
-  page_views: number;
-}
-
-interface TotalStats {
-  visits: number;
-  unique_visitors: number;
-  page_views: number;
-}
 
 interface AnalyticsClientProps {
   domain: string;
@@ -125,7 +87,6 @@ function AnalyticsSkeleton() {
 }
 
 export function AnalyticsClient({ 
-  domain,
   initialPageViews, 
   initialGroupedPageViews,
   initialGroupedPageSources,
@@ -186,7 +147,7 @@ export function AnalyticsClient({
         </div>
         <h3 className="text-xl font-semibold text-white mb-2">No analytics data yet</h3>
         <p className="max-w-md text-gray-400">
-          We're waiting for the first page view. Make sure you've added the tracking
+          We&apos;re waiting for the first page view. Make sure you&apos;ve added the tracking
           script to your website.
         </p>
       </motion.div>

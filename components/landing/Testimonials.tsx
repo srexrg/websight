@@ -4,6 +4,7 @@ import { useState, useEffect, SetStateAction } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 const testimonials = [
   {
@@ -146,13 +147,13 @@ const Testimonials = () => {
                     <div className="max-w-3xl mx-auto text-center px-6">
                       <div className="bg-zinc-900/40 backdrop-blur-xl p-8 rounded-lg border border-zinc-800 shadow-lg">
                         <p className="text-xl md:text-2xl text-gray-300 italic mb-8 leading-relaxed">
-                          "{testimonial.content}"
+                          &quot;{testimonial.content}&quot;
                         </p>
                         
                         <div className="flex flex-col items-center">
                           <div className="mb-4 relative">
                             <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full blur"></div>
-                            <img 
+                            <Image 
                               src={testimonial.avatar} 
                               alt={testimonial.author}
                               className="w-16 h-16 rounded-full object-cover relative z-10 border-2 border-zinc-900"

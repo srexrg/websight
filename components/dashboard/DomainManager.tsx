@@ -278,7 +278,7 @@ export default function DomainManager({
               <p className="text-gray-500 text-xs mt-2">
                 Enter only the domain name without http:// or other parts.
                 Example: example.com <br />
-                Note: Domains with or without "www." are treated as the same
+                Note: Domains with or without &quot;www.&quot; are treated as the same
                 domain.
               </p>
             </div>
@@ -300,7 +300,7 @@ export default function DomainManager({
               transition={{ duration: 0.3 }}
             >
               <GlobeIcon className="mx-auto h-12 w-12 mb-4 opacity-50" />
-              <p className="text-lg mb-2">You haven't added any domains yet.</p>
+              <p className="text-lg mb-2">You haven&apos;t added any domains yet.</p>
               <p className="text-sm text-gray-500">
                 Add your first domain above to get started.
               </p>

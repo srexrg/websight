@@ -122,10 +122,10 @@ const HowItWorks = () => {
                 <span className="text-blue-400">{"<script "}</span>
                 <span className="text-blue-300">src</span>
                 <span className="text-blue-400">{"="}</span>
-                <span className="text-green-400">"https://WebSight.io/tracker.js"</span> 
+                <span className="text-green-400">&quot;https://websight.io/tracker.js&quot;</span> 
                 <span className="text-blue-300">{" data-key"}</span>
                 <span className="text-blue-400">{"="}</span>
-                <span className="text-green-400">"YOUR_SITE_ID"</span>
+                <span className="text-green-400">&quot;YOUR_SITE_ID&quot;</span>
                 <span className="text-blue-400">{"></script>"}</span>
               </pre>
             </div>

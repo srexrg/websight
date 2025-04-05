@@ -1,11 +1,9 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, LineChart, Sparkles, Users, Globe, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
-
 const Hero = () => {
   return (
     <section className="pt-24 pb-20 md:pt-32 md:pb-32 relative overflow-hidden bg-black">

@@ -51,7 +51,7 @@ export default function QuickStartPage() {
                   <div className="space-y-4">
                     <h3 className="text-xl font-semibold text-white">1. Create an Account</h3>
                     <p className="text-gray-300">
-                      Sign up for a WebSight account if you haven't already. It's free to get started and no credit card is required.
+                      Sign up for a WebSight account if you haven&apos;t already. It&apos;s free to get started and no credit card is required.
                     </p>
                     <Link href="/auth">
                       <Button className="bg-blue-600 hover:bg-blue-700 text-white">
@@ -63,19 +63,19 @@ export default function QuickStartPage() {
                   <div className="space-y-4">
                     <h3 className="text-xl font-semibold text-white">2. Add Your Website</h3>
                     <p className="text-gray-300">
-                      Once logged in, add your website domain in the dashboard. You'll receive a unique tracking code for your site.
+                      Once logged in, add your website domain in the dashboard. You&apos;ll receive a unique tracking code for your site.
                     </p>
                   </div>
 
                   <div className="space-y-4">
                     <h3 className="text-xl font-semibold text-white">3. Install Tracking Code</h3>
                     <p className="text-gray-300">
-                      Add the following script to your website's <code className="bg-zinc-800 px-2 py-1 rounded text-sm text-gray-200">&lt;head&gt;</code> section:
+                      Add the following script to your website&apos;s <code className="bg-zinc-800 px-2 py-1 rounded text-sm text-gray-200">&lt;head&gt;</code> section:
                     </p>
                     <div className="relative">
                       <pre className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 overflow-x-auto">
                         <code className="text-gray-200">
-                          &lt;script src="https://websight.io/tracker.js" data-site="YOUR-SITE-ID"&gt;&lt;/script&gt;
+                          &lt;script src=&quot;https://websight.io/tracker.js&quot; data-site=&quot;YOUR-SITE-ID&quot;&gt;&lt;/script&gt;
                         </code>
                       </pre>
                       <Button

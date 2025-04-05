@@ -5,7 +5,6 @@ import {
   BarChart,
   Users,
   Activity,
-  Bell,
   Globe,
   File,
 } from "lucide-react";

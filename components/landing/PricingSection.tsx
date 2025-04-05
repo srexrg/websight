@@ -214,7 +214,7 @@ const PricingSection = () => {
               >
                 Contact Sales
               </Button>
-              <p className="text-sm text-gray-400">Let's discuss your requirements</p>
+              <p className="text-sm text-gray-400">Let&apos;s discuss your requirements</p>
             </div>
           </div>
         </motion.div>
