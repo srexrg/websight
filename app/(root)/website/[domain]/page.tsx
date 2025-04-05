@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Header } from "@/components/ui/header";
 import { GlobeIcon, ArrowLeftIcon, Settings, Bell } from "lucide-react";
 import { AnalyticsClient } from "@/components/analytics/AnalyticsClient";
+import { ExportButton } from "@/components/analytics/ExportButton";
 import { fetchEnhancedAnalytics, TimeRange } from "@/lib/actions/analytics";
 import {
   GroupedPageView,
@@ -131,17 +132,18 @@ export default async function WebsiteDetailPage({ params, searchParams }: PagePr
             </div>
 
             <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-blue-500/50 transition-all duration-300"
-              >
-                Export Data
-              </Button>
-              <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300"
-              >
-                View Live Data
-              </Button>
+              <ExportButton
+                domain={domainData.domain}
+                timeRange={timeRange}
+                totalStats={totalStats}
+                dailyStats={analytics.dailyStats}
+                groupedPageViews={groupedPageViews}
+                groupedPageSources={groupedPageSources}
+                deviceStats={analytics.deviceStats}
+                countryStats={analytics.countryStats}
+                osStats={analytics.osStats}
+                events={analytics.events}
+              />
             </div>
           </div>
 
