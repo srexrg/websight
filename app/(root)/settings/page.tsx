@@ -4,7 +4,7 @@ import SettingsClient from "@/components/settings/SettingsClient";
 import { Header } from "@/components/ui/header";
 
 export const metadata = {
-  title: "Settings"
+  title: "Settings | WebSight"
 };
 
 export default async function SettingsPage() {
@@ -37,6 +37,11 @@ export default async function SettingsPage() {
       <main className="flex-1 py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold text-white mb-2">Settings</h1>
+              <p className="text-gray-300">Manage your account settings and API keys</p>
+            </div>
+            
             <SettingsClient userId={userData.id} initialApiKey={userData?.api || ""} />
           </div>
         </div>
