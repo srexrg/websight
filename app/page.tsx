@@ -4,8 +4,8 @@ import Testimonials from "@/components/landing/Testimonials";
 import Footer from "@/components/landing/Footer";
 import Navbar from "@/components/landing/Navbar";
 import HowItWorks from "@/components/landing/HowItWorks";
-import PricingSection from "@/components/landing/PricingSection";
-import DashboardPreview from "@/components/landing/DashboardPreview";
+import ComparisonSection from "@/components/landing/ComparisonSection";
+import Cta from "@/components/landing/Cta";
 
 export default function Home() {
   return (
@@ -15,7 +15,8 @@ export default function Home() {
         <Hero />
         <Features />
         <HowItWorks />
-        <Testimonials />
+        <ComparisonSection />
+        <Cta />
       </main>
       <Footer />
     </div>
