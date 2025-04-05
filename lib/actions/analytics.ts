@@ -1,5 +1,5 @@
 "use server"
-import { SupabaseAuthClient } from "@supabase/supabase-js/dist/module/lib/SupabaseAuthClient";
+import { SupabaseClient } from "@supabase/supabase-js";
 import { DailyStats, AnalyticsData } from "../types";
 
 export type TimeRange = 'today' | 'yesterday' | 'last7days' | 'last30days' | 'last90days';
@@ -51,9 +51,9 @@ function getDateRange(timeRange: TimeRange) {
 }
 
 export async function fetchEnhancedAnalytics(
-  supabaseClient: any, 
+  supabaseClient: SupabaseClient, 
   domain: string,
-  timeRange: TimeRange = 'last30days'
+  timeRange: TimeRange = 'today'
 ): Promise<AnalyticsData> {
   const dateRange = getDateRange(timeRange);
   

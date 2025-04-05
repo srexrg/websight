@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from 'framer-motion';
-import { BarChart3, ArrowUp, Users, Globe, MousePointer, Clock, ChevronRight } from 'lucide-react';
+import {  ArrowUp, Users, Globe, MousePointer, Clock, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 

@@ -1,8 +1,5 @@
 'use client'
-
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
 import { countryCoordinates } from "@/lib/country-coordinates"
 import {
   Tooltip,
@@ -31,7 +28,7 @@ interface MarkerData {
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
 
-export function WorldMap({ data, className }: WorldMapProps) {
+export function WorldMap({ data }: WorldMapProps) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {

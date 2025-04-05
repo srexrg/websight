@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { 
   Menu, 
   X, 
-  ArrowRight,
   Globe
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
