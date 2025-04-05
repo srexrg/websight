@@ -56,3 +56,41 @@ export interface AnalyticsData {
   osStats: OsStat[];
   events: Event[];
 }
+
+export interface DailyStat {
+  date: string;
+  visits: number;
+  unique_visitors: number;
+  page_views: number;
+}
+
+export interface DeviceStats {
+  deviceType: string;
+  visits: number;
+}
+
+export interface CountryStats {
+  country: string;
+  visits: number;
+}
+
+export interface OsStats {
+  os: string;
+  visits: number;
+}
+
+export interface TrackedEvent {
+  event_name: string;
+  message?: string;
+  created_at: string;
+}
+
+export interface AnalyticsData {
+  pageViews: PageView[];
+  visits: Visit[];
+  dailyStats: DailyStat[];
+  deviceStats: DeviceStats[];
+  countryStats: CountryStats[];
+  osStats: OsStats[];
+  events: TrackedEvent[];
+}

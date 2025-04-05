@@ -17,13 +17,13 @@ export function Header({ user }: HeaderProps) {
                     <div className="flex items-center gap-8">
                         <div className="flex items-center gap-3">
                             <Link href="/dashboard">
-                                <div className="p-1.5 bg-blue-600/10 rounded-lg cursor-pointer hover:bg-blue-600/20 transition-colors">
+                                <div className="p-1.5 bg-blue-600/10 rounded-lg cursor-pointer transition-colors">
                                     <GlobeIcon className="h-6 w-6 text-blue-500" />
                                 </div>
                             </Link>
                             <Link
                                 href="/dashboard"
-                                className="text-xl font-semibold text-white hover:text-blue-400 transition-colors cursor-pointer"
+                                className="text-xl font-semibold text-white  transition-colors cursor-pointer"
                             >
                                 WebSight
                             </Link>
@@ -33,7 +33,7 @@ export function Header({ user }: HeaderProps) {
                             <Link href="/dashboard">
                                 <Button
                                     variant="ghost"
-                                    className="text-gray-400 hover:text-white cursor-pointer"
+                                    className="text-gray-400  cursor-pointer"
                                 >
                                     Dashboard
                                 </Button>
@@ -41,7 +41,7 @@ export function Header({ user }: HeaderProps) {
                             <Link href="/settings">
                                 <Button
                                     variant="ghost"
-                                    className="text-gray-400 hover:text-white cursor-pointer"
+                                    className="text-gray-400 cursor-pointer"
                                 >
                                     Settings
                                 </Button>
@@ -50,16 +50,9 @@ export function Header({ user }: HeaderProps) {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white cursor-pointer">
-                            <Bell className="h-5 w-5" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white cursor-pointer">
-                            <Settings className="h-5 w-5" />
-                        </Button>
-                        <div className="h-8 w-px bg-zinc-800"></div>
                         <div className="flex items-center gap-3">
                             <span className="text-sm text-gray-400">{user?.email}</span>
-                            <div className="h-8 w-8 rounded-full bg-blue-600/10 flex items-center justify-center cursor-pointer">
+                            <div className="h-8 w-8 rounded-full bg-blue-600/10 flex items-center justify-center">
                                 <span className="text-sm font-medium text-blue-500">
                                     {user?.email?.charAt(0).toUpperCase() || 'U'}
                                 </span>
