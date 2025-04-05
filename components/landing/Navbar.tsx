@@ -46,19 +46,12 @@ const Navbar = () => {
             <Link href="/auth">
               <Button 
                 variant="ghost" 
-                className="text-sm font-medium rounded-md px-4 bg-zinc-900/40 hover:bg-zinc-900/60 text-gray-300 hover:text-white backdrop-blur-xl border border-zinc-800"
+                className="text-sm font-medium rounded-md px-4 bg-zinc-900/40 hover:bg-zinc-900/60 text-gray-300 hover:text-white backdrop-blur-xl border border-zinc-800 cursor-pointer"
               >
                 Sign In
               </Button>
             </Link>
-            <Link href="/auth">
-              <Button 
-                className="text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md px-5 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300"
-              >
-                Get Started
-                <ArrowRight className="ml-1 h-3.5 w-3.5" />
-              </Button>
-            </Link>
+            
           </div>
 
           {/* Mobile Menu Trigger */}

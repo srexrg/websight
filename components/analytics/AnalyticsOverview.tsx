@@ -49,8 +49,11 @@ export function AnalyticsOverview({
   dailyStats = []
 }: AnalyticsOverviewProps) {
 
-
-
+  // Sort device stats in ascending order
+  const sortedDeviceStats = [...deviceStats].sort((a, b) => a.visits - b.visits);
+  
+  // Sort OS stats in ascending order
+  const sortedOsStats = [...osStats].sort((a, b) => a.visits - b.visits);
 
   const chartData = dailyStats.map(stat => ({
     name: new Date(stat.date).toISOString().split('T')[0].slice(5), 
@@ -65,8 +68,8 @@ export function AnalyticsOverview({
   const previousTotal = dailyStats.slice(0, midPoint).reduce((acc, curr) => acc + curr.visits, 0);
   const growthRate = calculateGrowth(recentTotal, previousTotal);
 
-    const allDeviceVisits = deviceStats.map((stat) => stat.visits);
-    const allOsVisits = osStats.map((stat) => stat.visits);
+  const allDeviceVisits = deviceStats.map((stat) => stat.visits);
+  const allOsVisits = osStats.map((stat) => stat.visits);
 
   return (
     <motion.div
@@ -220,7 +223,7 @@ export function AnalyticsOverview({
           <div className="h-[300px] mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
-                data={deviceStats.map((stat) => ({
+                data={sortedDeviceStats.map((stat) => ({
                   name: stat.deviceType,
                   value: stat.visits,
                 }))}
@@ -271,7 +274,7 @@ export function AnalyticsOverview({
             <h3 className="text-lg font-semibold text-white">Device Types</h3>
           </div>
           <div className="divide-y divide-zinc-800">
-            {deviceStats.map((stat) => {
+            {sortedDeviceStats.map((stat) => {
               const percentage = calculateNormalizedPercentage(
                 stat.visits,
                 totalVisits,
@@ -306,7 +309,7 @@ export function AnalyticsOverview({
             </h3>
           </div>
           <div className="divide-y divide-zinc-800">
-            {osStats.map((stat) => {
+            {sortedOsStats.map((stat) => {
               const percentage = calculateNormalizedPercentage(
                 stat.visits,
                 totalVisits,

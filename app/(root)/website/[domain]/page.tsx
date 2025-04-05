@@ -26,7 +26,7 @@ function groupPageViews(pageViews: PageView[]): GroupedPageView[] {
 
   return Object.entries(groupedViews)
     .map(([page, visits]) => ({ page, visits }))
-    .sort((a, b) => b.visits - a.visits);
+    .sort((a, b) => a.visits - b.visits);
 }
 
 function groupPageSources(visits: Visit[]): GroupedSource[] {
@@ -39,7 +39,7 @@ function groupPageSources(visits: Visit[]): GroupedSource[] {
 
   return Object.entries(groupedSources)
     .map(([source, visits]) => ({ source, visits }))
-    .sort((a, b) => b.visits - a.visits);
+    .sort((a, b) => a.visits - b.visits);
 }
 
 export const metadata = {

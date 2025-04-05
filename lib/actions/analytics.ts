@@ -83,7 +83,7 @@ export async function fetchEnhancedAnalytics(
       .eq("domain", domain)
       .gte("date", dateRange.start.toISOString().split('T')[0])
       .lte("date", dateRange.end.toISOString().split('T')[0])
-      .order('date', { ascending: false }),
+      .order('date', { ascending: true }),
     supabaseClient
       .from("events")
       .select('*')
