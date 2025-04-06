@@ -3,7 +3,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 
-const protectedRoutes = ['/dashboard', '/gallery', '/train', '/models', '/billing', '/generate'];
+const protectedRoutes = ['/dashboard', '/gallery', '/settings', '/website'];
 
 
 export async function updateSession(request: NextRequest) {
@@ -53,8 +53,6 @@ export async function updateSession(request: NextRequest) {
     redirectUrl.pathname = '/auth';
     return NextResponse.redirect(redirectUrl);
   }
-
-
 
 
   return supabaseResponse
