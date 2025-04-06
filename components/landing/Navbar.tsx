@@ -27,13 +27,13 @@ const Navbar = () => {
                 <Globe className="h-5 w-5 text-blue-400" />
               </div>
             </div>
-            <span className="text-lg font-semibold text-white">
+            <span className="text-lg font-semibold text-white font-oswald">
               WebSight
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6 relative z-10">
+          <nav className="hidden md:flex items-center gap-6 relative z-10 font-jakarta">
             <NavLink href="#features">Features</NavLink>
             {/* <NavLink href="#pricing">Pricing</NavLink> */}
             <NavLink href="#customers">Customers</NavLink>
@@ -41,7 +41,7 @@ const Navbar = () => {
           </nav>
 
           {/* Desktop Call-to-actions */}
-          <div className="hidden md:flex items-center gap-3 relative z-10">
+          <div className="hidden md:flex items-center gap-3 relative z-10 font-jakarta">
             <Link href="/auth">
               <Button 
                 variant="ghost" 
@@ -79,7 +79,7 @@ const Navbar = () => {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
-            <nav className="flex flex-col gap-3 mb-8">
+            <nav className="flex flex-col gap-3 mb-8 font-jakarta">
               <MobileNavLink href="#features" onClick={() => setIsMobileMenuOpen(false)}>
                 Features
               </MobileNavLink>
@@ -94,7 +94,7 @@ const Navbar = () => {
               </MobileNavLink>
             </nav>
             
-            <div className="mt-auto space-y-3">
+            <div className="mt-auto space-y-3 font-jakarta">
               <Link href="/auth" className="block">
                 <Button 
                   variant="outline" 

@@ -40,7 +40,7 @@ const ComparisonSection = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center max-w-3xl mx-auto mb-24"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white font-oswald">
             Why choose WebSight for your analytics?
           </h2>
         </motion.div>
@@ -53,7 +53,7 @@ const ComparisonSection = () => {
             transition={{ duration: 0.5 }}
             className="bg-red-50/5 border border-red-200/10 rounded-2xl p-8"
           >
-            <h3 className="text-xl font-semibold text-red-400 mb-6">
+            <h3 className="text-xl font-semibold text-red-400 mb-6 font-jakarta">
               {comparison.traditional.title}
             </h3>
             <div className="space-y-4">
@@ -73,14 +73,14 @@ const ComparisonSection = () => {
             transition={{ duration: 0.5 }}
             className="bg-blue-50/5 border border-blue-200/10 rounded-2xl p-8"
           >
-            <h3 className="text-xl font-semibold text-blue-400 mb-6">
+            <h3 className="text-xl font-semibold text-blue-400 mb-6 font-jakarta">
               {comparison.websight.title}
             </h3>
             <div className="space-y-4">
               {comparison.websight.points.map((point, index) => (
                 <div key={index} className="flex items-start gap-3">
                   <Check className="h-5 w-5 text-blue-400 mt-1 flex-shrink-0" />
-                  <p className="text-gray-300">{point}</p>
+                  <p className="text-gray-300 font-jakarta">{point}</p>
                 </div>
               ))}
             </div>

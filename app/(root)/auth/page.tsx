@@ -23,10 +23,10 @@ export default function AuthPage() {
               <BarChart3 className="w-10 h-10 text-blue-500" />
             </div>
             <div className="space-y-2 text-center">
-              <h1 className="text-3xl font-bold tracking-tight text-white">
+              <h1 className="text-3xl font-bold tracking-tight text-white font-oswald">
                 Welcome to WebSight
               </h1>
-              <p className="text-gray-400">
+              <p className="text-gray-400 font-jakarta">
                 Sign in to access your analytics dashboard
               </p>
             </div>

@@ -32,7 +32,7 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
     <div className="grid gap-6">
       <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
         <CardHeader>
-          <CardTitle className="text-white">Most Viewed Pages</CardTitle>
+          <CardTitle className="text-white font-oswald">Most Viewed Pages</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[300px] mb-6">
@@ -108,7 +108,7 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
 
       <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
         <CardHeader>
-          <CardTitle className="text-white">Traffic Sources</CardTitle>
+          <CardTitle className="text-white font-oswald ">Traffic Sources</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[300px] mb-6">
@@ -140,13 +140,13 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
                       );
                       return (
                         <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-2 shadow-md">
-                          <p className="text-[0.70rem] uppercase text-zinc-400">
+                          <p className="text-[0.70rem] uppercase text-zinc-400 font-jakarta">
                             {data.payload.source || 'Direct'}
                           </p>
-                          <p className="text-sm font-bold text-zinc-50">
+                          <p className="text-sm font-bold text-zinc-50 font-jakarta">
                             {abbreviateNumber(data.value as number)} visits
                           </p>
-                          <p className="text-xs text-zinc-400">
+                          <p className="text-xs text-zinc-400 font-jakarta">
                             {percentage.toFixed(1)}% of total
                           </p>
                         </div>

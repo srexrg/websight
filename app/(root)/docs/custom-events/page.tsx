@@ -36,24 +36,24 @@ export default function CustomEventsPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <div>
-              <h1 className="text-4xl font-bold mb-6 text-white">
+              <h1 className="text-4xl font-bold mb-6 text-white font-oswald">
                 Custom Events Guide
               </h1>
               <div className="prose prose-invert max-w-none">
-                <h2 className="text-2xl font-semibold text-white mt-8 mb-4">
+                <h2 className="text-2xl font-semibold text-white mt-8 mb-4 font-oswald">
                   Track Custom User Interactions
                 </h2>
-                <p className="text-gray-300 text-lg mb-8">
+                <p className="text-gray-300 text-lg mb-8 font-jakarta">
                   Learn how to track specific user interactions and events that
                   matter most to your business using WebSight&apos;s custom
                   events API.
                 </p>
                 <div className="space-y-12">
                   <div className="space-y-4">
-                    <h3 className="text-xl font-semibold text-white">
+                    <h3 className="text-xl font-semibold text-white font-oswald">
                       Basic Event Tracking
                     </h3>
-                    <p className="text-gray-300">
+                    <p className="text-gray-300 font-jakarta">
                       Track custom events by calling the{" "}
                       <code className="bg-zinc-800 px-2 py-1 rounded text-sm text-gray-200">
                         websight.track()
@@ -64,9 +64,33 @@ export default function CustomEventsPage() {
                     <div className="relative">
                       <pre className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 overflow-x-auto">
                         <code className="text-gray-200">
-                          {`websight.track('button_click', {
+                          {`// JavaScript Example
+websight.track('button_click', {
   buttonId: 'signup',
   location: 'header'
+});
+
+// TypeScript Example
+interface EventData {
+  name: string;
+  domain: string;
+  description?: string;
+}
+
+const eventData: EventData = {
+  name: "user_signup",    // required: event name
+  domain: "example.com",  // required: your domain
+  description: "User completed signup", // optional: event details
+};
+
+// Send the event
+await fetch("https://websight.srexrg.me/api/events", {
+  method: 'POST',
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer YOUR_API_KEY"
+  },
+  body: JSON.stringify(eventData)
 });`}
                         </code>
                       </pre>
@@ -76,7 +100,34 @@ export default function CustomEventsPage() {
                         className="absolute top-3 right-3 text-gray-400 hover:text-white bg-zinc-800/50 hover:bg-zinc-700/50"
                         onClick={() =>
                           navigator.clipboard.writeText(
-                            "websight.track('button_click', {\n  buttonId: 'signup',\n  location: 'header'\n});"
+                            `// JavaScript Example
+websight.track('button_click', {
+  buttonId: 'signup',
+  location: 'header'
+});
+
+// TypeScript Example
+interface EventData {
+  name: string;
+  domain: string;
+  description?: string;
+}
+
+const eventData: EventData = {
+  name: "user_signup",    // required: event name
+  domain: "example.com",  // required: your domain
+  description: "User completed signup", // optional: event details
+};
+
+// Send the event
+await fetch("https://websight.srexrg.me/api/events", {
+  method: 'POST',
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer YOUR_API_KEY"
+  },
+  body: JSON.stringify(eventData)
+});`
                           )
                         }
                       >
@@ -85,25 +136,65 @@ export default function CustomEventsPage() {
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-xl font-semibold text-white">
+                    <h3 className="text-xl font-semibold text-white font-oswald">
                       Common Use Cases
                     </h3>
                     <div className="space-y-6">
                       <div>
-                        <h4 className="text-lg font-medium text-white mb-2">
+                        <h4 className="text-lg font-medium text-white mb-2 font-oswald">
                           Form Submissions
                         </h4>
                         <div className="relative">
                           <pre className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 overflow-x-auto">
                             <code className="text-gray-200">
-                              {`
+                              {`// JavaScript Example
 form.addEventListener('submit', (e) => {
   websight.track('form_submit', {
     formId: 'contact_form',
     formType: 'contact',
     success: true
   });
-});`}
+});
+
+// React Example with TypeScript
+import { useState } from 'react';
+
+interface FormData {
+  name: string;
+  email: string;
+}
+
+const ContactForm = () => {
+  const [formData, setFormData] = useState<FormData>({ name: '', email: '' });
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Process form submission...
+    
+    // Track the event
+    const eventData = {
+      name: "form_submit",
+      domain: "example.com",
+      description: "Contact form submitted successfully"
+    };
+    
+    await fetch("https://websight.srexrg.me/api/events", {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_API_KEY"
+      },
+      body: JSON.stringify(eventData)
+    });
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* Form fields */}
+    </form>
+  );
+};`}
                             </code>
                           </pre>
                           <Button
@@ -112,7 +203,54 @@ form.addEventListener('submit', (e) => {
                             className="absolute top-3 right-3 text-gray-400 hover:text-white bg-zinc-800/50 hover:bg-zinc-700/50"
                             onClick={() =>
                               navigator.clipboard.writeText(
-                                "form.addEventListener('submit', (e) => {\n  websight.track('form_submit', {\n    formId: 'contact_form',\n    formType: 'contact',\n    success: true\n  });\n});"
+                                `// JavaScript Example
+form.addEventListener('submit', (e) => {
+  websight.track('form_submit', {
+    formId: 'contact_form',
+    formType: 'contact',
+    success: true
+  });
+});
+
+// React Example with TypeScript
+import { useState } from 'react';
+
+interface FormData {
+  name: string;
+  email: string;
+}
+
+const ContactForm = () => {
+  const [formData, setFormData] = useState<FormData>({ name: '', email: '' });
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Process form submission...
+    
+    // Track the event
+    const eventData = {
+      name: "form_submit",
+      domain: "example.com",
+      description: "Contact form submitted successfully"
+    };
+    
+    await fetch("https://websight.srexrg.me/api/events", {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_API_KEY"
+      },
+      body: JSON.stringify(eventData)
+    });
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* Form fields */}
+    </form>
+  );
+};`
                               )
                             }
                           >
@@ -121,13 +259,14 @@ form.addEventListener('submit', (e) => {
                         </div>
                       </div>
                       <div>
-                        <h4 className="text-lg font-medium text-white mb-2">
+                        <h4 className="text-lg font-medium text-white mb-2 font-oswald">
                           User Actions
                         </h4>
                         <div className="relative">
                           <pre className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 overflow-x-auto">
                             <code className="text-gray-200">
-                              {`// Track user interactions
+                              {`// JavaScript Example
+// Track user interactions
 websight.track('video_play', {
   videoId: 'intro-video',
   duration: 120,
@@ -137,16 +276,99 @@ websight.track('product_view', {
   productId: 'prod_123',
   category: 'electronics',
   price: 299.99
-});`}
+});
+
+// React Example with TypeScript
+import { useEffect } from 'react';
+
+interface VideoPlayerProps {
+  videoId: string;
+  src: string;
+}
+
+const VideoPlayer = ({ videoId, src }: VideoPlayerProps) => {
+  useEffect(() => {
+    // Track video view event
+    const trackVideoView = async () => {
+      const eventData = {
+        name: "video_play",
+        domain: "example.com",
+        description: "User started playing video"
+      };
+      
+      await fetch("https://websight.srexrg.me/api/events", {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_API_KEY"
+        },
+        body: JSON.stringify(eventData)
+      });
+    };
+    
+    trackVideoView();
+  }, [videoId]);
+  
+  return (
+    <video src={src} controls />
+  );
+};`}
                             </code>
                           </pre>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="absolute top-3 right-3 text-gray-400 hover:text-white bg-zinc-800/50 hover:bg-zinc-700/50"
+                            className="absolute cursor-pointer top-3 right-3 text-gray-400 hover:text-white bg-zinc-800/50 hover:bg-zinc-700/50"
                             onClick={() =>
                               navigator.clipboard.writeText(
-                                "websight.track('video_play', {\n  videoId: 'intro-video',\n  duration: 120,\n  position: 0\n});\n\nwebsight.track('product_view', {\n  productId: 'prod_123',\n  category: 'electronics',\n  price: 299.99\n});"
+                                `// JavaScript Example
+// Track user interactions
+websight.track('video_play', {
+  videoId: 'intro-video',
+  duration: 120,
+  position: 0
+});
+websight.track('product_view', {
+  productId: 'prod_123',
+  category: 'electronics',
+  price: 299.99
+});
+
+// React Example with TypeScript
+import { useEffect } from 'react';
+
+interface VideoPlayerProps {
+  videoId: string;
+  src: string;
+}
+
+const VideoPlayer = ({ videoId, src }: VideoPlayerProps) => {
+  useEffect(() => {
+    // Track video view event
+    const trackVideoView = async () => {
+      const eventData = {
+        name: "video_play",
+        domain: "example.com",
+        description: "User started playing video"
+      };
+      
+      await fetch("https://websight.srexrg.me/api/events", {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_API_KEY"
+        },
+        body: JSON.stringify(eventData)
+      });
+    };
+    
+    trackVideoView();
+  }, [videoId]);
+  
+  return (
+    <video src={src} controls />
+  );
+};`
                               )
                             }
                           >
@@ -157,10 +379,10 @@ websight.track('product_view', {
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-xl font-semibold text-white">
+                    <h3 className="text-xl font-semibold text-white font-oswald">
                       Best Practices
                     </h3>
-                    <ul className="space-y-2 text-gray-300 list-disc pl-4">
+                    <ul className="space-y-2 text-gray-300 list-disc pl-4 font-jakarta">
                       <li>
                         Use consistent event names across your application
                       </li>
@@ -172,21 +394,21 @@ websight.track('product_view', {
                     </ul>
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-xl font-semibold text-white">
+                    <h3 className="text-xl font-semibold text-white font-oswald">
                       Viewing Event Data
                     </h3>
-                    <p className="text-gray-300">
+                    <p className="text-gray-300 font-jakarta">
                       Custom events data can be viewed in your WebSight
                       dashboard under the Events section. You can:
                     </p>
-                    <ul className="space-y-2 text-gray-300 list-disc pl-4">
+                    <ul className="space-y-2 text-gray-300 list-disc pl-4 font-jakarta">
                       <li>Filter events by name, date range, and properties</li>
                       <li>View event trends and patterns</li>
                       <li>Export event data for further analysis</li>
                       <li>Set up custom alerts based on event triggers</li>
                     </ul>
                     <Link href="/dashboard">
-                      <Button className="bg-blue-600 hover:bg-blue-700 text-white mt-4">
+                      <Button className="bg-blue-600 hover:bg-blue-700 text-white mt-4 font-jakarta">
                         View Events Dashboard
                       </Button>
                     </Link>

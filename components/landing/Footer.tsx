@@ -11,24 +11,24 @@ const Footer = () => {
       {/* Background Elements */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_-100px,#2563eb10,transparent)]" />
-        <motion.div 
+        <motion.div
           className="absolute -bottom-80 -left-40 w-96 h-96 rounded-full bg-blue-500/5 filter blur-3xl"
-          animate={{ 
+          animate={{
             x: [0, 30, 0],
             y: [0, -30, 0],
           }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />
-        <motion.div 
+        <motion.div
           className="absolute -bottom-20 right-0 w-80 h-80 rounded-full bg-blue-500/5 filter blur-3xl"
-          animate={{ 
+          animate={{
             x: [0, -20, 0],
             y: [0, 20, 0],
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         />
       </div>
-      
+
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Company Info */}
@@ -40,61 +40,59 @@ const Footer = () => {
                   <Globe className="h-5 w-5 text-blue-400" />
                 </div>
               </div>
-              <span className="text-lg font-semibold text-white">
-                WebSight
-              </span>
+              <span className="text-lg font-semibold text-white">WebSight</span>
             </div>
-            
+
             <p className="text-gray-400 mb-6 max-w-md">
-              WebSight provides modern web analytics to help businesses understand their audience
-              and make data-driven decisions without compromising user privacy.
+              WebSight provides modern web analytics to help businesses
+              understand their audience and make data-driven decisions without
+              compromising user privacy.
             </p>
-            
+
             <div className="flex gap-4 mb-6">
-              <SocialLink icon={<FaTwitter className="h-4 w-4" />} href="https://twitter.com" />
-              <SocialLink icon={<FaLinkedin className="h-4 w-4" />} href="https://linkedin.com" />
-              <SocialLink icon={<FaInstagram className="h-4 w-4" />} href="https://instagram.com" />
+              <SocialLink
+                icon={<FaTwitter className="h-4 w-4" />}
+                href="https://x.com/srexrg"
+              />
+              <SocialLink
+                icon={<FaLinkedin className="h-4 w-4" />}
+                href="https://linkedin.com/in/sreeragp276"
+              />
             </div>
           </div>
-          
+
           {/* Quick Links */}
           <div>
             <h3 className="text-lg font-medium text-white mb-6">Product</h3>
             <nav className="flex flex-col space-y-3">
               <FooterLink href="#features">Features</FooterLink>
-              <FooterLink href="#pricing">Pricing</FooterLink>
-              <FooterLink href="#customers">Testimonials</FooterLink>
               <FooterLink href="/docs">Documentation</FooterLink>
-              <FooterLink href="/blog">Blog</FooterLink>
-            </nav>
-          </div>
-          
-          {/* Company Links */}
-          <div>
-            <h3 className="text-lg font-medium text-white mb-6">Company</h3>
-            <nav className="flex flex-col space-y-3">
-              <FooterLink href="/about">About</FooterLink>
-              <FooterLink href="/careers">Careers</FooterLink>
-              <FooterLink href="/contact">Contact</FooterLink>
-              <FooterLink href="/privacy">Privacy Policy</FooterLink>
-              <FooterLink href="/terms">Terms of Service</FooterLink>
             </nav>
           </div>
         </div>
-        
-        
+
         {/* Bottom */}
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-zinc-800">
           <p className="text-sm text-gray-400 order-2 md:order-1 mt-4 md:mt-0">
             © {new Date().getFullYear()} WebSight. All rights reserved.
           </p>
-          
-          <div className="flex gap-6 order-1 md:order-2">
-            <Link href="/privacy" className="text-sm text-gray-400 hover:text-blue-400 transition-colors">
-              Privacy
-            </Link>
-            <Link href="/terms" className="text-sm text-gray-400 hover:text-blue-400 transition-colors">
-              Terms
+
+          <div className="text-sm text-gray-400 font-text">
+            Made with{" "}
+            <span
+              className="text-blue-500 animate-pulse inline-block hover:scale-110 transition-transform"
+              aria-label="love"
+            >
+              💙
+            </span>{" "}
+            by{" "}
+            <Link
+              href="https://srexrg.me"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 transition-colors font-title focus:outline-none focus:ring-2 focus:ring-blue-500/20 rounded px-1"
+            >
+              srexrg
             </Link>
           </div>
         </div>

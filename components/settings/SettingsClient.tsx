@@ -56,9 +56,9 @@ export default function SettingsClient({ userId, initialApiKey }: SettingsClient
         <CardHeader>
           <div className="flex items-center gap-2">
             <KeyIcon className="h-5 w-5 text-blue-500" />
-            <CardTitle className="text-lg text-white">API Key</CardTitle>
+            <CardTitle className="text-lg text-white font-oswald">API Key</CardTitle>
           </div>
-          <CardDescription className="text-gray-300">
+          <CardDescription className="text-gray-300 font-jakarta">
             Generate and manage your API key to track custom events
           </CardDescription>
         </CardHeader>
@@ -129,8 +129,8 @@ export default function SettingsClient({ userId, initialApiKey }: SettingsClient
       {apiKey && (
         <Card className="border-zinc-800 bg-black/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-lg text-white">Usage Example</CardTitle>
-            <CardDescription className="text-gray-300">
+            <CardTitle className="text-lg text-white font-oswald">Usage Example</CardTitle>
+            <CardDescription className="text-gray-300 font-jakarta">
               Here&apos;s how to use your API key to track custom events
             </CardDescription>
           </CardHeader>

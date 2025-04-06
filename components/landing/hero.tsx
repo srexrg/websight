@@ -25,7 +25,7 @@ const Hero = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <motion.h1
-            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-white"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-white font-oswald"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -36,7 +36,7 @@ const Hero = () => {
           </motion.h1>
 
           <motion.p
-            className="text-lg md:text-xl text-gray-300 mb-8 md:mb-10"
+            className="text-lg md:text-xl text-gray-300 mb-8 md:mb-10 font-jakarta"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
@@ -61,35 +61,13 @@ const Hero = () => {
             </Link>
             <Button
               variant="outline"
-              className="bg-zinc-900/80 hover:bg-zinc-800/90 backdrop-blur-xl text-gray-200 hover:text-white border-zinc-700 hover:border-zinc-600 px-8 py-6 h-auto text-base rounded-md transition-all duration-300"
+              className="bg-zinc-900/80 hover:bg-zinc-800/90 backdrop-blur-xl text-gray-200 hover:text-white border-zinc-700 hover:border-zinc-600 px-8 py-6 h-auto text-base rounded-md transition-all duration-300 font-oswald"
             >
               View demo
             </Button>
           </motion.div>
         </div>
 
-        {/* Dashboard Preview */}
-        {/* <motion.div
-          className="relative mx-auto max-w-5xl mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <div className="absolute -z-10 inset-0 bg-gradient-to-tr from-blue-500/30 to-blue-600/30 blur-2xl rounded-2xl"></div>
-
-          <motion.div
-            className="rounded-2xl overflow-hidden shadow-2xl border border-blue-500/20 backdrop-blur-sm bg-zinc-900/60"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.5 }}
-          >
-            <img
-              src="/dashboard-preview.png"
-              alt="Analytics Dashboard"
-              className="w-full opacity-90"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-          </motion.div>
-        </motion.div> */}
 
       </div>
     </section>

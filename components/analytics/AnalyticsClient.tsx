@@ -145,8 +145,8 @@ export function AnalyticsClient({
             <path d="m19 9-5 5-4-4-3 3" />
           </svg>
         </div>
-        <h3 className="text-xl font-semibold text-white mb-2">No analytics data yet</h3>
-        <p className="max-w-md text-gray-400">
+        <h3 className="text-xl text-white mb-2 font-oswald">No analytics data yet</h3>
+        <p className="max-w-md text-gray-400 font-jakarta">
           We&apos;re waiting for the first page view. Make sure you&apos;ve added the tracking
           script to your website.
         </p>
@@ -221,7 +221,7 @@ export function AnalyticsClient({
           onValueChange={setActiveTab}
         >
           <div className="relative mb-6">
-            <TabsList className="bg-zinc-900/40 border border-zinc-800 p-1 rounded-lg w-full flex justify-between">
+            <TabsList className="bg-zinc-900/40 border border-zinc-800 p-1 rounded-lg w-full flex justify-between font-jakarta">
               <TabsTrigger
                 value="overview"
                 className="flex-1 cursor-pointer data-[state=active]:bg-blue-600/20 data-[state=active]:text-white text-zinc-400 hover:text-white transition-all duration-300 rounded-md py-2 px-4 flex items-center justify-center gap-2 relative"
