@@ -36,7 +36,7 @@ const Navbar = () => {
           <nav className="hidden md:flex items-center gap-6 relative z-10 font-jakarta">
             <NavLink href="#features">Features</NavLink>
             {/* <NavLink href="#pricing">Pricing</NavLink> */}
-            <NavLink href="#customers">Customers</NavLink>
+            <NavLink href="#how-it-works">How It Works</NavLink>
             <NavLink href="/docs">Docs</NavLink>
           </nav>
 
@@ -94,16 +94,10 @@ const Navbar = () => {
                 Features
               </MobileNavLink>
               <MobileNavLink
-                href="#pricing"
+                href="#how-it-works"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Pricing
-              </MobileNavLink>
-              <MobileNavLink
-                href="#customers"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Customers
+                How It Works
               </MobileNavLink>
               <MobileNavLink
                 href="/docs"
