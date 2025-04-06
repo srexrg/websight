@@ -4,6 +4,13 @@ Websight is a powerful, open-source web analytics dashboard built with Next.js 1
 
 
 
+
+
+https://github.com/user-attachments/assets/39aab69c-f23e-43e9-b608-7f37b913a847
+
+
+
+
 ## Features
 
 - **Real-time Analytics**: Track website performance metrics in real-time
