@@ -20,6 +20,7 @@
     "@types/react-simple-maps": "^3.0.6",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/ua-parser-js": "^0.7.39",
+    "@vercel/analytics": "^1.4.1",
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
