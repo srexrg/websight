@@ -1,9 +1,22 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+
+const buttonVariants = {
+  initial: { scale: 1 },
+  hover: {
+    scale: 1.05,
+    transition: { duration: 0.2 },
+  },
+  tap: {
+    scale: 0.95,
+    transition: { duration: 0.1 },
+  },
+};
+
+
 const Hero = () => {
   return (
     <section className="pt-24 pb-20 md:pt-32 md:pb-32 relative overflow-hidden bg-black">
@@ -48,27 +61,24 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            variants={buttonVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            className="flex justify-center"
           >
             <Link href="/auth">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 h-auto text-base rounded-md shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300">
-                Get started
-                <ArrowRight className="ml-1 h-3.5 w-3.5" />
+              <Button 
+                size="lg"
+                className="bg-blue-600 text-white font-bold cursor-pointer shadow-lg hover:shadow-xl hover:bg-blue-600/80 px-10 py-7 rounded-lg min-w-[240px]"
+              >
+                <span className="text-xl font-jakarta tracking-wide text-gray-100">
+                  Get Started
+                </span>
               </Button>
             </Link>
-            <Button
-              variant="outline"
-              className="bg-zinc-900/80 hover:bg-zinc-800/90 backdrop-blur-xl text-gray-200 hover:text-white border-zinc-700 hover:border-zinc-600 px-8 py-6 h-auto text-base rounded-md transition-all duration-300 font-oswald"
-            >
-              View demo
-            </Button>
           </motion.div>
         </div>
-
-
       </div>
     </section>
   );
