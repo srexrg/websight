@@ -98,8 +98,8 @@ We welcome contributions! Here's how you can help:
 
 - Thanks to all our contributors
 - Inspired by various open-source analytics tools
-- Built with ❤️ by the srexrg
+- Built with ❤️ by [srexrg](https://srexrg.me)
 
 ---
 
-If you find Websight useful, please consider giving it a star ⭐️ on GitHub!
+If you find Websight useful, please consider giving it a star ⭐️!
