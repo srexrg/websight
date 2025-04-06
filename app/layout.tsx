@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { Oswald } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,10 +41,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+      <Script src="https://websight.srexrg.me/tracker.js" data-site="websight.srexrg.me"/>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${jakarta.variable} antialiased`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
