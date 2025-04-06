@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Websight - Modern Web Analytics Dashboard
+
+Websight is a powerful, open-source web analytics dashboard built with Next.js 15 and React 19. It provides real-time insights into your website's performance with a clean, intuitive interface.
+
+
+
+## Features
+
+- **Real-time Analytics**: Track website performance metrics in real-time
+- **Data Visualization**: Beautiful, interactive charts powered by Recharts
+- **Geographic Insights**: Track user behavior across different regions with interactive maps
+- **PDF Reports**: Generate comprehensive reports with a single click
+- **Modern UI**: Clean, responsive interface built with Radix UI and Tailwind CSS
+- **Cross-platform**: Works seamlessly across all devices and screen sizes
+
+## Tech Stack
+
+- **Framework**: Next.js 15
+- **Language**: TypeScript
+- **UI Components**: ShadCn
+- **Styling**: Tailwind CSS
+- **Database**: Supabase
+- **Charts**: Recharts
+- **Maps**: React Simple Maps
+- **PDF Generation**: jsPDF
+- **Animations**: Framer Motion
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18.0 or later
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/srexrg/websight.git
+cd websight
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+```
+Fill in your environment variables in `.env.local`
+
+4. Run the development server:
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Sign up for an account or log in
+2. Add your website to track
+3. Install the tracking script
+4. Start monitoring your analytics
 
-## Learn More
+## Contributing
 
-To learn more about Next.js, take a look at the following resources:
+We welcome contributions! Here's how you can help:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/improvement`)
+3. Make your changes
+4. Commit your changes (`git commit -am 'Add new feature'`)
+5. Push to the branch (`git push origin feature/improvement`)
+6. Create a Pull Request
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Support
+
+- 🐦 [Twitter](https://twitter.com/srexrg)
+
+## Acknowledgments
+
+- Thanks to all our contributors
+- Inspired by various open-source analytics tools
+- Built with ❤️ by the srexrg
+
+---
+
+If you find Websight useful, please consider giving it a star ⭐️ on GitHub!

@@ -6,18 +6,18 @@ import { Button } from "@/components/ui/button";
 import { 
   Menu, 
   X, 
-  Globe
+  Globe,
 } from "lucide-react";
+FaGithub
 import { motion, AnimatePresence } from "framer-motion";
+import { FaGithub } from "react-icons/fa";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <>
-      <header 
-        className="fixed top-0 left-0 right-0 z-50 py-4 bg-black/60 backdrop-blur-xl border-b border-zinc-800"
-      >
+      <header className="fixed top-0 left-0 right-0 z-50 py-4 bg-black/60 backdrop-blur-xl border-b border-zinc-800">
         <div className="container mx-auto px-4 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 relative z-10">
@@ -43,20 +43,27 @@ const Navbar = () => {
           {/* Desktop Call-to-actions */}
           <div className="hidden md:flex items-center gap-3 relative z-10 font-jakarta">
             <Link href="/auth">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="text-sm font-medium rounded-md px-4 bg-zinc-900/40 hover:bg-zinc-900/60 text-gray-300 hover:text-white backdrop-blur-xl border border-zinc-800 cursor-pointer"
               >
                 Sign In
               </Button>
             </Link>
-            
+            <Link
+              href="https://github.com/srexrg/websight"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              <FaGithub className="h-5 w-5" />
+            </Link>
           </div>
 
           {/* Mobile Menu Trigger */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             className="md:hidden relative z-50 text-gray-300 hover:text-white"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -72,7 +79,7 @@ const Navbar = () => {
       {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div 
+          <motion.div
             className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl flex flex-col pt-24 pb-8 px-6"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -80,24 +87,36 @@ const Navbar = () => {
             transition={{ duration: 0.2 }}
           >
             <nav className="flex flex-col gap-3 mb-8 font-jakarta">
-              <MobileNavLink href="#features" onClick={() => setIsMobileMenuOpen(false)}>
+              <MobileNavLink
+                href="#features"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
                 Features
               </MobileNavLink>
-              <MobileNavLink href="#pricing" onClick={() => setIsMobileMenuOpen(false)}>
+              <MobileNavLink
+                href="#pricing"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
                 Pricing
               </MobileNavLink>
-              <MobileNavLink href="#customers" onClick={() => setIsMobileMenuOpen(false)}>
+              <MobileNavLink
+                href="#customers"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
                 Customers
               </MobileNavLink>
-              <MobileNavLink href="/docs" onClick={() => setIsMobileMenuOpen(false)}>
+              <MobileNavLink
+                href="/docs"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
                 Documentation
               </MobileNavLink>
             </nav>
-            
+
             <div className="mt-auto space-y-3 font-jakarta">
               <Link href="/auth" className="block">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full rounded-md text-center py-6 h-auto bg-zinc-900/40 hover:bg-zinc-900/60 text-gray-300 hover:text-white backdrop-blur-xl border border-zinc-800"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -105,7 +124,7 @@ const Navbar = () => {
                 </Button>
               </Link>
               <Link href="/auth" className="block">
-                <Button 
+                <Button
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-md py-6 h-auto shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
