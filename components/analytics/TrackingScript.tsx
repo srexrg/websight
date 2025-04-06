@@ -20,12 +20,14 @@ import {
 } from "@/components/ui/dialog";
 
 interface TrackingScriptProps {
-  domain: string;
+  domain?: string;
 }
 
 export function TrackingScript({ domain }: TrackingScriptProps) {
   const [copied, setCopied] = useState(false);
-  const scriptCode = `<script src="https://websight-ecru.vercel.app/tracker.js" data-site="${domain}"></script>`;
+  const scriptCode = `<script src="https://websight.srexrg.me/tracker.js" data-site="${domain || 
+    'Your Site'
+  }"></script>`;
 
   const copyToClipboard = async () => {
     try {
@@ -38,17 +40,17 @@ export function TrackingScript({ domain }: TrackingScriptProps) {
   };
 
   return (
-    <Dialog>
+    <Dialog >
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-blue-500/50 transition-all duration-300 cursor-pointer">
           <Code className="h-4 w-4" />
-          <span>Tracking Script</span>
+          <span className="font-oswald">Tracking Script</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[95vw] w-[800px] bg-black">
         <DialogHeader>
-          <DialogTitle className="text-white">Tracking Script</DialogTitle>
-          <DialogDescription className="text-white">
+          <DialogTitle className="text-white font-oswald">Tracking Script</DialogTitle>
+          <DialogDescription className="text-white font-jakarta">
             Add this script to your website to start tracking analytics
           </DialogDescription>
         </DialogHeader>

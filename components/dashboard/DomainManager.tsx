@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { TrackingScript } from "../analytics/TrackingScript";
 
 interface Domain {
   id: string;
@@ -250,8 +251,10 @@ export default function DomainManager({
     >
       <Card className="w-full backdrop-blur-xl bg-zinc-900/40 border-zinc-800 shadow-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl text-white">Your Domains</CardTitle>
-          <CardDescription className="text-gray-400">
+          <CardTitle className="text-2xl text-white font-oswald">
+            Your Domains
+          </CardTitle>
+          <CardDescription className="text-gray-400 font-jakarta">
             Add your website domains to start tracking analytics data
           </CardDescription>
         </CardHeader>
@@ -262,7 +265,7 @@ export default function DomainManager({
                 placeholder="Enter your domain (e.g., example.com)"
                 value={newDomain}
                 onChange={(e) => setNewDomain(e.target.value)}
-                className="w-full bg-zinc-900/60 border-zinc-700 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20"
+                className="w-full bg-zinc-900/60 border-zinc-700 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20 font-jakarta"
               />
               {error && (
                 <motion.div
@@ -272,14 +275,14 @@ export default function DomainManager({
                   transition={{ duration: 0.2 }}
                 >
                   <AlertCircleIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <p>{error}</p>
+                  <p className="font-jakarta">{error}</p>
                 </motion.div>
               )}
-              <p className="text-gray-500 text-xs mt-2">
+              <p className="text-gray-500 text-xs mt-2 font-jakarta">
                 Enter only the domain name without http:// or other parts.
                 Example: example.com <br />
-                Note: Domains with or without &quot;www.&quot; are treated as the same
-                domain.
+                Note: Domains with or without &quot;www.&quot; are treated as
+                the same domain.
               </p>
             </div>
             <Button
@@ -288,7 +291,7 @@ export default function DomainManager({
               className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300"
             >
               <PlusIcon className="h-4 w-4 mr-2" />
-              Add Domain
+              <p className="font-jakarta">Add Domain</p>
             </Button>
           </form>
 
@@ -300,7 +303,9 @@ export default function DomainManager({
               transition={{ duration: 0.3 }}
             >
               <GlobeIcon className="mx-auto h-12 w-12 mb-4 opacity-50" />
-              <p className="text-lg mb-2">You haven&apos;t added any domains yet.</p>
+              <p className="text-lg mb-2">
+                You haven&apos;t added any domains yet.
+              </p>
               <p className="text-sm text-gray-500">
                 Add your first domain above to get started.
               </p>
@@ -323,16 +328,16 @@ export default function DomainManager({
                         <div className="p-2.5 rounded-xl bg-blue-600/10 text-blue-500">
                           <BarChart3 className="h-5 w-5" />
                         </div>
-                        <h3 className="font-medium text-lg text-white group-hover:text-blue-400 transition-colors">
+                        <h3 className="font-medium text-lg text-white group-hover:text-blue-400 transition-colors font-oswald">
                           {domain.domain}
                         </h3>
                       </div>
 
-                      <div className="text-sm text-gray-500 mb-4">
+                      <div className="text-sm text-gray-500 mb-4 font-jakarta">
                         Added on {formatDate(domain.created_at)}
                       </div>
 
-                      <div className="flex items-center text-blue-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center text-blue-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity font-oswald">
                         View analytics
                         <ArrowRightIcon className="h-3.5 w-3.5 ml-1" />
                       </div>
@@ -358,17 +363,18 @@ export default function DomainManager({
         </CardContent>
         <CardFooter className="text-sm text-gray-400 border-t border-zinc-800 pt-6">
           <div className="w-full">
-            <p className="mb-3">
+            <p className="mb-3 font-jakarta">
               Need help setting up tracking on your website?
             </p>
             <div className="flex items-center gap-3">
+              <TrackingScript />
               <Button
                 variant="outline"
                 className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-blue-500/50 transition-all duration-300"
                 onClick={() => router.push("/settings")}
               >
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Get tracking code
+                <p className="font-jakarta">Setup Custom Events</p>
               </Button>
               <Button
                 variant="ghost"
@@ -377,7 +383,7 @@ export default function DomainManager({
               >
                 <a href="/docs" target="_blank" rel="noopener noreferrer">
                   <BookOpen className="h-4 w-4 mr-2" />
-                  View documentation
+                  <p className="font-jakarta">View documentation</p>
                 </a>
               </Button>
             </div>

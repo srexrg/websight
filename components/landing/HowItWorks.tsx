@@ -46,13 +46,13 @@ const HowItWorks = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center max-w-3xl mx-auto mb-24"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white font-oswald">
             How It Works
-            <span className="block mt-3 text-gray-400 text-xl md:text-2xl font-normal">
+            <span className="block mt-3 text-gray-400 text-xl md:text-2xl font-normal font-jakarta">
               Start Tracking in Minutes
             </span>
           </h2>
-          <p className="text-gray-400 text-lg md:text-xl font-light max-w-2xl mx-auto">
+          <p className="text-gray-400 text-lg md:text-xl font-light max-w-2xl mx-auto font-jakarta">
             Get started with powerful analytics in just a few simple steps
           </p>
         </motion.div>
@@ -89,10 +89,10 @@ const HowItWorks = () => {
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-medium text-white mb-3 group-hover:text-blue-300 transition-colors duration-500">
+                    <h3 className="text-xl font-medium text-white mb-3 group-hover:text-blue-300 transition-colors duration-500 font-jakarta">
                       {step.title}
                     </h3>
-                    <p className="text-gray-400 leading-relaxed">
+                    <p className="text-gray-400 leading-relaxed font-jakarta">
                       {step.description}
                     </p>
                   </div>
@@ -127,7 +127,7 @@ const HowItWorks = () => {
                 <span className="text-blue-300">src</span>
                 <span className="text-blue-400">{"="}</span>
                 <span className="text-green-400">
-                  &quot;https://websight-ecru.vercel.app/tracker.js&quot;
+                  &quot;https://websight.srexrg.me/tracker.js&quot;
                 </span>
                 <span className="text-blue-300">{" data-key"}</span>
                 <span className="text-blue-400">{"="}</span>

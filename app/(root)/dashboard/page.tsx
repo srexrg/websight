@@ -32,8 +32,8 @@ export default async function Dashboard() {
             <main className="flex-1 py-12 relative z-10">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="mb-10">
-                        <h2 className="text-3xl font-bold text-white mb-2">Welcome back{authUser.user_metadata?.full_name ? `, ${authUser.user_metadata.full_name}` : ''}!</h2>
-                        <p className="text-gray-400">Manage your website domains and view analytics insights</p>
+                        <h2 className="text-3xl font-bold text-white mb-2 font-oswald">Welcome back{authUser.user_metadata?.full_name ? `, ${authUser.user_metadata.full_name}` : ''}!</h2>
+                        <p className="text-gray-400 font-jakarta">Manage your website domains and view analytics insights</p>
                     </div>
                     <DomainManager
                         userId={authUser.id}

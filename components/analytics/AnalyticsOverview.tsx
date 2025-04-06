@@ -85,7 +85,7 @@ export function AnalyticsOverview({
             <div className="p-2 rounded-lg bg-blue-600/10">
               <Users className="h-5 w-5 text-blue-500" />
             </div>
-            <div className="flex items-center gap-1 text-sm">
+            {/* <div className="flex items-center gap-1 text-sm">
               <span
                 className={`flex items-center ${
                   growthRate >= 0 ? "text-emerald-500" : "text-red-500"
@@ -98,7 +98,7 @@ export function AnalyticsOverview({
                 )}
                 {Math.abs(growthRate).toFixed(1)}%
               </span>
-            </div>
+            </div> */}
           </div>
           <p className="text-sm text-gray-400 mb-1">Total Visits</p>
           <p className="text-2xl font-bold text-white">
@@ -136,7 +136,7 @@ export function AnalyticsOverview({
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-          <h3 className="text-lg font-semibold text-white mb-4">
+          <h3 className="text-lg font-semibold text-white mb-4 font-oswald">
             Traffic Overview
           </h3>
           <div className="h-[300px] mt-4">
@@ -217,7 +217,7 @@ export function AnalyticsOverview({
         </Card>
 
         <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-          <h3 className="text-lg font-semibold text-white mb-4">
+          <h3 className="text-lg font-semibold text-white mb-4 font-oswald">
             Device Distribution
           </h3>
           <div className="h-[300px] mt-4">
@@ -271,7 +271,7 @@ export function AnalyticsOverview({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
           <div className="p-6 border-b border-zinc-800">
-            <h3 className="text-lg font-semibold text-white">Device Types</h3>
+            <h3 className="text-lg font-semibold text-white font-oswald">Device Types</h3>
           </div>
           <div className="divide-y divide-zinc-800">
             {sortedDeviceStats.map((stat) => {
@@ -286,14 +286,14 @@ export function AnalyticsOverview({
                   className="p-4 flex justify-between items-center"
                 >
                   <div>
-                    <p className="font-medium text-white capitalize">
+                    <p className="font-medium text-white capitalize font-oswald">
                       {stat.deviceType}
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-400 font-jakarta">
                       {stat.visits} visits
                     </p>
                   </div>
-                  <p className="text-sm font-mono text-gray-400">
+                  <p className="text-sm  text-gray-400 font-jakarta">
                     {percentage.toFixed(1)}%
                   </p>
                 </div>
@@ -304,7 +304,7 @@ export function AnalyticsOverview({
 
         <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
           <div className="p-6 border-b border-zinc-800">
-            <h3 className="text-lg font-semibold text-white">
+            <h3 className="text-lg font-semibold text-white font-oswald">
               Operating Systems
             </h3>
           </div>
@@ -321,8 +321,8 @@ export function AnalyticsOverview({
                   className="p-4 flex justify-between items-center"
                 >
                   <div>
-                    <p className="font-medium text-white">{stat.os}</p>
-                    <p className="text-sm text-gray-400">
+                    <p className="font-medium text-white font-oswald">{stat.os}</p>
+                    <p className="text-sm text-gray-400 font-jakarta">
                       {stat.visits} visits
                     </p>
                   </div>
@@ -338,7 +338,7 @@ export function AnalyticsOverview({
 
       {/* World Map */}
       <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-        <h3 className="text-lg font-semibold text-white mb-4">
+        <h3 className="text-lg font-semibold text-white mb-4 font-oswald">
           Geographic Distribution
         </h3>
         <WorldMap data={countryStats} className="h-[400px]" />

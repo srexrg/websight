@@ -27,7 +27,7 @@ export default function QuickStartPage() {
                 Docs
               </Link>
               <ChevronRight className="h-4 w-4" />
-              <span className="text-white">Quick Start Guide</span>
+              <span className="text-white font-oswald">Quick Start Guide</span>
             </div>
           </div>
         </div>
@@ -36,23 +36,23 @@ export default function QuickStartPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <div>
-              <h1 className="text-4xl font-bold mb-6 text-white">
+              <h1 className="text-4xl font-bold mb-6 text-white font-oswald">
                 Quick Start Guide
               </h1>
               <div className="prose prose-invert max-w-none">
-                <h2 className="text-2xl font-semibold text-white mt-8 mb-4">
+                <h2 className="text-2xl font-semibold text-white mt-8 mb-4 font-oswald">
                   Getting Started with WebSight
                 </h2>
-                <p className="text-gray-300 text-lg mb-8">
+                <p className="text-gray-300 text-lg mb-8 font-jakarta">
                   Follow these simple steps to add WebSight analytics to your
                   website and start tracking visitor data in minutes.
                 </p>
                 <div className="space-y-12">
                   <div className="space-y-4">
-                    <h3 className="text-xl font-semibold text-white">
+                    <h3 className="text-xl font-semibold text-white font-oswald">
                       1. Create an Account
                     </h3>
-                    <p className="text-gray-300">
+                    <p className="text-gray-300 font-jakarta">
                       Sign up for a WebSight account if you haven&apos;t
                       already. It&apos;s free to get started and no credit card
                       is required.
@@ -64,19 +64,19 @@ export default function QuickStartPage() {
                     </Link>
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-xl font-semibold text-white">
+                    <h3 className="text-xl font-semibold text-white font-oswald">
                       2. Add Your Website
                     </h3>
-                    <p className="text-gray-300">
+                    <p className="text-gray-300 font-jakarta">
                       Once logged in, add your website domain in the dashboard.
                       You&apos;ll receive a unique tracking code for your site.
                     </p>
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-xl font-semibold text-white">
+                    <h3 className="text-xl font-semibold text-white font-oswald">
                       3. Install Tracking Code
                     </h3>
-                    <p className="text-gray-300">
+                    <p className="text-gray-300 font-jakarta">
                       Add the following script to your website&apos;s{" "}
                       <code className="bg-zinc-800 px-2 py-1 rounded text-sm text-gray-200">
                         &lt;head&gt;
@@ -87,7 +87,7 @@ export default function QuickStartPage() {
                       <pre className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 overflow-x-auto">
                         <code className="text-gray-200">
                           &lt;script
-                          src=&quot;https://websight-ecru.vercel.app/tracker.js&quot;
+                          src=&quot;https://websight.srexrg.me/tracker.js&quot;
                           data-site=&quot;YOUR-SITE-ID&quot;&gt;&lt;/script&gt;
                         </code>
                       </pre>
@@ -97,7 +97,7 @@ export default function QuickStartPage() {
                         className="absolute top-3 right-3 text-gray-400 hover:text-white bg-zinc-800/50 hover:bg-zinc-700/50"
                         onClick={() =>
                           navigator.clipboard.writeText(
-                            '<script src="https://websight-ecru.vercel.app/tracker.js" data-site="YOUR-SITE-ID"></script>'
+                            '<script src="https://websight.srexrg.me/tracker.js" data-site="YOUR-SITE-ID"></script>'
                           )
                         }
                       >
@@ -106,10 +106,10 @@ export default function QuickStartPage() {
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-xl font-semibold text-white">
+                    <h3 className="text-xl font-semibold text-white font-oswald">
                       4. Verify Installation
                     </h3>
-                    <p className="text-gray-300">
+                    <p className="text-gray-300 font-jakarta">
                       Return to your WebSight dashboard and verify that data is
                       being collected. You should see your first analytics
                       within minutes.
@@ -124,15 +124,15 @@ export default function QuickStartPage() {
                     </Link>
                   </div>
                 </div>
-                <h2 className="text-2xl font-semibold text-white mt-12 mb-4">
+                <h2 className="text-2xl font-semibold text-white mt-12 mb-4 font-oswald">
                   Next Steps
                 </h2>
-                <ul className="space-y-2 text-gray-300 list-disc pl-4">
+                <ul className="space-y-2 text-gray-300 list-disc pl-4 font-jakarta">
                   <li>
                     Set up{" "}
                     <Link
                       href="/docs/custom-events"
-                      className="text-blue-400 hover:underline"
+                      className="text-blue-400 hover:underline font-jakarta"
                     >
                       custom event tracking
                     </Link>

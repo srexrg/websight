@@ -23,7 +23,7 @@ export function Header({ user }: HeaderProps) {
                             </Link>
                             <Link
                                 href="/dashboard"
-                                className="text-xl font-semibold text-white  transition-colors cursor-pointer"
+                                className="text-xl font-semibold text-white font-oswald transition-colors cursor-pointer"
                             >
                                 WebSight
                             </Link>
@@ -33,7 +33,7 @@ export function Header({ user }: HeaderProps) {
                             <Link href="/dashboard">
                                 <Button
                                     variant="ghost"
-                                    className="text-gray-400  cursor-pointer"
+                                    className="text-gray-400 font-jakarta cursor-pointer"
                                 >
                                     Dashboard
                                 </Button>
@@ -41,7 +41,7 @@ export function Header({ user }: HeaderProps) {
                             <Link href="/settings">
                                 <Button
                                     variant="ghost"
-                                    className="text-gray-400 cursor-pointer"
+                                    className="text-gray-400 font-jakarta cursor-pointer"
                                 >
                                     Settings
                                 </Button>
@@ -53,7 +53,7 @@ export function Header({ user }: HeaderProps) {
                         <div className="flex items-center gap-3">
                             <span className="text-sm text-gray-400">{user?.email}</span>
                             <div className="h-8 w-8 rounded-full bg-blue-600/10 flex items-center justify-center">
-                                <span className="text-sm font-medium text-blue-500">
+                                <span className="text-sm font-medium text-blue-500 font-jakarta">
                                     {user?.email?.charAt(0).toUpperCase() || 'U'}
                                 </span>
                             </div>

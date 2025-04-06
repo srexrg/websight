@@ -38,13 +38,13 @@ export function CustomEventsAnalytics({ events }: CustomEventsAnalyticsProps) {
               >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-white">{event.event_name}</p>
-                    <span className="text-xs text-zinc-500">
+                    <p className="text-sm font-medium text-white font-jakarta">{event.event_name}</p>
+                    <span className="text-xs text-zinc-500 font-jakarta">
                       {formatDistanceToNow(new Date(event.created_at), { addSuffix: true })}
                     </span>
                   </div>
                   {event.message && (
-                    <p className="text-sm text-zinc-400">
+                    <p className="text-sm text-zinc-400 font-jakarta">
                       {event.message}
                     </p>
                   )}

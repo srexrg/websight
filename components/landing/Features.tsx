@@ -65,13 +65,13 @@ const Features = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center max-w-3xl mx-auto mb-24"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white font-oswald">
             Website Analytics Reimagined
-            <span className="block mt-3 text-gray-400 text-xl md:text-2xl font-normal">
+            <span className="block mt-3 text-gray-400 text-xl md:text-2xl font-normal font-jakarta">
               Powerful Insights Made Simple
             </span>
           </h2>
-          <p className="text-gray-400 text-lg md:text-xl font-light max-w-2xl mx-auto">
+          <p className="text-gray-400 text-lg md:text-xl font-light max-w-2xl mx-auto font-jakarta">
             Transform your website data into actionable insights with our
             comprehensive analytics suite
           </p>
@@ -99,10 +99,10 @@ const Features = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-medium text-white mb-3 group-hover:text-blue-300 transition-colors duration-500">
+                    <h3 className="text-xl font-medium text-white mb-3 group-hover:text-blue-300 transition-colors duration-500 font-jakarta">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-400 leading-relaxed">
+                    <p className="text-gray-400 leading-relaxed font-jakarta">
                       {feature.description}
                     </p>
                   </div>

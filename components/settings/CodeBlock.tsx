@@ -13,7 +13,7 @@ export function CodeBlock({ apiKey }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
   const tsCode = `// TypeScript Example
-const url = "https://websight-ecru.vercel.app/api/events";
+const url = "https://websight.srexrg.me/api/events";
 const headers = {
   "Content-Type": "application/json",
   "Authorization": "Bearer ${apiKey}"
@@ -39,7 +39,7 @@ await fetch(url, {
 });`;
 
   const jsCode = `// JavaScript Example
-const url = "https://websight-ecru.vercel.app/api/events";
+const url = "https://websight.srexrg.me/api/events";
 const headers = {
   "Content-Type": "application/json",
   "Authorization": "Bearer ${apiKey}"

@@ -94,13 +94,13 @@ export default async function WebsiteDetailPage({ params, searchParams }: PagePr
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors font-jakarta">
                   Domains
                 </Link>
                 <span className="text-gray-600">/</span>
-                <span className="text-white font-medium">{domainData.domain}</span>
+                <span className="text-white font-medium font-oswald">{domainData.domain}</span>
               </div>
-              <h1 className="text-2xl font-bold text-white">Analytics Overview</h1>
+              <h1 className="text-2xl font-bold text-white font-oswald ">Analytics Overview</h1>
             </div>
             <div className="flex items-center gap-3">
               <TrackingScript domain={domainData.domain} />
