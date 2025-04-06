@@ -1,16 +1,11 @@
 'use client';
-
 import LoginButton from '@/components/auth/login-button'
 import { motion } from 'framer-motion'
 import { BarChart3 } from 'lucide-react'
-
 export default function AuthPage() {
   return (
     <div className="flex min-h-screen bg-gray-950 overflow-hidden">
-      {/* Background gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#2563eb10,transparent)]" />
-      
-      {/* Left side - Main Content */}
       <div className="flex flex-1 flex-col justify-center items-center px-4 sm:px-6 lg:px-20 relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -18,7 +13,6 @@ export default function AuthPage() {
           transition={{ duration: 0.5 }}
           className="mx-auto w-full max-w-md"
         >
-          {/* Logo and Header */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -37,8 +31,6 @@ export default function AuthPage() {
               </p>
             </div>
           </motion.div>
-
-          {/* Auth Card */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -46,7 +38,6 @@ export default function AuthPage() {
             className="bg-gradient-to-r from-blue-600/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-8 shadow-xl"
           >
             <LoginButton />
-            
           </motion.div>
         </motion.div>
       </div>
