@@ -32,8 +32,8 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section 
-      id="how-it-works" 
+    <section
+      id="how-it-works"
       className="relative py-32 bg-black overflow-hidden"
       aria-label="How It Works Section"
     >
@@ -60,16 +60,16 @@ const HowItWorks = () => {
         <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6 lg:gap-8 relative">
           {/* Connecting Lines */}
           <div className="absolute top-[45%] left-0 w-full h-px bg-zinc-800 hidden lg:block" />
-          
+
           {steps.map((step, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: 0.5, 
+              transition={{
+                duration: 0.5,
                 delay: index * 0.1,
-                ease: "easeOut"
+                ease: "easeOut",
               }}
             >
               <div className="group h-full bg-zinc-900/40 hover:bg-zinc-900/60 transition-all duration-500 backdrop-blur-xl border border-zinc-800 rounded-lg p-6 cursor-pointer">
@@ -82,10 +82,12 @@ const HowItWorks = () => {
                     </div>
                     {/* Step number */}
                     <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                      <span className="text-blue-400 text-sm font-medium">{index + 1}</span>
+                      <span className="text-blue-400 text-sm font-medium">
+                        {index + 1}
+                      </span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <h3 className="text-xl font-medium text-white mb-3 group-hover:text-blue-300 transition-colors duration-500">
                       {step.title}
@@ -115,14 +117,18 @@ const HowItWorks = () => {
                 <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
                 <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
               </div>
-              <span className="ml-3 text-sm text-gray-400">tracking-script.js</span>
+              <span className="ml-3 text-sm text-gray-400">
+                tracking-script.js
+              </span>
             </div>
             <div className="p-6 text-sm font-mono text-gray-300 overflow-x-auto">
               <pre className="whitespace-pre">
                 <span className="text-blue-400">{"<script "}</span>
                 <span className="text-blue-300">src</span>
                 <span className="text-blue-400">{"="}</span>
-                <span className="text-green-400">&quot;https://websight.io/tracker.js&quot;</span> 
+                <span className="text-green-400">
+                  &quot;https://websight-ecru.vercel.app/tracker.js&quot;
+                </span>
                 <span className="text-blue-300">{" data-key"}</span>
                 <span className="text-blue-400">{"="}</span>
                 <span className="text-green-400">&quot;YOUR_SITE_ID&quot;</span>

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { corsHeaders } from "@/utils/cors";
 import { UAParser } from "ua-parser-js";
 
-// Custom error types for better error handling
+
 class DatabaseError extends Error {
     constructor(message: string, public readonly code: string) {
         super(message);
