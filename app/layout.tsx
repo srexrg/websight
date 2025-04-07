@@ -111,7 +111,7 @@ export default function RootLayout({
       <Script src="https://websight.srexrg.me/tracker.js" data-site="websight.srexrg.me"/>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${jakarta.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${jakarta.variable} antialiased bg-black`}
       >
         {children}
         <Analytics />

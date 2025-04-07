@@ -94,32 +94,32 @@ export default async function WebsiteDetailPage({ params, searchParams }: PagePr
 
   return (
     <div className="min-h-screen bg-black">
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#7c3aed15,transparent)]" />
-        <div className="absolute top-1/4 left-20 w-64 h-64 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 rounded-full filter blur-3xl" />
-        <div className="absolute bottom-1/3 right-20 w-72 h-72 bg-gradient-to-br from-indigo-600/10 to-blue-600/10 rounded-full filter blur-3xl" />
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#7c3aed15,transparent)] sm:bg-[radial-gradient(circle_1000px_at_50%_200px,#7c3aed15,transparent)]" />
+        <div className="absolute top-1/4 left-10 sm:left-20 w-40 h-40 sm:w-64 sm:h-64 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 rounded-full filter blur-3xl" />
+        <div className="absolute bottom-1/3 right-10 sm:right-20 w-40 h-40 sm:w-72 sm:h-72 bg-gradient-to-br from-indigo-600/10 to-blue-600/10 rounded-full filter blur-3xl" />
       </div>
 
       <Header user={user} />
 
-      <main className="relative z-10 py-8">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+      <main className="relative z-10 py-6 sm:py-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
             <div>
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-1 sm:mb-2">
                 <Link 
                   href="/dashboard" 
-                  className="text-gray-400 hover:text-white transition-colors font-jakarta"
+                  className="text-xs sm:text-sm text-gray-400 hover:text-white transition-colors font-jakarta"
                 >
                   Domains
                 </Link>
                 <span className="text-gray-600">/</span>
-                <span className="text-white font-jakarta">{domainData.domain}</span>
+                <span className="text-xs sm:text-sm text-white font-jakarta truncate max-w-[150px] sm:max-w-none">{domainData.domain}</span>
               </div>
-              <h1 className="text-2xl font-oswald text-white tracking-tight">Analytics Overview</h1>
+              <h1 className="text-xl sm:text-2xl font-oswald text-white tracking-tight">Analytics Overview</h1>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 sm:mt-0">
               <TrackingScript domain={domainData.domain} />
               <ExportButton
                 domain={domainData.domain}
@@ -136,7 +136,7 @@ export default async function WebsiteDetailPage({ params, searchParams }: PagePr
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <AnalyticsClient
               domain={domainData.domain}
               initialPageViews={analytics.pageViews}

@@ -250,16 +250,16 @@ export default function DomainManager({
       transition={{ duration: 0.5 }}
     >
       <Card className="w-full backdrop-blur-xl bg-zinc-900/40 border-zinc-800 shadow-2xl">
-        <CardHeader>
-          <CardTitle className="text-2xl text-white font-oswald">
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-xl sm:text-2xl text-white font-oswald">
             Your Domains
           </CardTitle>
-          <CardDescription className="text-gray-400 font-jakarta">
+          <CardDescription className="text-sm sm:text-base text-gray-400 font-jakarta">
             Add your website domains to start tracking analytics data
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={addDomain} className="flex gap-3 mb-8">
+        <CardContent className="p-4 sm:p-6">
+          <form onSubmit={addDomain} className="flex flex-col sm:flex-row gap-3 mb-6 sm:mb-8">
             <div className="flex-1">
               <Input
                 placeholder="Enter your domain (e.g., example.com)"
@@ -269,12 +269,12 @@ export default function DomainManager({
               />
               {error && (
                 <motion.div
-                  className="flex items-start gap-1.5 text-red-400 text-sm mt-2"
+                  className="flex items-start gap-1.5 text-red-400 text-xs sm:text-sm mt-2"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <AlertCircleIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <AlertCircleIcon className="h-3 w-3 sm:h-4 sm:w-4 mt-0.5 flex-shrink-0" />
                   <p className="font-jakarta">{error}</p>
                 </motion.div>
               )}
@@ -288,30 +288,30 @@ export default function DomainManager({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300"
+              className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300 mt-2 sm:mt-0"
             >
-              <PlusIcon className="h-4 w-4 mr-2" />
-              <p className="font-jakarta">Add Domain</p>
+              <PlusIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <p className="font-jakarta text-sm sm:text-base">Add Domain</p>
             </Button>
           </form>
 
           {domains.length === 0 ? (
             <motion.div
-              className="text-center py-16 text-gray-400"
+              className="text-center py-8 sm:py-16 text-gray-400"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <GlobeIcon className="mx-auto h-12 w-12 mb-4 opacity-50" />
-              <p className="text-lg mb-2">
+              <GlobeIcon className="mx-auto h-8 w-8 sm:h-12 sm:w-12 mb-3 sm:mb-4 opacity-50" />
+              <p className="text-base sm:text-lg mb-1 sm:mb-2">
                 You haven&apos;t added any domains yet.
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500">
                 Add your first domain above to get started.
               </p>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {domains.map((domain, index) => (
                 <motion.div
                   key={domain.id}
@@ -321,25 +321,25 @@ export default function DomainManager({
                 >
                   <Card className="group relative overflow-hidden transition-all border-zinc-800 bg-zinc-900/40 hover:bg-zinc-900/60 hover:border-blue-500/50">
                     <div
-                      className="p-5 cursor-pointer"
+                      className="p-3 sm:p-5 cursor-pointer"
                       onClick={() => handleDomainClick(domain.domain)}
                     >
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2.5 rounded-xl bg-blue-600/10 text-blue-500">
-                          <BarChart3 className="h-5 w-5" />
+                      <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        <div className="p-1.5 sm:p-2.5 rounded-xl bg-blue-600/10 text-blue-500">
+                          <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5" />
                         </div>
-                        <h3 className="font-medium text-lg text-white group-hover:text-blue-400 transition-colors font-oswald">
+                        <h3 className="font-medium text-base sm:text-lg text-white group-hover:text-blue-400 transition-colors font-oswald">
                           {domain.domain}
                         </h3>
                       </div>
 
-                      <div className="text-sm text-gray-500 mb-4 font-jakarta">
+                      <div className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4 font-jakarta">
                         Added on {formatDate(domain.created_at)}
                       </div>
 
-                      <div className="flex items-center text-blue-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity font-oswald">
+                      <div className="flex items-center text-blue-400 text-xs sm:text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity font-oswald">
                         View analytics
-                        <ArrowRightIcon className="h-3.5 w-3.5 ml-1" />
+                        <ArrowRightIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5 ml-1" />
                       </div>
                     </div>
 
@@ -350,10 +350,10 @@ export default function DomainManager({
                         e.stopPropagation();
                         removeDomain(domain.id);
                       }}
-                      className="absolute top-3 right-3 h-8 w-8 p-0 rounded-lg opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                      className="absolute top-2 right-2 sm:top-3 sm:right-3 h-6 w-6 sm:h-8 sm:w-8 p-0 rounded-lg opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
                       title="Remove domain"
                     >
-                      <TrashIcon className="h-4 w-4" />
+                      <TrashIcon className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                   </Card>
                 </motion.div>
@@ -361,29 +361,29 @@ export default function DomainManager({
             </div>
           )}
         </CardContent>
-        <CardFooter className="text-sm text-gray-400 border-t border-zinc-800 pt-6">
+        <CardFooter className="text-xs sm:text-sm text-gray-400 border-t border-zinc-800 pt-4 sm:pt-6 p-4 sm:p-6">
           <div className="w-full">
-            <p className="mb-3 font-jakarta">
+            <p className="mb-2 sm:mb-3 font-jakarta">
               Need help setting up tracking on your website?
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
               <TrackingScript />
               <Button
                 variant="outline"
-                className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-blue-500/50 transition-all duration-300"
+                className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-blue-500/50 transition-all duration-300 w-full sm:w-auto"
                 onClick={() => router.push("/settings")}
               >
-                <BarChart3 className="h-4 w-4 mr-2" />
-                <p className="font-jakarta">Setup Custom Events</p>
+                <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <p className="font-jakarta text-xs sm:text-sm">Setup Custom Events</p>
               </Button>
               <Button
                 variant="ghost"
-                className="text-gray-400 hover:text-blue-400 hover:bg-blue-400/10"
+                className="text-gray-400 hover:text-blue-400 hover:bg-blue-400/10 w-full sm:w-auto"
                 asChild
               >
                 <a href="/docs" target="_blank" rel="noopener noreferrer">
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  <p className="font-jakarta">View documentation</p>
+                  <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <p className="font-jakarta text-xs sm:text-sm">View documentation</p>
                 </a>
               </Button>
             </div>
