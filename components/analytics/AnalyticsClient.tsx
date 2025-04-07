@@ -206,13 +206,13 @@ export function AnalyticsClient({
           className="w-full"
           onValueChange={setActiveTab}
         >
-          <div className="relative mb-6">
-            <TabsList className="bg-zinc-900/40 border border-zinc-800 p-1 rounded-lg w-full flex justify-between font-jakarta">
+          <div className="relative mb-4 sm:mb-6">
+            <TabsList className="bg-zinc-900/40 border border-zinc-800 p-0.5 sm:p-1 rounded-lg w-full flex justify-between font-jakarta">
               <TabsTrigger
                 value="overview"
-                className="flex-1 cursor-pointer data-[state=active]:bg-blue-600/20 data-[state=active]:text-white text-zinc-400 hover:text-white transition-all duration-300 rounded-md py-2 px-4 flex items-center justify-center gap-2 relative"
+                className="flex-1 cursor-pointer data-[state=active]:bg-blue-600/20 data-[state=active]:text-white text-zinc-400 hover:text-white transition-all duration-300 rounded-md py-1.5 sm:py-2 px-2 sm:px-4 flex items-center justify-center gap-1 sm:gap-2 relative text-xs sm:text-sm"
               >
-                <BarChart3 className="h-4 w-4" />
+                <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Overview</span>
                 {activeTab === "overview" && (
                   <motion.div
@@ -224,10 +224,11 @@ export function AnalyticsClient({
               </TabsTrigger>
               <TabsTrigger
                 value="pages"
-                className="flex-1 cursor-pointer data-[state=active]:bg-blue-600/20 data-[state=active]:text-white text-zinc-400 hover:text-white transition-all duration-300 rounded-md py-2 px-4 flex items-center justify-center gap-2 relative"
+                className="flex-1 cursor-pointer data-[state=active]:bg-blue-600/20 data-[state=active]:text-white text-zinc-400 hover:text-white transition-all duration-300 rounded-md py-1.5 sm:py-2 px-2 sm:px-4 flex items-center justify-center gap-1 sm:gap-2 relative text-xs sm:text-sm"
               >
-                <FileText className="h-4 w-4" />
-                <span>Pages & Sources</span>
+                <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">Pages & Sources</span>
+                <span className="xs:hidden">Pages</span>
                 {activeTab === "pages" && (
                   <motion.div
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full"
@@ -238,9 +239,9 @@ export function AnalyticsClient({
               </TabsTrigger>
               <TabsTrigger
                 value="events"
-                className="flex-1 cursor-pointer data-[state=active]:bg-blue-600/20 data-[state=active]:text-white text-zinc-400 hover:text-white transition-all duration-300 rounded-md py-2 px-4 flex items-center justify-center gap-2 relative"
+                className="flex-1 cursor-pointer data-[state=active]:bg-blue-600/20 data-[state=active]:text-white text-zinc-400 hover:text-white transition-all duration-300 rounded-md py-1.5 sm:py-2 px-2 sm:px-4 flex items-center justify-center gap-1 sm:gap-2 relative text-xs sm:text-sm"
               >
-                <Bell className="h-4 w-4" />
+                <Bell className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Events</span>
                 {activeTab === "events" && (
                   <motion.div
