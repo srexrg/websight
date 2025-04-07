@@ -24,29 +24,33 @@ interface PageAnalyticsProps {
 }
 
 export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisits }: PageAnalyticsProps) {
-
-   const allPageVisits = groupedPageViews.map((pv) => pv.visits);
-   const allSourceVisits = groupedPageSources.map((ps) => ps.visits);
+  const allPageVisits = groupedPageViews.map((pv) => pv.visits);
+  const allSourceVisits = groupedPageSources.map((ps) => ps.visits);
 
   return (
-    <div className="grid gap-6">
-      <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-        <CardHeader>
-          <CardTitle className="text-white font-oswald">Most Viewed Pages</CardTitle>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <Card className="bg-zinc-900/40 border-zinc-800 hover:border-blue-500/50 transition-all duration-300">
+        <CardHeader className="border-b border-zinc-800">
+          <CardTitle className="text-lg font-jakarta text-white">Top Pages</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="h-[300px] mb-6">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={groupedPageViews}>
-                <XAxis 
-                  dataKey="page" 
-                  stroke="#525252" 
+              <BarChart
+                data={groupedPageViews.map(({ page, visits }) => ({
+                  page,
+                  visits,
+                }))}
+                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+              >
+                <XAxis
+                  dataKey="page"
+                  stroke="#525252"
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(value) => `/${value}`}
                 />
-                <YAxis 
+                <YAxis
                   stroke="#525252"
                   fontSize={12}
                   tickLine={false}
@@ -57,13 +61,13 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       const data = payload[0];
-                        const percentage = calculateNormalizedPercentage(
-                          data.value as number,
-                          totalVisits,
-                          allPageVisits
-                        );
+                      const percentage = calculateNormalizedPercentage(
+                        data.value as number,
+                        totalVisits,
+                        allPageVisits
+                      );
                       return (
-                        <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-2 shadow-md">
+                        <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3 shadow-xl">
                           <p className="text-[0.70rem] uppercase text-zinc-400">
                             /{data.payload.page}
                           </p>
@@ -87,17 +91,20 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="space-y-4">
+          
+          <div className="space-y-2">
             {groupedPageViews.map(({ page, visits }) => (
-              
-              <div key={page} className="flex items-center justify-between p-2 rounded-lg bg-zinc-900/40">
+              <div 
+                key={page} 
+                className="flex items-center justify-between p-3 rounded-lg bg-zinc-800/20 hover:bg-zinc-800/40 transition-colors"
+              >
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-white">/{page}</p>
+                  <p className="text-sm font-jakarta text-white">/{page}</p>
                   <p className="text-sm text-zinc-400">
                     {abbreviateNumber(visits)} {visits === 1 ? 'visit' : 'visits'}
                   </p>
                 </div>
-                <div className="font-mono text-sm text-zinc-400">
+                <div className="text-sm text-zinc-400">
                   {calculateNormalizedPercentage(visits, totalVisits, allPageVisits).toFixed(1)}%
                 </div>
               </div>
@@ -106,23 +113,28 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
         </CardContent>
       </Card>
 
-      <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-        <CardHeader>
-          <CardTitle className="text-white font-oswald ">Traffic Sources</CardTitle>
+      <Card className="bg-zinc-900/40 border-zinc-800 hover:border-blue-500/50 transition-all duration-300">
+        <CardHeader className="border-b border-zinc-800">
+          <CardTitle className="text-lg font-jakarta text-white">Top Sources</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="h-[300px] mb-6">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={groupedPageSources}>
-                <XAxis 
-                  dataKey="source" 
-                  stroke="#525252" 
+              <BarChart
+                data={groupedPageSources.map(({ source, visits }) => ({
+                  source: source || 'Direct',
+                  visits,
+                }))}
+                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+              >
+                <XAxis
+                  dataKey="source"
+                  stroke="#525252"
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(value) => value || 'Direct'}
                 />
-                <YAxis 
+                <YAxis
                   stroke="#525252"
                   fontSize={12}
                   tickLine={false}
@@ -139,14 +151,14 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
                         allSourceVisits
                       );
                       return (
-                        <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-2 shadow-md">
-                          <p className="text-[0.70rem] uppercase text-zinc-400 font-jakarta">
-                            {data.payload.source || 'Direct'}
+                        <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3 shadow-xl">
+                          <p className="text-[0.70rem] uppercase text-zinc-400">
+                            {data.payload.source}
                           </p>
-                          <p className="text-sm font-bold text-zinc-50 font-jakarta">
+                          <p className="text-sm font-bold text-zinc-50">
                             {abbreviateNumber(data.value as number)} visits
                           </p>
-                          <p className="text-xs text-zinc-400 font-jakarta">
+                          <p className="text-xs text-zinc-400">
                             {percentage.toFixed(1)}% of total
                           </p>
                         </div>
@@ -163,16 +175,20 @@ export function PageAnalytics({ groupedPageViews, groupedPageSources, totalVisit
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="space-y-4">
+          
+          <div className="space-y-2">
             {groupedPageSources.map(({ source, visits }) => (
-              <div key={source} className="flex items-center justify-between p-2 rounded-lg bg-zinc-900/40">
+              <div 
+                key={source} 
+                className="flex items-center justify-between p-3 rounded-lg bg-zinc-800/20 hover:bg-zinc-800/40 transition-colors"
+              >
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-white">{source || 'Direct'}</p>
+                  <p className="text-sm font-jakarta text-white">{source || 'Direct'}</p>
                   <p className="text-sm text-zinc-400">
                     {abbreviateNumber(visits)} {visits === 1 ? 'visit' : 'visits'}
                   </p>
                 </div>
-                <div className="font-mono text-sm text-zinc-400">
+                <div className="text-sm text-zinc-400">
                   {calculateNormalizedPercentage(visits, totalVisits, allSourceVisits).toFixed(1)}%
                 </div>
               </div>

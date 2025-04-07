@@ -13,6 +13,7 @@ import {
   PageView,
   Visit,
 } from "@/lib/types";
+
 function groupPageViews(pageViews: PageView[]): GroupedPageView[] {
   const groupedViews: Record<string, number> = {};
   pageViews.forEach(({ page }) => {
@@ -23,8 +24,9 @@ function groupPageViews(pageViews: PageView[]): GroupedPageView[] {
   });
   return Object.entries(groupedViews)
     .map(([page, visits]) => ({ page, visits }))
-    .sort((a, b) => a.visits - b.visits);
+    .sort((a, b) => b.visits - a.visits);
 }
+
 function groupPageSources(visits: Visit[]): GroupedSource[] {
   const groupedSources: Record<string, number> = {};
   visits.forEach(({ source }) => {
@@ -34,18 +36,22 @@ function groupPageSources(visits: Visit[]): GroupedSource[] {
   });
   return Object.entries(groupedSources)
     .map(([source, visits]) => ({ source, visits }))
-    .sort((a, b) => a.visits - b.visits);
+    .sort((a, b) => b.visits - a.visits);
 }
+
 export const metadata = {
   title: {
     template: "%s Analytics",
   },
 };
+
 export type paramsType = Promise<{ domain: string }>;
+
 interface PageProps {
   params: paramsType;
   searchParams: Promise<{ timeRange?: TimeRange }>;
 }
+
 export default async function WebsiteDetailPage({ params, searchParams }: PageProps) {
   const { domain } = await params;
   const { timeRange = 'last30days' } = await searchParams;
@@ -53,22 +59,27 @@ export default async function WebsiteDetailPage({ params, searchParams }: PagePr
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
   if (!user) {
     redirect("/auth");
   }
+
   const { data: domainData, error } = await supabase
     .from("domains")
     .select("*")
     .eq("domain", decodeURIComponent(domain))
     .eq("user_id", user.id)
     .single();
+
   if (error || !domainData) {
     console.error("Error fetching domain:", error);
     notFound();
   }
+
   const analytics = await fetchEnhancedAnalytics(supabase, domain, timeRange);
   const groupedPageViews = groupPageViews(analytics.pageViews);
   const groupedPageSources = groupPageSources(analytics.visits);
+
   const totalStats = analytics.dailyStats.reduce(
     (
       acc: { visits: number; unique_visitors: number; page_views: number },
@@ -80,28 +91,34 @@ export default async function WebsiteDetailPage({ params, searchParams }: PagePr
     }),
     { visits: 0, unique_visitors: 0, page_views: 0 }
   );
-  return (
-    <div className="flex flex-col min-h-screen bg-black">
 
+  return (
+    <div className="min-h-screen bg-black">
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#7c3aed15,transparent)]" />
         <div className="absolute top-1/4 left-20 w-64 h-64 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 rounded-full filter blur-3xl" />
         <div className="absolute bottom-1/3 right-20 w-72 h-72 bg-gradient-to-br from-indigo-600/10 to-blue-600/10 rounded-full filter blur-3xl" />
       </div>
+
       <Header user={user} />
-      <main className="flex-1 py-8 relative z-10">
+
+      <main className="relative z-10 py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors font-jakarta">
+                <Link 
+                  href="/dashboard" 
+                  className="text-gray-400 hover:text-white transition-colors font-jakarta"
+                >
                   Domains
                 </Link>
                 <span className="text-gray-600">/</span>
-                <span className="text-white font-medium font-oswald">{domainData.domain}</span>
+                <span className="text-white font-jakarta">{domainData.domain}</span>
               </div>
-              <h1 className="text-2xl font-bold text-white font-oswald ">Analytics Overview</h1>
+              <h1 className="text-2xl font-oswald text-white tracking-tight">Analytics Overview</h1>
             </div>
+
             <div className="flex items-center gap-3">
               <TrackingScript domain={domainData.domain} />
               <ExportButton
@@ -118,6 +135,7 @@ export default async function WebsiteDetailPage({ params, searchParams }: PagePr
               />
             </div>
           </div>
+
           <div className="space-y-6">
             <AnalyticsClient
               domain={domainData.domain}

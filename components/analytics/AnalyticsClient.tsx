@@ -64,22 +64,22 @@ function AnalyticsSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
       <div className="flex justify-end">
-        <div className="h-10 w-40 bg-zinc-800 rounded-md"></div>
+        <div className="h-10 w-40 bg-zinc-800/50 rounded-lg"></div>
       </div>
       
-      <div className="bg-zinc-900/40 border border-zinc-800 p-1 rounded-md h-10"></div>
+      <div className="bg-zinc-800/50 p-1 rounded-lg h-10"></div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-zinc-900/40 border border-zinc-800 rounded-lg p-6 h-32"></div>
+          <div key={i} className="bg-zinc-800/50 rounded-lg p-6 h-32"></div>
         ))}
       </div>
       
-      <div className="bg-zinc-900/40 border border-zinc-800 rounded-lg p-6 h-80"></div>
+      <div className="bg-zinc-800/50 rounded-lg p-6 h-80"></div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[1, 2].map((i) => (
-          <div key={i} className="bg-zinc-900/40 border border-zinc-800 rounded-lg p-6 h-64"></div>
+          <div key={i} className="bg-zinc-800/50 rounded-lg p-6 h-64"></div>
         ))}
       </div>
     </div>
@@ -129,24 +129,10 @@ export function AnalyticsClient({
         transition={{ duration: 0.5 }}
       >
         <div className="w-16 h-16 mb-6 rounded-2xl bg-blue-600/10 flex items-center justify-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-blue-500"
-          >
-            <path d="M3 3v18h18" />
-            <path d="m19 9-5 5-4-4-3 3" />
-          </svg>
+          <BarChart3 className="w-8 h-8 text-blue-500" />
         </div>
-        <h3 className="text-xl text-white mb-2 font-oswald">No analytics data yet</h3>
-        <p className="max-w-md text-gray-400 font-jakarta">
+        <h3 className="text-xl text-white mb-2 font-jakarta">No analytics data yet</h3>
+        <p className="max-w-md text-gray-400">
           We&apos;re waiting for the first page view. Make sure you&apos;ve added the tracking
           script to your website.
         </p>
@@ -166,7 +152,7 @@ export function AnalyticsClient({
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className="bg-zinc-900/80 hover:bg-zinc-800/90 text-gray-300 hover:text-white border-zinc-700 hover:border-blue-500/50 transition-all duration-300"
+              className="bg-zinc-900/80 hover:bg-zinc-800/90  text-gray-300 hover:text-white border-zinc-800 hover:border-blue-500/50 transition-all duration-300"
               disabled={isLoading}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
@@ -267,7 +253,7 @@ export function AnalyticsClient({
             </TabsList>
           </div>
 
-          <TabsContent value="overview" className="mt-6">
+          <TabsContent value="overview" className="mt-6 space-y-6">
             <AnalyticsOverview
               pageViews={totalPageViews}
               totalVisits={totalVisits}
@@ -279,7 +265,7 @@ export function AnalyticsClient({
             />
           </TabsContent>
 
-          <TabsContent value="pages" className="mt-6">
+          <TabsContent value="pages" className="mt-6 space-y-6">
             <PageAnalytics
               groupedPageViews={initialGroupedPageViews}
               groupedPageSources={initialGroupedPageSources}
@@ -287,7 +273,7 @@ export function AnalyticsClient({
             />
           </TabsContent>
 
-          <TabsContent value="events" className="mt-6">
+          <TabsContent value="events" className="mt-6 space-y-6">
             <CustomEventsAnalytics events={events} />
           </TabsContent>
         </Tabs>

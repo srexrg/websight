@@ -3,7 +3,7 @@
 import { Card } from "@/components/ui/card";
 import { WorldMap } from "./WorldMap";
 import { motion } from "framer-motion";
-import { Users, Globe2, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Users, Globe2, ArrowUpRight, ArrowDownRight, Monitor, Activity } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 import { calculateGrowth, abbreviateNumber, calculateNormalizedPercentage } from "@/lib/utils/analytics";
 
@@ -48,12 +48,8 @@ export function AnalyticsOverview({
   osStats = [],
   dailyStats = []
 }: AnalyticsOverviewProps) {
-
-  // Sort device stats in ascending order
-  const sortedDeviceStats = [...deviceStats].sort((a, b) => a.visits - b.visits);
-  
-  // Sort OS stats in ascending order
-  const sortedOsStats = [...osStats].sort((a, b) => a.visits - b.visits);
+  const sortedDeviceStats = [...deviceStats].sort((a, b) => b.visits - a.visits);
+  const sortedOsStats = [...osStats].sort((a, b) => b.visits - a.visits);
 
   const chartData = dailyStats.map(stat => ({
     name: new Date(stat.date).toISOString().split('T')[0].slice(5), 
@@ -79,13 +75,13 @@ export function AnalyticsOverview({
       transition={{ duration: 0.5 }}
     >
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card className="p-6 bg-zinc-900/40 border-zinc-800 hover:border-blue-500/50 transition-all duration-300">
           <div className="flex items-center justify-between mb-4">
             <div className="p-2 rounded-lg bg-blue-600/10">
-              <Users className="h-5 w-5 text-blue-500" />
+              <Activity className="h-5 w-5 text-blue-500" />
             </div>
-            {/* <div className="flex items-center gap-1 text-sm">
+            <div className="flex items-center gap-1 text-sm">
               <span
                 className={`flex items-center ${
                   growthRate >= 0 ? "text-emerald-500" : "text-red-500"
@@ -98,7 +94,7 @@ export function AnalyticsOverview({
                 )}
                 {Math.abs(growthRate).toFixed(1)}%
               </span>
-            </div> */}
+            </div>
           </div>
           <p className="text-sm text-gray-400 mb-1">Total Visits</p>
           <p className="text-2xl font-bold text-white">
@@ -106,10 +102,10 @@ export function AnalyticsOverview({
           </p>
         </Card>
 
-        <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
+        <Card className="p-6 bg-zinc-900/40 border-zinc-800 hover:border-blue-500/50 transition-all duration-300">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-2 rounded-lg bg-blue-600/10">
-              <Globe2 className="h-5 w-5 text-blue-500" />
+            <div className="p-2 rounded-lg bg-emerald-600/10">
+              <Globe2 className="h-5 w-5 text-emerald-500" />
             </div>
           </div>
           <p className="text-sm text-gray-400 mb-1">Page Views</p>
@@ -118,7 +114,7 @@ export function AnalyticsOverview({
           </p>
         </Card>
 
-        <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
+        <Card className="p-6 bg-zinc-900/40 border-zinc-800 hover:border-blue-500/50 transition-all duration-300">
           <div className="flex items-center justify-between mb-4">
             <div className="p-2 rounded-lg bg-emerald-600/10">
               <Users className="h-5 w-5 text-emerald-500" />
@@ -129,17 +125,15 @@ export function AnalyticsOverview({
             {abbreviateNumber(uniqueVisitors)}
           </p>
         </Card>
-
-
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-          <h3 className="text-lg font-semibold text-white mb-4 font-oswald">
+        <Card className="p-6 bg-zinc-900/40 border-zinc-800 hover:border-blue-500/50 transition-all duration-300">
+          <h3 className="text-lg font-jakarta text-white mb-4">
             Traffic Overview
           </h3>
-          <div className="h-[300px] mt-4">
+          <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
@@ -176,7 +170,7 @@ export function AnalyticsOverview({
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-2 shadow-md">
+                        <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3 shadow-xl">
                           <div className="grid grid-cols-2 gap-2">
                             {payload.map((pld) => (
                               <div key={pld.dataKey}>
@@ -216,17 +210,18 @@ export function AnalyticsOverview({
           </div>
         </Card>
 
-        <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-          <h3 className="text-lg font-semibold text-white mb-4 font-oswald">
+        <Card className="p-6 bg-zinc-900/40 border-zinc-800 hover:border-blue-500/50 transition-all duration-300">
+          <h3 className="text-lg font-jakarta text-white mb-4">
             Device Distribution
           </h3>
-          <div className="h-[300px] mt-4">
+          <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={sortedDeviceStats.map((stat) => ({
                   name: stat.deviceType,
                   value: stat.visits,
                 }))}
+                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
               >
                 <XAxis
                   dataKey="name"
@@ -247,7 +242,7 @@ export function AnalyticsOverview({
                     if (active && payload && payload.length) {
                       const data = payload[0];
                       return (
-                        <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-2 shadow-md">
+                        <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3 shadow-xl">
                           <p className="text-[0.70rem] uppercase text-zinc-400">
                             {data.payload.name}
                           </p>
@@ -269,9 +264,9 @@ export function AnalyticsOverview({
 
       {/* Detailed Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
+        <Card className="bg-zinc-900/40 border-zinc-800 hover:border-blue-500/50 transition-all duration-300">
           <div className="p-6 border-b border-zinc-800">
-            <h3 className="text-lg font-semibold text-white font-oswald">Device Types</h3>
+            <h3 className="text-lg font-jakarta text-white">Device Types</h3>
           </div>
           <div className="divide-y divide-zinc-800">
             {sortedDeviceStats.map((stat) => {
@@ -283,17 +278,17 @@ export function AnalyticsOverview({
               return (
                 <div
                   key={stat.deviceType}
-                  className="p-4 flex justify-between items-center"
+                  className="p-4 flex justify-between items-center hover:bg-zinc-800/50 transition-colors"
                 >
                   <div>
-                    <p className="font-medium text-white capitalize font-oswald">
+                    <p className="font-jakarta text-white capitalize">
                       {stat.deviceType}
                     </p>
-                    <p className="text-sm text-gray-400 font-jakarta">
+                    <p className="text-sm text-gray-400">
                       {stat.visits} visits
                     </p>
                   </div>
-                  <p className="text-sm  text-gray-400 font-jakarta">
+                  <p className="text-sm text-gray-400">
                     {percentage.toFixed(1)}%
                   </p>
                 </div>
@@ -302,9 +297,9 @@ export function AnalyticsOverview({
           </div>
         </Card>
 
-        <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
+        <Card className="bg-zinc-900/40 border-zinc-800 hover:border-blue-500/50 transition-all duration-300">
           <div className="p-6 border-b border-zinc-800">
-            <h3 className="text-lg font-semibold text-white font-oswald">
+            <h3 className="text-lg font-jakarta text-white">
               Operating Systems
             </h3>
           </div>
@@ -318,15 +313,15 @@ export function AnalyticsOverview({
               return (
                 <div
                   key={stat.os}
-                  className="p-4 flex justify-between items-center"
+                  className="p-4 flex justify-between items-center hover:bg-zinc-800/50 transition-colors"
                 >
                   <div>
-                    <p className="font-medium text-white font-oswald">{stat.os}</p>
-                    <p className="text-sm text-gray-400 font-jakarta">
+                    <p className="font-jakarta text-white">{stat.os}</p>
+                    <p className="text-sm text-gray-400">
                       {stat.visits} visits
                     </p>
                   </div>
-                  <p className="text-sm font-mono text-gray-400">
+                  <p className="text-sm text-gray-400">
                     {percentage.toFixed(1)}%
                   </p>
                 </div>
@@ -337,8 +332,8 @@ export function AnalyticsOverview({
       </div>
 
       {/* World Map */}
-      <Card className="p-6 bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-        <h3 className="text-lg font-semibold text-white mb-4 font-oswald">
+      <Card className="p-6 bg-zinc-900/40 border-zinc-800 hover:border-blue-500/50 transition-all duration-300">
+        <h3 className="text-lg font-jakarta text-white mb-4">
           Geographic Distribution
         </h3>
         <WorldMap data={countryStats} className="h-[400px]" />
