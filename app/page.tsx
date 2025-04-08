@@ -15,7 +15,7 @@ export default function Home() {
         <Features />
         <HowItWorks />
         <ComparisonSection />
-        {/* <FAQSection/> */}
+        <FAQSection/>
         <Cta />
       </main>
       <Footer />
