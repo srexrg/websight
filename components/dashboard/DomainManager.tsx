@@ -291,7 +291,7 @@ export default function DomainManager({
               className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300 mt-2 sm:mt-0"
             >
               <PlusIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              <p className="font-jakarta text-sm sm:text-base">Add Domain</p>
+              <p className="font-jakarta text-sm sm:text-base cursor-pointer">Add Domain</p>
             </Button>
           </form>
 
