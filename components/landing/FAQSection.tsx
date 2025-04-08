@@ -12,29 +12,24 @@ import {
 const FAQSection = () => {
   const faqs = [
     {
-      question: "What types of photos work best with the AI ?",
+      question: "Is your analytics platform free to use?",
       answer:
-        "Our AI works best with clear, well-lit photos of faces. We recommend uploading 10-15 diverse photos including selfies, professional shots, and casual photos from different angles - including full body shots, close-up face shots, profile views, and 3/4 angles.",
+        "Yes! Our platform is completely free with no hidden costs or paid plans. You get access to all features including custom event tracking, real-time analytics, and advanced metrics without any limitations.",
     },
     {
-      question: "How long does it take to process photos ?",
+      question: "How does your platform compare to Vercel Analytics?",
       answer:
-        "It takes around 20-30 minutes to train the AI Models and it will only take less than 15 seconds to generate the AI Photos.",
+        "Unlike Vercel Analytics which requires paid plans for features like custom events and advanced metrics, our platform offers all features completely free. We provide comprehensive analytics including custom event tracking, real-time insights, and detailed user behavior analysis at no cost.",
     },
     {
-      question: "Can I use the generated images commercially ?",
+      question: "How easy is it to set up the analytics platform?",
       answer:
-        "Yes, with our Pro and Premium plans, you receive full commercial usage rights for all AI-generated images",
+        "Setup is incredibly simple - just add our lightweight tracking script to your website. We provide step-by-step guides, code snippets, and integration support for all major frameworks including Next.js, React, and more. Most users can get started in under 5 minutes.",
     },
     {
-      question: "What happens to my original photos ?",
+      question: "What operating systems and platforms do you support?",
       answer:
-        "Your privacy is our priority. The original photos are processed securely and automatically deleted after processing. We never share or use your photos for any other purpose.",
-    },
-    {
-      question: "What types of models are available ?",
-      answer:
-        "We give you Free access to multiple models like Flux Models and NVIDIA Sana.",
+        "Our platform is platform-agnostic and works with any operating system. Whether you're using Windows, macOS, Linux, or deploying to any cloud provider, our analytics solution will work seamlessly.",
     },
   ];
 
