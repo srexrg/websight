@@ -49,16 +49,15 @@ const FAQSection = () => {
             <Sparkles className="mr-1 h-3 w-3" />
             FAQ
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-title mb-6">
+          <h2 className="text-4xl md:text-5xl font-oswald mb-6">
             Got
-            <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent px-3">
+            <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text font-oswald text-transparent px-3">
               Questions
             </span>
             ?
           </h2>
-          <p className="text-gray-400 text-lg font-text">
-            Find answers to common questions about our AI photo transformation
-            service
+          <p className="text-gray-400 text-lg font-jakarta">
+            Find answers to common questions about our analytics platform
           </p>
         </motion.div>
 
@@ -83,12 +82,12 @@ const FAQSection = () => {
                   <AccordionTrigger className="hover:no-underline py-6 text-left cursor-pointer">
                     <div className="flex items-center gap-2">
                       {/* <Plus className="h-4 w-4 text-blue-400 shrink-0" /> */}
-                      <span className="text-lg font-medium text-gray-200 group-hover:text-white transition-colors font-title">
+                      <span className="text-lg font-medium text-gray-200 group-hover:text-white transition-colors font-jakarta">
                         {faq.question}
                       </span>
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="text-gray-400 text-lg pb-8 font-text">
+                  <AccordionContent className="text-gray-400 text-lg pb-8 font-jakarta">
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>
