@@ -67,11 +67,11 @@ const Features = () => {
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white font-oswald">
             Website Analytics Reimagined
-            <span className="block mt-3 text-gray-400 text-xl md:text-2xl font-normal font-jakarta">
-              Powerful Insights Made Simple
-            </span>
           </h2>
-          <p className="text-gray-400 text-lg md:text-xl font-light max-w-2xl mx-auto font-jakarta">
+          <p className="text-xl md:text-2xl text-blue-300/90 mb-6 font-jakarta">
+            Powerful Insights Made Simple
+          </p>
+          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto font-jakarta">
             Transform your website data into actionable insights with our
             comprehensive analytics suite
           </p>
