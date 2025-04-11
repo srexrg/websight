@@ -48,7 +48,7 @@ const HowItWorks = () => {
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white font-oswald">
             How It Works
-            <span className="block mt-3 text-gray-400 text-xl md:text-2xl font-normal font-jakarta">
+            <span className="block mt-3 text-blue-300/90 text-xl md:text-2xl font-normal font-jakarta">
               Start Tracking in Minutes
             </span>
           </h2>

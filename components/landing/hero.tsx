@@ -54,9 +54,9 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
           >
-            WebSight makes it easy to collect, analyze, and understand your
-            website data — so you can focus on{" "}
-            <span className="text-blue-400">growth</span>
+            Powerful analytics that just works. Get instant insights into your
+            website's performance without {" "}
+            <span className="text-blue-400 font-bold">Complexity</span>
           </motion.p>
 
           {/* CTA Buttons */}
