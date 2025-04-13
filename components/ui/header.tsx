@@ -53,7 +53,7 @@ export function Header({ user }: HeaderProps) {
                         <div className="flex items-center gap-3">
                             <span className="text-sm text-gray-400">{user?.email}</span>
                             <div className="h-8 w-8 rounded-full bg-blue-600/10 flex items-center justify-center">
-                                <span className="text-sm font-medium text-blue-500 font-jakarta">
+                                <span className="text-sm font-medium text-blue-400 font-jakarta">
                                     {user?.email?.charAt(0).toUpperCase() || 'U'}
                                 </span>
                             </div>
