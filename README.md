@@ -1,6 +1,6 @@
 # Websight - Modern Web Analytics Dashboard
 
-Websight is a powerful, open-source web analytics dashboard built with Next.js 15 and React 19. It provides real-time insights into your website's performance with a clean, intuitive interface.
+WebSight is a simple, open-source alternative to Vercel Analytics, built for developers who want full control over their website metrics. It tracks essential stats, respects user privacy, and lets you own your data—without the bloat.
 
 
 
