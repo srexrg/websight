@@ -31,12 +31,10 @@ const Cta = () => {
               analytics solution. It's free, forever.
             </p>
             <div className="flex justify-center">
-              {/* Use Button component */}
               <Link href="/auth" passHref>
                 <Button
-                  asChild
                   size="lg" 
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg hover:shadow-blue-500/50 focus-visible:ring-blue-400 px-8 py-3 rounded-lg text-lg font-jakarta tracking-wide transition-all duration-300 transform hover:scale-105"
+                  className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold shadow-lg hover:shadow-blue-500/50 focus-visible:ring-blue-400 px-8 py-3 rounded-lg text-lg font-jakarta tracking-wide transition-all duration-300 transform hover:scale-105"
                 >
                   Get Started Free
                 </Button>
