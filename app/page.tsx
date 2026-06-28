@@ -1,4 +1,5 @@
 import Hero from "@/components/landing/hero";
+import TrustBar from "@/components/landing/TrustBar";
 import Features from "@/components/landing/Features";
 import Footer from "@/components/landing/Footer";
 import Navbar from "@/components/landing/Navbar";
@@ -12,6 +13,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <TrustBar />
         <Features />
         <HowItWorks />
         <ComparisonSection />
