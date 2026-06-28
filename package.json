@@ -31,8 +31,8 @@
     "jspdf-autotable": "^3.8.4",
     "lucide-react": "^0.483.0",
     "next": "15.2.8",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "react-icons": "^5.5.0",
     "react-simple-maps": "^3.0.0",
     "react-syntax-highlighter": "^15.6.1",
@@ -43,15 +43,15 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.3.1",
     "@types/jspdf": "^1.3.3",
     "@types/node": "^20",
-    "@types/react": "19.0.2",
-    "@types/react-dom": "19.0.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "tailwindcss": "^4.3.1",
+    "typescript": "^6.0.3"
   },
   "overrides": {
     "react-simple-maps": {
