@@ -55,7 +55,7 @@ const Hero = () => {
             transition={{ duration: 0.5, delay: 0.15 }}
           >
             Powerful analytics that just works. Get instant insights into your
-            website's performance without {" "}
+            website&apos;s performance without{" "}
             <span className="text-blue-400 font-bold">Complexity</span>
           </motion.p>
 

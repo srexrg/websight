@@ -7,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useMemo, useEffect, useState } from "react"
+import { useMemo, useState } from "react"
 
 interface CountryStats {
   country: string;
@@ -29,11 +29,7 @@ interface MarkerData {
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
 
 export function WorldMap({ data }: WorldMapProps) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const [isMounted] = useState(() => typeof window !== 'undefined');
 
   // Memoize the max visits calculation to ensure consistency
   const maxVisits = useMemo(() => 

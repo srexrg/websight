@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Globe } from "lucide-react";
 import { motion } from "framer-motion";
-import { FaTwitter,FaInstagram,FaLinkedin } from "react-icons/fa";
+import { FaTwitter, FaLinkedin } from "react-icons/fa";
 
 const Footer = () => {
   return (
