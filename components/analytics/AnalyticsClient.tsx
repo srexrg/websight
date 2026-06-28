@@ -106,6 +106,7 @@ export function AnalyticsClient({
 
   // Reset loading state when data changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- prop-sync loading flag; addressed in the dashboard rewrite (revamp sub-project #3)
     setIsLoading(false);
   }, [initialPageViews, initialDailyStats, initialGroupedPageViews, initialGroupedPageSources]);
 
