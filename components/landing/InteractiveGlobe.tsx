@@ -9,15 +9,15 @@ const World = dynamic(
 
 const globeConfig = {
   pointSize: 2,
-  globeColor: "#0B3D2C",
+  globeColor: "#0A241B",
   showAtmosphere: true,
   atmosphereColor: "#5FD3A6",
-  atmosphereAltitude: 0.12,
-  emissive: "#0B3D2C",
-  emissiveIntensity: 0.12,
+  atmosphereAltitude: 0.16,
+  emissive: "#0A241B",
+  emissiveIntensity: 0.1,
   shininess: 0.9,
-  polygonColor: "rgba(14,156,110,0.7)",
-  ambientLight: "#5FD3A6",
+  polygonColor: "rgba(125,230,185,0.62)",
+  ambientLight: "#6FE0AE",
   directionalLeftLight: "#ffffff",
   directionalTopLight: "#ffffff",
   pointLight: "#ffffff",
@@ -30,7 +30,7 @@ const globeConfig = {
   autoRotateSpeed: 0.5,
 };
 
-const colors = ["#0E9C6E", "#34D399", "#5FD3A6"];
+const colors = ["#5FD3A6", "#ffffff", "#34D399"];
 
 const sampleArcs = [
   { order: 1, startLat: -19.885592, startLng: -43.951191, endLat: -15.595412, endLng: -35.294643, arcAlt: 0.1, color: colors[Math.floor(Math.random() * colors.length)] },
@@ -70,8 +70,17 @@ const sampleArcs = [
 
 export default function InteractiveGlobe() {
   return (
-    <div className="relative w-full h-[400px] md:h-[460px]">
-      <World data={sampleArcs} globeConfig={globeConfig} />
+    <div className="relative w-full h-[400px] md:h-[480px]">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 47%, #07180F 0%, rgba(7,24,16,0.94) 26%, rgba(7,24,16,0) 60%)",
+        }}
+      />
+      <div className="absolute inset-0">
+        <World data={sampleArcs} globeConfig={globeConfig} />
+      </div>
     </div>
   );
 }
