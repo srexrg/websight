@@ -1,5 +1,5 @@
 import { CheckCircle } from "@phosphor-icons/react/dist/ssr/CheckCircle";
-import Globe from "@/components/landing/Globe";
+import InteractiveGlobe from "@/components/landing/InteractiveGlobe";
 import { globePoints } from "@/lib/landing/content";
 
 export default function GlobeHighlight() {
@@ -32,23 +32,17 @@ export default function GlobeHighlight() {
             </div>
           </div>
 
-          {/* Right column: globe with radial glow */}
-          <div className="relative flex items-center justify-center h-[400px]">
+          {/* Right column: interactive 3D globe with radial glow */}
+          <div className="relative flex items-center justify-center min-h-[460px]">
             {/* Radial emerald glow */}
             <div
-              className="absolute w-[420px] h-[420px] rounded-full"
+              className="absolute inset-0 rounded-full pointer-events-none"
               style={{
                 background:
                   "radial-gradient(circle, rgba(14,156,110,0.12), rgba(14,156,110,0) 62%)",
               }}
             />
-            {/* Floating globe wrapper */}
-            <div
-              className="relative"
-              style={{ animation: "wsFloat 6s ease-in-out infinite" }}
-            >
-              <Globe size={320} />
-            </div>
+            <InteractiveGlobe />
           </div>
         </div>
       </div>

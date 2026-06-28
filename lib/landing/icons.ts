@@ -4,6 +4,7 @@
  * Each key matches the short name used in content.ts (e.g. "broadcast").
  */
 
+import type { Icon as PhosphorIcon } from "@phosphor-icons/react";
 import { Broadcast } from "@phosphor-icons/react/dist/ssr/Broadcast";
 import { GlobeHemisphereWest } from "@phosphor-icons/react/dist/ssr/GlobeHemisphereWest";
 import { ShieldCheck } from "@phosphor-icons/react/dist/ssr/ShieldCheck";
@@ -33,7 +34,7 @@ export type IconKey =
   | "leaf"
   | "cursor-click";
 
-export const iconMap: Record<IconKey, React.ElementType> = {
+export const iconMap: Record<IconKey, PhosphorIcon> = {
   "broadcast": Broadcast,
   "globe-hemisphere-west": GlobeHemisphereWest,
   "shield-check": ShieldCheck,
