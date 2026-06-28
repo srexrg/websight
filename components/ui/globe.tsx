@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Color, Fog, PerspectiveCamera, Scene, Vector3, Object3D } from "three";
+import { Color, Fog, PerspectiveCamera, Scene, Vector3 } from "three";
 import ThreeGlobe from "three-globe";
 import { useThree, Canvas, extend, ThreeElement } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -78,7 +78,6 @@ function hexToRgb(hex: string) {
 function World(props: WorldProps) {
   const { globeConfig, data } = props;
   const globeRef = useRef<ThreeGlobe | null>(null);
-  const groupRef = useRef<Object3D | null>(null);
   const { camera } = useThree();
   const isInitialized = useRef(false);
 
@@ -217,13 +216,14 @@ function World(props: WorldProps) {
   return (
     <>
       <threeGlobe ref={globeRef as React.RefObject<ThreeGlobe>} />
-      <group ref={groupRef as React.RefObject<Object3D>} />
     </>
   );
 }
 
 const fogScene = new Scene();
 fogScene.fog = new Fog(0xffffff, 400, 2000);
+
+const globeCamera = new PerspectiveCamera(50, 1, 180, 1800);
 
 export function Globe({
   globeConfig,
@@ -235,7 +235,7 @@ export function Globe({
   return (
     <Canvas
       scene={fogScene}
-      camera={new PerspectiveCamera(50, 1, 180, 1800)}
+      camera={globeCamera}
       gl={{ antialias: true, alpha: true }}
     >
       <World globeConfig={globeConfig} data={data} />
