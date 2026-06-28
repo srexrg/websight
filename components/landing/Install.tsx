@@ -12,7 +12,7 @@ export default function Install() {
     navigator.clipboard.writeText(SNIPPET).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    });
+    }).catch(() => {});
   }
 
   return (
