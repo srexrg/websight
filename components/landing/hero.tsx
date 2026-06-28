@@ -1,17 +1,18 @@
 import Link from "next/link";
-import { ArrowRight, PlayCircle, CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, PlayCircle, CheckCircle, ChartLine, Broadcast, GlobeHemisphereWest, FileText, UsersThree, GearSix } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 import Globe from "@/components/landing/Globe";
+import type { Icon as PhosphorIcon } from "@phosphor-icons/react/dist/lib/types";
 
 // ─── Local data (mirrored from design's heroMetrics + miniNav) ─────────────────
 
-const miniNav = [
-  { icon: "ph ph-chart-line",              label: "Overview",  active: false },
-  { icon: "ph ph-broadcast",               label: "Realtime",  active: false },
-  { icon: "ph ph-globe-hemisphere-west",   label: "Globe",     active: true  },
-  { icon: "ph ph-file-text",               label: "Pages",     active: false },
-  { icon: "ph ph-users-three",             label: "Audience",  active: false },
-  { icon: "ph ph-gear-six",                label: "Settings",  active: false },
+const miniNav: { Icon: PhosphorIcon; label: string; active: boolean }[] = [
+  { Icon: ChartLine,            label: "Overview",  active: false },
+  { Icon: Broadcast,            label: "Realtime",  active: false },
+  { Icon: GlobeHemisphereWest,  label: "Globe",     active: true  },
+  { Icon: FileText,             label: "Pages",     active: false },
+  { Icon: UsersThree,           label: "Audience",  active: false },
+  { Icon: GearSix,              label: "Settings",  active: false },
 ];
 
 const heroMetrics = [
@@ -152,10 +153,10 @@ export default function Hero() {
                     item.active ? "bg-accent" : "bg-transparent"
                   }`}
                 >
-                  <i
-                    className={`${item.icon} text-[14px] ${
-                      item.active ? "text-[#0B7E58]" : "text-muted-foreground"
-                    }`}
+                  <item.Icon
+                    size={14}
+                    weight={item.active ? "fill" : "regular"}
+                    className={item.active ? "text-[#0B7E58]" : "text-muted-foreground"}
                   />
                   <span
                     className={`text-[12px] ${
