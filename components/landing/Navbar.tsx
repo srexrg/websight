@@ -8,7 +8,6 @@ import {
   X, 
   Globe,
 } from "lucide-react";
-FaGithub
 import { motion, AnimatePresence } from "framer-motion";
 import { FaGithub } from "react-icons/fa";
 

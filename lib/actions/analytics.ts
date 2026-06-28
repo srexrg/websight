@@ -112,17 +112,17 @@ export async function fetchEnhancedAnalytics(
     pageViews: pageViewsResponse.data || [],
     visits: visitsResponse.data || [],
     dailyStats: (dailyStatsResponse.data || []) as DailyStats[],
-    deviceStats: deviceStatsPromise.data?.map((d: any) => ({
-      deviceType: d.device_type || 'unknown',
-      visits: parseInt(d.count)
+    deviceStats: deviceStatsPromise.data?.map((d: Record<string, unknown>) => ({
+      deviceType: (d.device_type as string) || 'unknown',
+      visits: parseInt(d.count as string)
     })) || [],
-    countryStats: countryStatsPromise.data?.map((c: any) => ({
-      country: c.country || 'unknown',
-      visits: parseInt(c.count)
+    countryStats: countryStatsPromise.data?.map((c: Record<string, unknown>) => ({
+      country: (c.country as string) || 'unknown',
+      visits: parseInt(c.count as string)
     })) || [],
-    osStats: osStatsPromise.data?.map((o: any) => ({
-      os: o.os || 'unknown',
-      visits: parseInt(o.count)
+    osStats: osStatsPromise.data?.map((o: Record<string, unknown>) => ({
+      os: (o.os as string) || 'unknown',
+      visits: parseInt(o.count as string)
     })) || [],
     events: eventsResponse.data || []
   };

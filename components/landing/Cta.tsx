@@ -28,7 +28,7 @@ const Cta = () => {
             </h2>
             <p className="text-gray-300 mb-8 max-w-2xl mx-auto text-lg font-jakarta">
               Get started in minutes with our privacy-focused, powerful
-              analytics solution. It's free, forever.
+              analytics solution. It&apos;s free, forever.
             </p>
             <div className="flex justify-center">
               <Link href="/auth" passHref>

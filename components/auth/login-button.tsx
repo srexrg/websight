@@ -3,16 +3,12 @@
 import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button' 
 import { FaGoogle } from 'react-icons/fa'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 
 export default function LoginButton() {
   const supabase = createClient()
-  const [origin, setOrigin] = useState('')
-
-  useEffect(() => {
-    setOrigin(window.location.origin)
-  }, [])
+  const [origin] = useState(() => typeof window !== 'undefined' ? window.location.origin : '')
 
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
