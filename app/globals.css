@@ -4,41 +4,35 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans: var(--font-hanken);
+  --font-mono: var(--font-jetbrains);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-oswald: var(--font-oswald);
-  --font-jakarta: var(--font-jakarta);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-fg);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-surface: var(--surface);
+  --color-page: var(--page);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -46,104 +40,77 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  
-  /* Light mode */
-  --background: oklch(0.98 0 0);
-  --foreground: oklch(0.2 0.02 240);
-  
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.02 240);
-  
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.02 240);
-  
-  --primary: oklch(0.35 0.2 260); /* Deep purple */
-  --primary-foreground: oklch(0.98 0 0);
-  
-  --secondary: oklch(0.92 0.02 240);
-  --secondary-foreground: oklch(0.3 0.05 240);
-  
-  --muted: oklch(0.95 0.01 240);
-  --muted-foreground: oklch(0.5 0.05 240);
-  
-  --accent: oklch(0.95 0.03 260);
-  --accent-foreground: oklch(0.3 0.05 240);
-  
-  --destructive: oklch(0.65 0.2 20);
-  --border: oklch(0.9 0.01 240);
-  --input: oklch(0.9 0.01 240);
-  --ring: oklch(0.4 0.15 260);
-  
-  /* Colorful chart palette */
-  --chart-1: oklch(0.4 0.2 260); /* Purple */
-  --chart-2: oklch(0.5 0.2 200); /* Blue */
-  --chart-3: oklch(0.5 0.15 160); /* Teal */  
-  --chart-4: oklch(0.5 0.15 120); /* Green */
-  --chart-5: oklch(0.5 0.2 40);   /* Orange */
-  
-  /* Sidebar colors */
-  --sidebar: oklch(0.2 0.02 240);
-  --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.35 0.2 260);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.25 0.05 260);
-  --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.3 0.03 240);
-  --sidebar-ring: oklch(0.5 0.1 260);
+  --radius: 0.75rem;
+
+  --page: #F6F7F9;
+  --surface: #FFFFFF;
+  --surface-2: #FBFBFE;
+
+  --background: #F6F7F9;
+  --foreground: #1A1B25;
+
+  --card: #FFFFFF;
+  --card-foreground: #1A1B25;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1B25;
+
+  --brand: #0E9C6E;
+  --brand-fg: #FFFFFF;
+  --primary: #0E9C6E;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #F1F2F5;
+  --secondary-foreground: #1A1B25;
+  --muted: #F6F7F9;
+  --muted-foreground: #6B6E7B;
+  --accent: #E3F5EC;
+  --accent-foreground: #0B7E58;
+
+  --success: #1F9D6B;
+  --danger: #D2554F;
+  --destructive: #D2554F;
+
+  --border: #ECEDF1;
+  --input: #ECEDF1;
+  --ring: #0E9C6E;
 }
 
-/* Dark mode class settings - properly using Tailwind dark mode */
+/* dark theme not shipped yet - revamp sub-project, do not rely on this */
 :root.dark {
   /* Dark mode - deep space theme */
   --background: oklch(0.1 0.02 240); /* Deep dark blue-black */
   --foreground: oklch(0.9 0.02 240);
-  
+
   --card: oklch(0.13 0.02 240);
   --card-foreground: oklch(0.9 0.02 240);
-  
+
   --popover: oklch(0.13 0.02 240);
   --popover-foreground: oklch(0.9 0.02 240);
-  
+
   --primary: oklch(0.65 0.25 260); /* Vibrant purple */
   --primary-foreground: oklch(0.1 0.02 240);
-  
+
   --secondary: oklch(0.2 0.04 240);
   --secondary-foreground: oklch(0.9 0.02 240);
-  
+
   --muted: oklch(0.18 0.03 240);
   --muted-foreground: oklch(0.6 0.05 240);
-  
+
   --accent: oklch(0.2 0.04 260);
   --accent-foreground: oklch(0.9 0.02 240);
-  
+
   --destructive: oklch(0.6 0.25 20);
   --border: oklch(0.2 0.03 240);
   --input: oklch(0.2 0.03 240);
   --ring: oklch(0.6 0.15 260);
-  
-  /* Vibrant chart colors for dark mode */
-  --chart-1: oklch(0.65 0.25 260); /* Vivid purple */
-  --chart-2: oklch(0.6 0.25 200); /* Bright blue */
-  --chart-3: oklch(0.6 0.22 160); /* Vibrant teal */
-  --chart-4: oklch(0.6 0.2 120); /* Bright green */
-  --chart-5: oklch(0.65 0.25 40); /* Vivid orange */
-  
-  --sidebar: oklch(0.08 0.02 240);
-  --sidebar-foreground: oklch(0.9 0.02 240);
-  --sidebar-primary: oklch(0.65 0.25 260);
-  --sidebar-primary-foreground: oklch(0.1 0.02 240);
-  --sidebar-accent: oklch(0.18 0.04 260);
-  --sidebar-accent-foreground: oklch(0.9 0.02 240);
-  --sidebar-border: oklch(0.2 0.03 240);
-  --sidebar-ring: oklch(0.6 0.15 260);
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+  * { @apply border-border; }
+  body { @apply bg-page text-foreground; }
 }
+
+@keyframes wsPulse { 0% { transform: scale(.7); opacity: .55 } 70% { transform: scale(2.6); opacity: 0 } 100% { transform: scale(2.6); opacity: 0 } }
+@keyframes wsBlink { 0%, 100% { opacity: 1 } 50% { opacity: .3 } }
+@keyframes wsRise { 0% { opacity: 0; transform: translateY(-6px) } 100% { opacity: 1; transform: translateY(0) } }
+@keyframes wsFloat { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
