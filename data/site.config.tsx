@@ -4,5 +4,5 @@ export const DATA = {
   url: "https://websight.srexrg.me",
   prevImage: "/prev.png",
   description:
-    "WebSight is a powerful opensource alternative to Vercel Analytics.",
+    "Privacy-first web analytics for people who build on the internet.",
 } as const;
