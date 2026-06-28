@@ -1,157 +1,47 @@
-"use client"
-
-import { useState } from "react";
 import Link from "next/link";
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
-import { 
-  Menu, 
-  X, 
-  Globe,
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { FaGithub } from "react-icons/fa";
+import { navLinks } from "@/lib/landing/content";
 
-const Navbar = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+export default function Navbar() {
   return (
-    <>
-      <header className="fixed top-0 left-0 right-0 z-50 py-4 bg-black/60 backdrop-blur-xl border-b border-zinc-800">
-        <div className="container mx-auto px-4 flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 relative z-10">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg blur-sm opacity-60"></div>
-              <div className="p-1.5 bg-zinc-900/80 rounded-lg border border-blue-500/20 relative">
-                <Globe className="h-5 w-5 text-blue-400" />
-              </div>
-            </div>
-            <span className="text-lg font-semibold text-white font-oswald">
-              WebSight
-            </span>
+    <div className="sticky top-0 z-50 bg-white/[0.86] backdrop-blur-[12px] border-b border-[#F0F1F4]">
+      <div className="max-w-[1180px] mx-auto px-7 py-[15px] flex items-center justify-between">
+        {/* Left: logo + nav links */}
+        <div className="flex items-center gap-[38px]">
+          <Link href="/">
+            <Logo size={30} />
           </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6 relative z-10 font-jakarta">
-            <NavLink href="#features">Features</NavLink>
-            {/* <NavLink href="#pricing">Pricing</NavLink> */}
-            <NavLink href="#how-it-works">How It Works</NavLink>
-            <NavLink href="/docs">Docs</NavLink>
-          </nav>
-
-          {/* Desktop Call-to-actions */}
-          <div className="hidden md:flex items-center gap-3 relative z-10 font-jakarta">
-            <Link href="/auth">
-              <Button
-                variant="ghost"
-                className="text-sm font-medium rounded-md px-4 bg-zinc-900/40 hover:bg-zinc-900/60 text-gray-300 hover:text-white backdrop-blur-xl border border-zinc-800 cursor-pointer"
+          <nav className="flex items-center gap-[26px]">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-[14px] font-medium text-[#5A5D69] hover:text-foreground transition-colors"
               >
-                Sign In
-              </Button>
-            </Link>
-            <Link
-              href="https://github.com/srexrg/websight"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-300 hover:text-white transition-colors"
-            >
-              <FaGithub className="h-5 w-5" />
-            </Link>
-          </div>
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
 
-          {/* Mobile Menu Trigger */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden relative z-50 text-gray-300 hover:text-white"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        {/* Right: sign in + start free */}
+        <div className="flex items-center gap-[14px]">
+          <Link
+            href="/auth"
+            className="text-[14px] font-semibold text-[#3A3D49] hover:text-brand transition-colors"
           >
-            {isMobileMenuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
+            Sign in
+          </Link>
+          <Button asChild className="bg-brand text-white text-[14px] font-semibold px-4 py-[9px] h-auto rounded-[10px] shadow-[0_2px_8px_rgba(14,156,110,0.30)] hover:bg-brand/90 gap-[7px]">
+            <Link href="/auth">
+              Start free
+              <ArrowRight size={14} />
+            </Link>
           </Button>
         </div>
-      </header>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl flex flex-col pt-24 pb-8 px-6"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            <nav className="flex flex-col gap-3 mb-8 font-jakarta">
-              <MobileNavLink
-                href="#features"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Features
-              </MobileNavLink>
-              <MobileNavLink
-                href="#how-it-works"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                How It Works
-              </MobileNavLink>
-              <MobileNavLink
-                href="/docs"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Documentation
-              </MobileNavLink>
-            </nav>
-
-            <div className="mt-auto space-y-3 font-jakarta">
-              <Link href="/auth" className="block">
-                <Button
-                  variant="outline"
-                  className="w-full rounded-md text-center py-6 h-auto bg-zinc-900/40 hover:bg-zinc-900/60 text-gray-300 hover:text-white backdrop-blur-xl border border-zinc-800"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/auth" className="block">
-                <Button
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-md py-6 h-auto shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+      </div>
+    </div>
   );
-};
-
-// Desktop navigation link
-const NavLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
-  <Link 
-    href={href} 
-    className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors relative group"
-  >
-    {children}
-    <span className="absolute inset-x-0 -bottom-px h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-300 bg-blue-500"></span>
-  </Link>
-);
-
-// Mobile navigation link
-const MobileNavLink = ({ href, onClick, children }: { href: string, onClick: () => void, children: React.ReactNode }) => (
-  <Link 
-    href={href} 
-    onClick={onClick}
-    className="py-3 text-lg font-medium text-gray-300 hover:text-white border-b border-zinc-800 flex items-center transition-colors"
-  >
-    {children}
-  </Link>
-);
-
-export default Navbar;
+}
