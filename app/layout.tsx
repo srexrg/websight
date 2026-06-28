@@ -1,30 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
-import { Oswald } from "next/font/google";
+import { Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import Script from "next/script";
 import { DATA } from "@/data/site.config";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const jakarta = Plus_Jakarta_Sans({
+const hanken = Hanken_Grotesk({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-jakarta",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-hanken",
 });
 
-const oswald = Oswald({
-  variable: "--font-oswald",
+const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-jetbrains",
 });
 
 export const metadata: Metadata = {
@@ -111,7 +103,7 @@ export default function RootLayout({
       <Script src="https://websight.srexrg.me/tracker.js" data-site="websight.srexrg.me"/>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${jakarta.variable} antialiased bg-black`}
+        className={`${hanken.variable} ${jetbrains.variable} font-sans antialiased`}
       >
         {children}
         <Analytics />
