@@ -263,6 +263,7 @@ declare
     v_path text;
     v_now timestamptz;
     v_is_pageview boolean;
+    v_sessionize boolean;
     v_session uuid;
     v_prev_pageviews int;
     v_prev_last timestamptz;
@@ -280,6 +281,9 @@ begin
         v_path := coalesce(e ->> 'path', '/');
         v_now := coalesce((e ->> 'created_at')::timestamptz, now());
         v_is_pageview := v_name = 'pageview';
+        -- Server-emitted events (API key sources) carry sessionize=false:
+        -- they are stored and counted but never open or touch a session.
+        v_sessionize := coalesce((e ->> 'sessionize')::boolean, true);
 
         if v_site is null or v_visitor is null or v_name is null then
             raise exception 'event missing site_id/visitor_id/name: %', e;
@@ -301,6 +305,9 @@ begin
         end if;
 
         -- ------------------------------------------------------- session --
+        v_session := null;
+
+        if v_sessionize then
         select s.id, s.pageviews, s.last_event_at, s.started_at
         into v_session, v_prev_pageviews, v_prev_last, v_started
         from sessions s
@@ -368,6 +375,7 @@ begin
                 e ->> 'user_id'
             );
         end if;
+        end if; -- v_sessionize
 
         -- --------------------------------------------------------- event --
         insert into events (
@@ -518,7 +526,9 @@ set search_path = public
 as $$
     with ev as (
         select count(*) filter (where name = 'pageview') as pageviews,
-               count(distinct visitor_id) as visitors
+               -- Only sessionized (browser) traffic counts as visitors;
+               -- server-emitted API events have session_id null.
+               count(distinct visitor_id) filter (where session_id is not null) as visitors
         from events
         where site_id = p_site and created_at >= p_from and created_at < p_to
     ),
@@ -571,7 +581,7 @@ begin
     left join (
         select date_trunc(p_granularity, created_at) as bucket,
                count(*) filter (where name = 'pageview') as pageviews,
-               count(distinct visitor_id) as visitors
+               count(distinct visitor_id) filter (where session_id is not null) as visitors
         from events
         where site_id = p_site and created_at >= p_from and created_at < p_to
         group by 1
@@ -615,7 +625,7 @@ begin
         $q$
         select %1$I::text as value,
                count(*) filter (where name = 'pageview') as pageviews,
-               count(distinct visitor_id) as visitors
+               count(distinct visitor_id) filter (where session_id is not null) as visitors
         from public.events
         where site_id = $1 and created_at >= $2 and created_at < $3
           and %1$I is not null
@@ -630,6 +640,15 @@ $$;
 ------------------------------------------------------------------------------
 -- Security: RLS on, access only through the service role / definer RPCs
 ------------------------------------------------------------------------------
+
+-- The service role is the only direct reader/writer of the new tables
+-- (ingestion route, queries.ts, backfill). Everything else goes through the
+-- SECURITY DEFINER RPCs above. anon/authenticated get no table grants.
+grant select, insert, update, delete
+    on public.sites, public.salts, public.events, public.sessions, public.rollup_daily
+    to service_role;
+grant usage, select on all sequences in schema public to service_role;
+grant select on public.sites to authenticated;
 
 alter table public.sites enable row level security;
 alter table public.salts enable row level security;
@@ -651,6 +670,17 @@ revoke all on function public.rebuild_rollup_daily(uuid) from public, anon, auth
 revoke all on function public.analytics_overview(uuid, timestamptz, timestamptz) from public, anon, authenticated;
 revoke all on function public.analytics_timeseries(uuid, timestamptz, timestamptz, text) from public, anon, authenticated;
 revoke all on function public.analytics_breakdown(uuid, timestamptz, timestamptz, text, int) from public, anon, authenticated;
+
+grant execute on function
+    public.current_salt(),
+    public.ingest_event(jsonb),
+    public.ensure_events_partition(date),
+    public.close_stale_sessions(),
+    public.rebuild_rollup_daily(uuid),
+    public.analytics_overview(uuid, timestamptz, timestamptz),
+    public.analytics_timeseries(uuid, timestamptz, timestamptz, text),
+    public.analytics_breakdown(uuid, timestamptz, timestamptz, text, int)
+    to service_role;
 
 ------------------------------------------------------------------------------
 -- Scheduled maintenance (requires pg_cron)

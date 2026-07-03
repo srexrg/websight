@@ -89,6 +89,15 @@ create index if not exists visits_website_created_idx on public.visits (website_
 create index if not exists page_views_domain_created_idx on public.page_views (domain, created_at);
 create index if not exists events_website_created_idx on public.events (website_id, created_at);
 
+-- The legacy app reads/writes these tables with the anon key (no RLS).
+-- Production has these grants from the old Supabase defaults; make them
+-- explicit so fresh databases behave identically.
+grant select, insert, update, delete
+    on public.users, public.domains, public.visits, public.page_views,
+       public.events, public.daily_stats
+    to anon, authenticated, service_role;
+grant usage, select on all sequences in schema public to anon, authenticated, service_role;
+
 -- Aggregation RPCs used by lib/actions/analytics.ts (previously dashboard-only).
 create or replace function public.get_device_stats(
     website_domain text,
