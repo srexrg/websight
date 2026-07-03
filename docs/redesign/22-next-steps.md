@@ -71,8 +71,16 @@ Update this table as work proceeds so any future agent knows where things stand.
 
 | Plan | Status | Branch / PR | Notes |
 |---|---|---|---|
-| Step 0 deps refresh | not started | - | items 1-3 before `02` code |
-| 01 tracking-sdk | not started | - | |
-| 02 ingestion-and-data-model | not started | - | **start here** |
+| Step 0 deps refresh | **done** (2026-07-03) | `redesign/02-ingestion` | items 1-3 done. ESLint stays on 9: `eslint-config-next` 16.2.10 bundles an `eslint-plugin-react` that crashes under ESLint 10 (`getFilename` removed) - retry when Next ships compat. `@supabase/ssr` 0.12 verified compiling + building; Google login flow still needs a manual e2e check against prod before deploy. |
+| 01 tracking-sdk | not started | - | payload schema + batch ingestion already accepted by `/api/track` |
+| 02 ingestion-and-data-model | **milestones 1-4 done** (2026-07-03) | `redesign/02-ingestion` | Migrations `0000` (legacy baseline reconstruction) + `0001` (sites/salts/events/sessions/rollup_daily, `ingest_event`, read RPCs, pg_cron jobs). New `/api/track` handles v2 batches + legacy dual-write; `/api/events` dual-writes sessionless. `lib/analytics/queries.ts` (overview/timeseries/breakdown) proven against backfilled data. `scripts/backfill.ts` written + verified locally. Verified via vitest (40 tests incl. 11 integration against `supabase start`) + real-HTTP e2e. **Remaining**: milestone 5 (rate limiting, per-site origin validation, monitoring); run backfill + `supabase migration repair` when linking prod (see notes below); cut-over/retire old tables waits for `03`. |
 | 03 dashboard-shell | not started | - | |
 | 04-21 | not started | - | blocked on Phase 1 |
+
+### Deploy notes for `02` (prod rollout)
+
+1. `supabase link` the prod project, then `supabase migration repair --status applied 20260703000000` (the baseline already exists in prod) and `supabase db push` for `0001`.
+2. Ensure the `pg_cron` extension is enabled on prod before pushing; the migration tolerates its absence but then the three `ws-*` jobs must be scheduled manually.
+3. Set `SUPABASE_SERVICE_ROLE_KEY` in the deployment env - the new ingest route and `lib/analytics/queries.ts` require it (see `.env.example`).
+4. Deploy the app only after the migration is applied (`/api/events` now writes `events_legacy`; the old dashboard Events tab reads it too).
+5. Run `npm run backfill` once against prod (service key in env), then spot-check `rollup_daily` vs `daily_stats` for a few days of parity before trusting the new numbers.
