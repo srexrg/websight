@@ -11,6 +11,7 @@ import {
   getFunnelStepVisitors,
   getFunnelTimeToConvert,
   getGoalsWithStats,
+  getJourneys,
   getGoalTimeseries,
   getOverview,
   getProfileDetail,
@@ -214,6 +215,16 @@ export async function GET(
           return NextResponse.json({ error: "Invalid funnel" }, { status: 400 });
         }
         return NextResponse.json(await getFunnelTimeToConvert(site.id, range, funnel, undefined, filters));
+      }
+      case "journeys": {
+        const anchor = q.get("anchor") || null;
+        const dir = q.get("dir") === "ends" ? "ends" : "starts";
+        const steps = Math.min(Math.max(Number(q.get("steps")) || 4, 2), 6);
+        const topN = Math.min(Math.max(Number(q.get("topN")) || 8, 2), 20);
+        const grouping = (q.get("group") ?? "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 20);
+        return NextResponse.json(
+          await getJourneys(site.id, range, { anchor, direction: dir, steps, topN, grouping }, undefined, filters),
+        );
       }
       case "live-count":
         return NextResponse.json({ count: await getLiveCount(site.id, 5, filters) });
