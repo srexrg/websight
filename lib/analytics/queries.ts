@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/utils/supabase/admin";
 import type { Filter } from "./filters";
+import type { GoalKind, PathOp } from "./goals";
 
 /**
  * THE analytics read layer (docs/redesign/02). Every dashboard fetch goes
@@ -514,6 +515,158 @@ export async function getProfileSessions(
       deviceType: (r.device_type as string | null) ?? null,
       browser: (r.browser as string | null) ?? null,
       os: (r.os as string | null) ?? null,
+    }));
+  });
+}
+
+/** Goal definition fields the compiler needs (docs/redesign/08). */
+export type GoalDef = {
+  kind: GoalKind;
+  pathOp: PathOp | null;
+  pathPattern: string | null;
+  eventName: string | null;
+  propFilters: Filter[];
+};
+
+export type GoalPreview = { conversions: number; uniques: number };
+export type GoalStats = {
+  conversions: number;
+  uniques: number;
+  visitors: number;
+  rate: number;
+  valueCents: number;
+};
+
+/** Match count for an unsaved goal definition over a range (dialog preview). */
+export async function getGoalPreview(
+  siteId: string,
+  range: QueryRange,
+  def: GoalDef,
+  supabase?: SupabaseClient,
+): Promise<GoalPreview> {
+  return timed(`goal-preview site=${siteId}`, async () => {
+    const { data, error } = await client(supabase)
+      .rpc("analytics_goal_preview", {
+        p_site: siteId,
+        p_from: range.from.toISOString(),
+        p_to: range.to.toISOString(),
+        p_kind: def.kind,
+        p_path_op: def.pathOp,
+        p_path_pattern: def.pathPattern,
+        p_event_name: def.eventName,
+        p_prop_filters: def.propFilters ?? [],
+      })
+      .single();
+    if (error) throw new Error(`analytics_goal_preview failed: ${error.message}`);
+    const r = data as { conversions: number; uniques: number };
+    return { conversions: Number(r.conversions), uniques: Number(r.uniques) };
+  });
+}
+
+/** Conversion stats for a saved goal. */
+export async function getGoalStats(
+  siteId: string,
+  range: QueryRange,
+  goalId: string,
+  supabase?: SupabaseClient,
+  filters: Filter[] = [],
+): Promise<GoalStats> {
+  return timed(`goal-stats site=${siteId}`, async () => {
+    const { data, error } = await client(supabase)
+      .rpc("analytics_goal_stats", {
+        p_site: siteId,
+        p_from: range.from.toISOString(),
+        p_to: range.to.toISOString(),
+        p_goal: goalId,
+        p_filters: filters,
+      })
+      .single();
+    if (error) throw new Error(`analytics_goal_stats failed: ${error.message}`);
+    const r = data as { conversions: number; uniques: number; visitors: number; rate: number; value_cents: number };
+    return {
+      conversions: Number(r.conversions),
+      uniques: Number(r.uniques),
+      visitors: Number(r.visitors),
+      rate: Number(r.rate),
+      valueCents: Number(r.value_cents),
+    };
+  });
+}
+
+export type GoalWithStats = {
+  id: string;
+  name: string;
+  kind: GoalKind;
+  pathPattern: string | null;
+  pathOp: PathOp | null;
+  eventName: string | null;
+  propFilters: Filter[];
+  valueCents: number | null;
+  currency: string | null;
+  conversions: number;
+  uniques: number;
+  visitors: number;
+  rate: number;
+};
+
+export type GoalSeriesPoint = { bucket: string; conversions: number; uniques: number };
+
+/** All active goals with conversion stats for the goals table. */
+export async function getGoalsWithStats(
+  siteId: string,
+  range: QueryRange,
+  supabase?: SupabaseClient,
+  filters: Filter[] = [],
+): Promise<GoalWithStats[]> {
+  return timed(`goals-stats site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_goals_with_stats", {
+      p_site: siteId,
+      p_from: range.from.toISOString(),
+      p_to: range.to.toISOString(),
+      p_filters: filters,
+    });
+    if (error) throw new Error(`analytics_goals_with_stats failed: ${error.message}`);
+    return (data as Record<string, unknown>[]).map((r) => ({
+      id: r.id as string,
+      name: r.name as string,
+      kind: r.kind as GoalKind,
+      pathPattern: (r.path_pattern as string | null) ?? null,
+      pathOp: (r.path_op as PathOp | null) ?? null,
+      eventName: (r.event_name as string | null) ?? null,
+      propFilters: (r.prop_filters as Filter[] | null) ?? [],
+      valueCents: (r.value_cents as number | null) ?? null,
+      currency: (r.currency as string | null) ?? null,
+      conversions: Number(r.conversions),
+      uniques: Number(r.uniques),
+      visitors: Number(r.visitors),
+      rate: Number(r.rate),
+    }));
+  });
+}
+
+/** Conversion timeseries for one goal (sparkline / goal detail chart). */
+export async function getGoalTimeseries(
+  siteId: string,
+  range: QueryRange,
+  goalId: string,
+  granularity: Granularity = "day",
+  supabase?: SupabaseClient,
+  filters: Filter[] = [],
+): Promise<GoalSeriesPoint[]> {
+  return timed(`goal-timeseries site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_goal_timeseries", {
+      p_site: siteId,
+      p_from: range.from.toISOString(),
+      p_to: range.to.toISOString(),
+      p_goal: goalId,
+      p_granularity: granularity,
+      p_filters: filters,
+    });
+    if (error) throw new Error(`analytics_goal_timeseries failed: ${error.message}`);
+    return (data as Record<string, unknown>[]).map((r) => ({
+      bucket: r.bucket as string,
+      conversions: Number(r.conversions),
+      uniques: Number(r.uniques),
     }));
   });
 }

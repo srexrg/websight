@@ -7,6 +7,8 @@ import {
   getLiveBreakdown,
   getLiveCount,
   getLiveTicker,
+  getGoalsWithStats,
+  getGoalTimeseries,
   getOverview,
   getProfileDetail,
   getProfileEventFreq,
@@ -167,6 +169,18 @@ export async function GET(
         const key = q.get("key") ?? "";
         if (!key) return NextResponse.json({ error: "Missing key" }, { status: 400 });
         return NextResponse.json(await getProfileEventFreq(site.id, key));
+      }
+      case "goals-stats":
+        return NextResponse.json(await getGoalsWithStats(site.id, range, undefined, filters));
+      case "goal-timeseries": {
+        const goal = q.get("goal") ?? "";
+        if (!/^[0-9a-f-]{36}$/i.test(goal)) {
+          return NextResponse.json({ error: "Invalid goal" }, { status: 400 });
+        }
+        const g = q.get("granularity") as Granularity;
+        return NextResponse.json(
+          await getGoalTimeseries(site.id, range, goal, GRANULARITIES.includes(g) ? g : "day", undefined, filters),
+        );
       }
       case "live-count":
         return NextResponse.json({ count: await getLiveCount(site.id, 5, filters) });

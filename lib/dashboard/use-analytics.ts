@@ -15,6 +15,8 @@ import type {
   EventBreakdownRow,
   Granularity,
   LiveBreakdownRow,
+  GoalSeriesPoint,
+  GoalWithStats,
   Overview,
   ProfileEventFreq,
   ProfileRow,
@@ -168,6 +170,25 @@ export function usePrefetchSessionEvents(site: string) {
     },
     [qc, site],
   );
+}
+
+/** All active goals with conversion stats for the goals table (docs/redesign/08). */
+export function useGoalsWithStats(site: string, p: AnalyticsParams) {
+  return useQuery<GoalWithStats[]>({
+    queryKey: ["analytics", site, "goals-stats", p],
+    queryFn: () => fetchAnalytics(site, { kind: "goals-stats", ...base(p) }),
+    staleTime: STALE_MS,
+  });
+}
+
+export function useGoalTimeseries(site: string, p: AnalyticsParams, goalId: string) {
+  return useQuery<GoalSeriesPoint[]>({
+    queryKey: ["analytics", site, "goal-timeseries", goalId, p],
+    queryFn: () =>
+      fetchAnalytics(site, { kind: "goal-timeseries", goal: goalId, granularity: "day", ...base(p) }),
+    enabled: !!goalId,
+    staleTime: STALE_MS,
+  });
 }
 
 /** Profiles list (lifetime aggregates), searchable by user/visitor id. */
