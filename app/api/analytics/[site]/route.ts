@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import {
   getBreakdown,
+  getDimensionValues,
   getEventBreakdown,
   getOverview,
   getTimeseries,
   type BreakdownDimension,
   type Granularity,
 } from "@/lib/analytics/queries";
+import { decodeFilters, isValidDim } from "@/lib/analytics/filters";
 import { RANGE_PRESETS, rangeToDates, type RangePreset } from "@/lib/dashboard/range";
 
 /**
@@ -18,15 +20,20 @@ import { RANGE_PRESETS, rangeToDates, type RangePreset } from "@/lib/dashboard/r
  * actual analytics queries then run through lib/analytics/queries.ts.
  *
  * Query params:
- *   kind=overview|timeseries|breakdown|events   (required)
+ *   kind=overview|timeseries|breakdown|events|dimension-values  (required)
  *   range=24h|7d|30d|90d                        (default 7d)
+ *   from=<ISO>&to=<ISO>                         (override range, e.g. comparison)
+ *   f=<encoded filters>                         (docs/redesign/05 codec)
  *   granularity=hour|day|week|month             (timeseries)
- *   dimension=<BreakdownDimension>              (breakdown)
+ *   dimension=<BreakdownDimension>              (breakdown/dimension-values)
+ *   q=<search>                                  (dimension-values)
  *   limit=<n>                                   (breakdown/events, max 100)
  */
 
 const DIMENSIONS: readonly BreakdownDimension[] = [
   "path",
+  "entry_path",
+  "exit_path",
   "referrer_domain",
   "channel",
   "country",
@@ -72,17 +79,34 @@ export async function GET(
   const preset = (RANGE_PRESETS as readonly string[]).includes(q.get("range") ?? "")
     ? (q.get("range") as RangePreset)
     : "7d";
-  const range = rangeToDates(preset);
+  let range = rangeToDates(preset);
+  const fromIso = q.get("from");
+  const toIso = q.get("to");
+  if (fromIso && toIso) {
+    const from = new Date(fromIso);
+    const to = new Date(toIso);
+    if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime()) || from >= to) {
+      return NextResponse.json({ error: "Invalid from/to" }, { status: 400 });
+    }
+    range = { from, to };
+  }
+  const filters = decodeFilters(q.get("f"));
   const limit = Math.min(Math.max(Number(q.get("limit")) || 10, 1), 100);
 
   try {
     switch (q.get("kind")) {
       case "overview":
-        return NextResponse.json(await getOverview(site.id, range));
+        return NextResponse.json(await getOverview(site.id, range, undefined, filters));
       case "timeseries": {
         const g = q.get("granularity") as Granularity;
         return NextResponse.json(
-          await getTimeseries(site.id, range, GRANULARITIES.includes(g) ? g : "day"),
+          await getTimeseries(
+            site.id,
+            range,
+            GRANULARITIES.includes(g) ? g : "day",
+            undefined,
+            filters,
+          ),
         );
       }
       case "breakdown": {
@@ -90,10 +114,19 @@ export async function GET(
         if (!DIMENSIONS.includes(dim)) {
           return NextResponse.json({ error: "Invalid dimension" }, { status: 400 });
         }
-        return NextResponse.json(await getBreakdown(site.id, range, dim, limit));
+        return NextResponse.json(await getBreakdown(site.id, range, dim, limit, undefined, filters));
       }
       case "events":
-        return NextResponse.json(await getEventBreakdown(site.id, range, limit));
+        return NextResponse.json(await getEventBreakdown(site.id, range, limit, undefined, filters));
+      case "dimension-values": {
+        const dim = q.get("dimension") ?? "";
+        if (!isValidDim(dim) || dim.startsWith("prop:")) {
+          return NextResponse.json({ error: "Invalid dimension" }, { status: 400 });
+        }
+        return NextResponse.json(
+          await getDimensionValues(site.id, range, dim, q.get("q") ?? "", limit),
+        );
+      }
       default:
         return NextResponse.json({ error: "Invalid kind" }, { status: 400 });
     }

@@ -41,3 +41,43 @@ export const RANGE_LABELS: Record<RangePreset, string> = {
   "30d": "30d",
   "90d": "90d",
 };
+
+// ---------------------------------------------------------------- comparison
+
+export const COMPARE_MODES = ["off", "prev", "yoy"] as const;
+export type CompareMode = (typeof COMPARE_MODES)[number];
+
+export const compareParser = parseAsStringLiteral(COMPARE_MODES).withDefault("off");
+
+export const COMPARE_LABELS: Record<CompareMode, string> = {
+  off: "No comparison",
+  prev: "Previous period",
+  yoy: "Year over year",
+};
+
+/**
+ * Comparison range for a given current range (docs/redesign/04): "prev" is
+ * the immediately preceding period of equal length; "yoy" shifts one year.
+ * The comparison period always gets identical filters.
+ */
+export function comparisonRange(
+  range: { from: Date; to: Date },
+  mode: CompareMode,
+): { from: Date; to: Date } | null {
+  if (mode === "off") return null;
+  if (mode === "yoy") {
+    const from = new Date(range.from);
+    const to = new Date(range.to);
+    from.setFullYear(from.getFullYear() - 1);
+    to.setFullYear(to.getFullYear() - 1);
+    return { from, to };
+  }
+  const span = range.to.getTime() - range.from.getTime();
+  return { from: new Date(range.from.getTime() - span), to: new Date(range.from) };
+}
+
+/** Relative delta (0.12 = +12%); null when the previous value is 0 ("new"). */
+export function relativeDelta(current: number, previous: number): number | null {
+  if (!Number.isFinite(previous) || previous === 0) return null;
+  return (current - previous) / previous;
+}

@@ -24,6 +24,7 @@ export function countryFlag(code: string): string {
 export function countryItems(rows: BreakdownRow[] | undefined): BreakdownItem[] | undefined {
   return rows?.map((r) => ({
     label: `${countryFlag(r.value)} ${countryName(r.value)}`.trim(),
+    filterValue: r.value,
     value: r.visitors,
   }));
 }
@@ -31,6 +32,7 @@ export function countryItems(rows: BreakdownRow[] | undefined): BreakdownItem[] 
 export function toItems(rows: BreakdownRow[] | undefined, withViews = false): BreakdownItem[] | undefined {
   return rows?.map((r) => ({
     label: r.value,
+    filterValue: r.value,
     value: r.visitors,
     secondary: withViews ? `${formatNumber(r.pageviews)} views` : undefined,
   }));

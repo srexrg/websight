@@ -1,14 +1,12 @@
 "use client";
 
-import { useQueryState } from "nuqs";
 import { EmptyState, ErrorState, RowsSkeleton } from "@/components/dashboard/states";
 import { formatNumber } from "@/lib/dashboard/format";
-import { rangeParser } from "@/lib/dashboard/range";
-import { useEventBreakdown } from "@/lib/dashboard/use-analytics";
+import { useDashboardParams, useEventBreakdown } from "@/lib/dashboard/use-analytics";
 
 export function EventsScreen({ site }: { site: string }) {
-  const [range] = useQueryState("range", rangeParser);
-  const events = useEventBreakdown(site, range);
+  const { params } = useDashboardParams();
+  const events = useEventBreakdown(site, params);
 
   return (
     <section className="rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(16,24,40,.04)]">
