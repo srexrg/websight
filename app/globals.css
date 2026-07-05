@@ -123,8 +123,34 @@
 .ws-globe-dot { position: absolute; inset: 6px; border-radius: 9999px; background: #0E9C6E; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
 .ws-globe-pulse { position: absolute; inset: 2px; border-radius: 9999px; background: rgba(14,156,110,.45); animation: wsPulse 2.2s ease-out infinite; }
 .ws-globe-count { position: absolute; top: -7px; right: -7px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 9999px; background: #0B7E58; color: #fff; font-family: var(--font-jetbrains), monospace; font-size: 10px; font-weight: 700; line-height: 16px; text-align: center; }
-.maplibregl-ctrl-attrib { background: rgba(0,0,0,.35) !important; }
-.maplibregl-ctrl-attrib, .maplibregl-ctrl-attrib a { color: #9AB5A8 !important; font-size: 10px; }
+
+/* Starfield behind the data globe (components/dashboard/screens/globe-screen.tsx).
+   MapLibre's canvas is transparent outside the sphere, so these stars show
+   around the globe. Hand-placed for a natural, non-gridded scatter. */
+.ws-starfield {
+  position: absolute; inset: 0; pointer-events: none;
+  background-repeat: no-repeat;
+  background-image:
+    radial-gradient(1.4px 1.4px at 8% 16%, rgba(255,255,255,.9), transparent 60%),
+    radial-gradient(1px 1px at 15% 62%, rgba(214,235,255,.55), transparent 60%),
+    radial-gradient(1.6px 1.6px at 22% 34%, rgba(255,255,255,.75), transparent 60%),
+    radial-gradient(1px 1px at 31% 82%, rgba(255,255,255,.5), transparent 60%),
+    radial-gradient(1.2px 1.2px at 39% 12%, rgba(190,220,255,.7), transparent 60%),
+    radial-gradient(1px 1px at 45% 48%, rgba(255,255,255,.45), transparent 60%),
+    radial-gradient(1.5px 1.5px at 54% 74%, rgba(255,255,255,.8), transparent 60%),
+    radial-gradient(1px 1px at 62% 22%, rgba(210,232,255,.55), transparent 60%),
+    radial-gradient(1.3px 1.3px at 69% 58%, rgba(255,255,255,.7), transparent 60%),
+    radial-gradient(1px 1px at 77% 88%, rgba(255,255,255,.5), transparent 60%),
+    radial-gradient(1.6px 1.6px at 84% 30%, rgba(255,255,255,.85), transparent 60%),
+    radial-gradient(1px 1px at 90% 66%, rgba(200,226,255,.55), transparent 60%),
+    radial-gradient(1.2px 1.2px at 94% 12%, rgba(255,255,255,.65), transparent 60%),
+    radial-gradient(1px 1px at 5% 90%, rgba(255,255,255,.5), transparent 60%),
+    radial-gradient(1.3px 1.3px at 50% 6%, rgba(255,255,255,.7), transparent 60%),
+    radial-gradient(1px 1px at 73% 40%, rgba(190,220,255,.5), transparent 60%);
+  animation: wsTwinkle 6s ease-in-out infinite;
+}
+@keyframes wsTwinkle { 0%, 100% { opacity: .85 } 50% { opacity: .55 } }
+@media (prefers-reduced-motion: reduce) { .ws-starfield { animation: none } }
 @keyframes wsBlink { 0%, 100% { opacity: 1 } 50% { opacity: .3 } }
 @keyframes wsRise { 0% { opacity: 0; transform: translateY(-6px) } 100% { opacity: 1; transform: translateY(0) } }
 @keyframes wsFloat { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }

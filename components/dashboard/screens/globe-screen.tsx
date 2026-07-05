@@ -69,7 +69,8 @@ export function GlobeScreen({ site }: { site: string }) {
   return (
     <div className="grid gap-4 xl:grid-cols-[1fr_340px]">
       {/* Globe stage: real cartography on a space background */}
-      <section className="relative min-h-[560px] overflow-hidden rounded-2xl border border-border bg-[radial-gradient(ellipse_at_center,#101B2E_0%,#060B14_70%)] shadow-[0_1px_2px_rgba(16,24,40,.04)]">
+      <section className="relative min-h-[560px] overflow-hidden rounded-2xl border border-border bg-[radial-gradient(ellipse_at_center,#0b0d16_0%,#000000_75%)] shadow-[0_1px_2px_rgba(16,24,40,.04)]">
+        <div className="ws-starfield" aria-hidden />
         <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
           <span className="flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 font-mono text-[11.5px] font-semibold text-[#EAF6EF] backdrop-blur">
             <span className="h-1.5 w-1.5 rounded-full bg-[#5FD3A6] [animation:wsBlink_1.4s_ease-in-out_infinite]" />

@@ -5,11 +5,13 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 /**
- * Realistic 3D globe (docs/redesign/06, DataFast-style): MapLibre GL v5
- * globe projection over OpenFreeMap's `liberty` vector style - real
- * cartography with place labels, free tiles, no API key, self-hostable.
- * Visitor markers are pulsing emerald dots with count badges; clicking
- * one applies a country filter.
+ * Stylized "light" 3D data globe (docs/redesign/06), matching the rybbit /
+ * Mapbox-Standard aesthetic: light sky-blue oceans, soft light land, a bright
+ * white-blue atmosphere halo, and a dark starfield. Built as a MapLibre GL v5
+ * globe over public-domain Natural Earth vectors (land + lakes + admin borders)
+ * served locally - no tiles, no API key, no attribution/watermark. Visitor
+ * markers are pulsing emerald dots with count badges; clicking one filters by
+ * country.
  */
 
 export type GlobePoint = {
@@ -20,7 +22,43 @@ export type GlobePoint = {
   count: number;
 };
 
-const STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
+// Public-domain Natural Earth vectors, served locally from /public/geo.
+const LAND_URL = "/geo/land-50m.geojson";
+const LAKES_URL = "/geo/lakes-50m.geojson";
+const BORDERS_URL = "/geo/borders-110m.geojson";
+
+const OCEAN = "#a7cee2"; // light sky-blue sea
+const LAND = "#e2e3ca"; // soft light land (beige-sage)
+const COAST = "#9fb6b8"; // faint coastline
+const BORDER = "rgba(150,130,120,0.35)"; // subtle country borders
+
+const STYLE: maplibregl.StyleSpecification = {
+  version: 8,
+  sources: {
+    land: { type: "geojson", data: LAND_URL },
+    lakes: { type: "geojson", data: LAKES_URL },
+    borders: { type: "geojson", data: BORDERS_URL },
+  },
+  layers: [
+    // Background paints the globe's surface (the sea); space around the sphere
+    // stays transparent so the page's dark starfield shows through.
+    { id: "ocean", type: "background", paint: { "background-color": OCEAN } },
+    { id: "land", type: "fill", source: "land", paint: { "fill-color": LAND } },
+    { id: "lakes", type: "fill", source: "lakes", paint: { "fill-color": OCEAN } },
+    {
+      id: "coastline",
+      type: "line",
+      source: "land",
+      paint: { "line-color": COAST, "line-width": 0.5, "line-opacity": 0.7 },
+    },
+    {
+      id: "borders",
+      type: "line",
+      source: "borders",
+      paint: { "line-color": BORDER, "line-width": 0.5 },
+    },
+  ],
+};
 
 export function RealGlobe({
   points,
@@ -46,24 +84,31 @@ export function RealGlobe({
     const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const map = new maplibregl.Map({
       container,
-      style: STYLE_URL,
+      style: STYLE,
       center: [10, 22],
       zoom: 1.3,
       minZoom: 0.8,
       maxZoom: 6,
-      attributionControl: { compact: true },
+      attributionControl: false, // Natural Earth is public domain - none required
       canvasContextAttributes: { antialias: true },
     });
     mapRef.current = map;
 
     map.on("style.load", () => {
       map.setProjection({ type: "globe" });
+      // Bright white-blue atmosphere halo (rybbit / Mapbox Standard look).
       try {
         map.setSky({
-          "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 6, 0],
+          "sky-color": "#bcd9f0",
+          "horizon-color": "#eaf4ff",
+          "fog-color": "#ffffff",
+          "sky-horizon-blend": 0.9,
+          "horizon-fog-blend": 0.9,
+          "fog-ground-blend": 0.6,
+          "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 5, 0.4],
         });
       } catch {
-        /* older style spec without sky support */
+        /* older style spec without full sky support */
       }
     });
 
