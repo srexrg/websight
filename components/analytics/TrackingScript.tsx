@@ -18,9 +18,9 @@ interface TrackingScriptProps {
 
 export function TrackingScript({ domain }: TrackingScriptProps) {
   const [copied, setCopied] = useState(false);
-  const scriptCode = `<script src="https://websight.srexrg.me/tracker.js" data-site="${domain || 
-    'Your Site'
-  }"></script>`;
+  const origin = process.env.NEXT_PUBLIC_APP_URL ?? "https://websight.srexrg.me";
+  const scriptCode = `<script defer src="${origin}/t.js" data-site="${domain || "your-domain.com"}"></script>`;
+  const legacyCode = `<script src="${origin}/tracker.js" data-site="${domain || "your-domain.com"}"></script>`;
 
   const copyToClipboard = async () => {
     try {
@@ -67,6 +67,20 @@ export function TrackingScript({ domain }: TrackingScriptProps) {
               <Copy className="h-4 w-4 text-zinc-400" />
             )}
           </Button>
+        </div>
+        <div className="mt-4 text-xs text-zinc-500 font-jakarta">
+          <p>
+            Custom events:{" "}
+            <code className="text-zinc-400">
+              websight.track(&quot;signup&quot;, {"{"} plan: &quot;pro&quot; {"}"})
+            </code>{" "}
+            or add <code className="text-zinc-400">data-ws-event=&quot;signup&quot;</code> to any
+            element.
+          </p>
+          <p className="mt-2">
+            Previous snippet (deprecated, still works):{" "}
+            <code className="text-zinc-400 break-all">{legacyCode}</code>
+          </p>
         </div>
       </DialogContent>
     </Dialog>

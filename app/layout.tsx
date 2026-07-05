@@ -100,7 +100,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-      <Script src="https://websight.srexrg.me/tracker.js" data-site="websight.srexrg.me"/>
+      {/* Self-tracking via the v2 tracker, served from our own origin.
+          The script no-ops on localhost, so dev stays clean. */}
+      <Script
+        src="/t.js"
+        data-site={
+          process.env.NEXT_PUBLIC_SELF_SITE ??
+          (process.env.NEXT_PUBLIC_APP_URL
+            ? new URL(process.env.NEXT_PUBLIC_APP_URL).hostname
+            : "websight.srexrg.me")
+        }
+        strategy="afterInteractive"
+      />
       </head>
       <body
         className={`${hanken.variable} ${jetbrains.variable} font-sans antialiased`}
