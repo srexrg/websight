@@ -108,16 +108,23 @@ export function JourneysScreen({ site }: { site: string }) {
               <option key={n} value={n}>top {n}</option>
             ))}
           </select>
-          <button onClick={exportPng} className={`${SELECT} hover:bg-secondary`} title="Export as PNG">PNG</button>
+          <button
+            onClick={exportPng}
+            className="rounded-md border border-border px-2.5 py-1 text-[11.5px] font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            title="Export the diagram as a PNG"
+          >
+            Export
+          </button>
         </div>
       </header>
 
       {/* Grouping rules */}
-      <div className="flex flex-wrap items-center gap-2 px-[18px] pb-1">
+      <div className="flex flex-wrap items-center gap-1.5 px-[18px] pb-1.5">
+        <span className="text-[11px] text-muted-foreground">Collapse</span>
         {grouping.map((g) => (
-          <span key={g} className="flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
+          <span key={g} className="flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 font-mono text-[11px] text-accent-foreground">
             {g}
-            <button onClick={() => setGrouping((r) => r.filter((x) => x !== g))} className="text-foreground/60 hover:text-destructive">&times;</button>
+            <button onClick={() => setGrouping((r) => r.filter((x) => x !== g))} className="hover:text-destructive">&times;</button>
           </span>
         ))}
         <input
@@ -129,8 +136,9 @@ export function JourneysScreen({ site }: { site: string }) {
               setGroupInput("");
             }
           }}
-          placeholder="Group paths, e.g. /blog/*  (Enter)"
-          className="w-56 rounded-md border border-input bg-transparent px-2 py-0.5 font-mono text-[11px] text-foreground outline-none placeholder:text-muted-foreground focus:border-ring"
+          placeholder="/blog/* ↵"
+          className="w-40 rounded-md border border-input bg-transparent px-2 py-0.5 font-mono text-[11px] text-foreground outline-none placeholder:text-muted-foreground/60 focus:w-56 focus:border-ring"
+          style={{ transition: "width 160ms ease-out" }}
         />
       </div>
 

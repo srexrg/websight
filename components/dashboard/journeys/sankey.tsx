@@ -1,77 +1,80 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { sankey, sankeyJustify, sankeyLinkHorizontal } from "d3-sankey";
 import type { SankeyExtraProperties, SankeyNodeMinimal, SankeyLinkMinimal } from "d3-sankey";
 import type { JourneyResult } from "@/lib/analytics/journeys";
 import { formatNumber } from "@/lib/dashboard/format";
 
-type NodeExtra = { key: string; label: string; col: number; isOther: boolean; isDrop: boolean };
+type NodeExtra = { key: string; label: string; col: number; isOther: boolean; ended: number };
 type LinkExtra = { pct: number };
 type SNode = SankeyNodeMinimal<NodeExtra, LinkExtra> & NodeExtra;
 type SLink = SankeyLinkMinimal<NodeExtra, LinkExtra> & LinkExtra;
 
-function shortLabel(path: string): string {
-  if (path.length <= 22) return path;
-  return `${path.slice(0, 12)}…${path.slice(-8)}`;
+const MARGIN = 118; // room for the outer-column labels
+const NODE_W = 13;
+
+function shortLabel(path: string, max = 20): string {
+  if (path.length <= max) return path;
+  return `${path.slice(0, max - 9)}…${path.slice(-8)}`;
 }
 
-/** Custom-SVG Sankey for user journeys (docs/redesign/10 M2). */
 export type SankeyNodeClick = { path: string; col: number; isOther: boolean };
 
+/** Clean custom-SVG Sankey for user journeys (docs/redesign/10). */
 export function JourneySankey({
   data,
-  width = 940,
-  height = 460,
   flip = false,
   onNodeClick,
 }: {
   data: JourneyResult;
-  width?: number;
-  height?: number;
-  /** Mirror horizontally so the anchor sits on the right (ends-with mode). */
   flip?: boolean;
   onNodeClick?: (node: SankeyNodeClick, clientX: number, clientY: number) => void;
 }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(920);
+  const [hover, setHover] = useState<string | null>(null);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      const w = entries[0].contentRect.width;
+      if (w > 0) setWidth(Math.max(560, Math.floor(w)));
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const maxCol = data.nodes.reduce((m, n) => Math.max(m, n.col), 0);
+  const perCol = new Map<number, number>();
+  for (const n of data.nodes) perCol.set(n.col, (perCol.get(n.col) ?? 0) + 1);
+  const densest = Math.max(...perCol.values(), 1);
+  const height = Math.max(360, Math.min(densest * 46 + 40, 660));
+
   const graph = useMemo(() => {
     const index = new Map<string, number>();
     const nodes: (NodeExtra & SankeyExtraProperties)[] = [];
-    const push = (key: string, meta: NodeExtra) => {
-      if (!index.has(key)) {
-        index.set(key, nodes.length);
-        nodes.push(meta);
-      }
-      return index.get(key)!;
-    };
-
     for (const n of data.nodes) {
-      push(n.id, { key: n.id, label: n.path, col: n.col, isOther: n.isOther, isDrop: false });
+      index.set(n.id, nodes.length);
+      nodes.push({ key: n.id, label: n.path, col: n.col, isOther: n.isOther, ended: n.ended });
     }
-    const links: { source: number; target: number; value: number; pct: number }[] = [];
     const sourceTotal = new Map<string, number>();
     for (const e of data.edges) sourceTotal.set(e.source, (sourceTotal.get(e.source) ?? 0) + e.count);
+    const links: { source: number; target: number; value: number; pct: number }[] = [];
     for (const e of data.edges) {
       const s = index.get(e.source);
       const t = index.get(e.target);
       if (s == null || t == null) continue;
       links.push({ source: s, target: t, value: e.count, pct: e.count / (sourceTotal.get(e.source) ?? e.count) });
     }
-    // Drop-off sinks (sessions that ended at a node).
-    for (const n of data.nodes) {
-      if (n.ended <= 0) continue;
-      const sinkKey = `drop:${n.col}`;
-      const sinkIdx = push(sinkKey, { key: sinkKey, label: "Exited", col: n.col + 1, isOther: false, isDrop: true });
-      const total = n.count || n.ended;
-      links.push({ source: index.get(n.id)!, target: sinkIdx, value: n.ended, pct: n.ended / total });
-    }
-
     if (nodes.length === 0 || links.length === 0) return null;
     try {
       const laid = sankey<NodeExtra, LinkExtra>()
-        .nodeWidth(11)
-        .nodePadding(9)
+        .nodeWidth(NODE_W)
+        .nodePadding(14)
         .nodeAlign(sankeyJustify)
-        .extent([[1, 6], [width - 1, height - 6]])({
+        .extent([[MARGIN, 24], [width - MARGIN, height - 12]])({
         nodes: nodes.map((n) => ({ ...n })),
         links: links.map((l) => ({ ...l })),
       });
@@ -91,33 +94,36 @@ export function JourneySankey({
 
   if (!graph) {
     return (
-      <div className="flex h-40 items-center justify-center text-[13px] text-muted-foreground">
+      <div ref={wrapRef} className="flex h-40 items-center justify-center text-[13px] text-muted-foreground">
         Not enough path data to draw a journey.
       </div>
     );
   }
 
   const linkPath = sankeyLinkHorizontal<NodeExtra, LinkExtra>();
+  const lastCol = flip ? 0 : maxCol;
+  const firstCol = flip ? maxCol : 0;
+
+  const connected = (l: SLink) =>
+    hover != null && ((l.source as SNode).key === hover || (l.target as SNode).key === hover);
 
   return (
-    <div className="overflow-x-auto">
-      <svg width={width} height={height} className="min-w-[640px]">
-        <g>
+    <div ref={wrapRef} className="w-full overflow-x-auto">
+      <svg width={width} height={height} className="min-w-[600px]" style={{ fontFamily: "var(--font-jetbrains), monospace" }}>
+        <g strokeLinecap="round">
           {(graph.links as SLink[]).map((l, i) => {
-            const src = l.source as SNode;
-            const tgt = l.target as SNode;
+            const on = connected(l);
             return (
               <path
                 key={i}
                 d={linkPath(l) ?? undefined}
                 fill="none"
-                stroke={tgt.isDrop ? "var(--danger)" : "var(--brand)"}
-                strokeOpacity={tgt.isDrop ? 0.18 : 0.22}
+                stroke="var(--brand)"
+                strokeOpacity={hover == null ? 0.16 : on ? 0.5 : 0.05}
                 strokeWidth={Math.max(1, l.width ?? 1)}
+                style={{ transition: "stroke-opacity 140ms ease-out" }}
               >
-                <title>
-                  {`${src.label} → ${tgt.isDrop ? "Exit" : tgt.label}: ${formatNumber(l.value ?? 0)} (${(l.pct * 100).toFixed(0)}% of ${src.label})`}
-                </title>
+                <title>{`${(l.source as SNode).label} → ${(l.target as SNode).label}: ${formatNumber(l.value ?? 0)} (${Math.round(l.pct * 100)}% of ${(l.source as SNode).label})`}</title>
               </path>
             );
           })}
@@ -125,37 +131,50 @@ export function JourneySankey({
         <g>
           {(graph.nodes as SNode[]).map((n, i) => {
             const x0 = n.x0 ?? 0;
+            const x1 = n.x1 ?? 0;
             const y0 = n.y0 ?? 0;
-            const w = (n.x1 ?? 0) - x0;
-            const h = Math.max(1, (n.y1 ?? 0) - y0);
-            const labelRight = x0 < width / 2;
+            const h = Math.max(2, (n.y1 ?? 0) - y0);
+            const active = hover == null || hover === n.key;
+            const isFirst = n.col === firstCol;
+            const isLast = n.col === lastCol;
+            // Label placement: first col outside-left, last col outside-right, middle above.
+            const pos = isFirst
+              ? { x: x0 - 7, y: y0 + h / 2, anchor: "end" as const, dy: "0.34em", above: false }
+              : isLast
+                ? { x: x1 + 7, y: y0 + h / 2, anchor: "start" as const, dy: "0.34em", above: false }
+                : { x: (x0 + x1) / 2, y: y0 - 5, anchor: "middle" as const, dy: "0", above: true };
             return (
-              <g key={i}>
+              <g
+                key={i}
+                onMouseEnter={() => setHover(n.key)}
+                onMouseLeave={() => setHover(null)}
+                style={{ opacity: active ? 1 : 0.4, transition: "opacity 140ms ease-out" }}
+              >
                 <rect
                   x={x0}
                   y={y0}
-                  width={w}
+                  width={x1 - x0}
                   height={h}
-                  rx={1.5}
-                  fill={n.isDrop ? "var(--danger)" : n.isOther ? "var(--muted-foreground)" : "var(--brand)"}
-                  fillOpacity={n.isDrop ? 0.5 : n.isOther ? 0.5 : 0.85}
-                  className={n.isDrop ? "" : "cursor-pointer"}
+                  rx={2.5}
+                  fill={n.isOther ? "var(--muted-foreground)" : "var(--brand)"}
+                  fillOpacity={n.isOther ? 0.45 : 0.9}
+                  className={n.isOther ? "cursor-default" : "cursor-pointer"}
                   onClick={(ev) =>
-                    !n.isDrop && onNodeClick?.({ path: n.label, col: n.col, isOther: n.isOther }, ev.clientX, ev.clientY)
+                    !n.isOther && onNodeClick?.({ path: n.label, col: n.col, isOther: n.isOther }, ev.clientX, ev.clientY)
                   }
                 >
-                  <title>{`${n.label}: ${formatNumber(n.value ?? 0)}`}</title>
+                  <title>{`${n.label}: ${formatNumber(n.value ?? 0)}${n.ended > 0 ? ` · ${formatNumber(n.ended)} exited here` : ""}`}</title>
                 </rect>
-                {h > 10 && (
+                {(pos.above ? h > 6 : true) && (
                   <text
-                    x={labelRight ? (n.x1 ?? 0) + 4 : x0 - 4}
-                    y={y0 + h / 2}
-                    dy="0.35em"
-                    textAnchor={labelRight ? "start" : "end"}
-                    className="fill-foreground font-mono"
-                    style={{ fontSize: 10.5 }}
+                    x={pos.x}
+                    y={pos.y}
+                    dy={pos.dy}
+                    textAnchor={pos.anchor}
+                    className="pointer-events-none fill-foreground"
+                    style={{ fontSize: pos.above ? 10 : 11 }}
                   >
-                    {shortLabel(n.label)}
+                    {shortLabel(n.label, pos.above ? 16 : 20)}
                     <tspan className="fill-muted-foreground"> {formatNumber(n.value ?? 0)}</tspan>
                   </text>
                 )}
