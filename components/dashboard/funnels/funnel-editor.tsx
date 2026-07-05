@@ -21,7 +21,15 @@ function stepValid(s: FunnelStep): boolean {
   return s.goalId !== "";
 }
 
-export function FunnelEditor({ site, funnel }: { site: string; funnel: Funnel | null }) {
+export function FunnelEditor({
+  site,
+  funnel,
+  stateless = false,
+}: {
+  site: string;
+  funnel: Funnel | null;
+  stateless?: boolean;
+}) {
   const router = useRouter();
   const qc = useQueryClient();
   const [name, setName] = useState(funnel?.name ?? "");
@@ -53,6 +61,9 @@ export function FunnelEditor({ site, funnel }: { site: string; funnel: Funnel | 
       return next;
     });
 
+  // Stateless sites rotate visitor ids daily, so a >1-day window is meaningless.
+  const allowedWindows = stateless ? FUNNEL_WINDOWS.filter((w) => w <= 1440) : FUNNEL_WINDOWS;
+  const effWindow = stateless ? Math.min(windowMinutes, 1440) : windowMinutes;
   const ready = name.trim() !== "" && steps.length >= 2 && steps.length <= 8 && steps.every(stepValid);
 
   // Live preview over the last 7 days (debounced).
@@ -78,7 +89,7 @@ export function FunnelEditor({ site, funnel }: { site: string; funnel: Funnel | 
 
   const save = useMutation({
     mutationFn: async () => {
-      const body = { name: name.trim(), steps, windowMinutes };
+      const body = { name: name.trim(), steps, windowMinutes: effWindow };
       const url = funnel ? `/api/sites/${site}/funnels/${funnel.id}` : `/api/sites/${site}/funnels`;
       const res = await fetch(url, {
         method: funnel ? "PATCH" : "POST",
@@ -114,11 +125,16 @@ export function FunnelEditor({ site, funnel }: { site: string; funnel: Funnel | 
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Conversion window</span>
-            <select className={INPUT} value={windowMinutes} onChange={(e) => setWindowMinutes(Number(e.target.value))}>
-              {FUNNEL_WINDOWS.map((w) => (
+            <select className={INPUT} value={effWindow} onChange={(e) => setWindowMinutes(Number(e.target.value))}>
+              {allowedWindows.map((w) => (
                 <option key={w} value={w}>{WINDOW_LABELS[w]}</option>
               ))}
             </select>
+            {stateless && (
+              <span className="text-[10.5px] text-muted-foreground">
+                Capped at 1 day - visitor ids reset daily in stateless mode.
+              </span>
+            )}
           </label>
         </div>
 
