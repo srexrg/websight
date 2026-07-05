@@ -2,8 +2,8 @@
 
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
-import type { GlobeConfig } from "@/components/ui/globe";
 import { EmptyState, RowsSkeleton, Sk } from "@/components/dashboard/states";
+import type { GlobePoint } from "@/components/dashboard/globe/real-globe";
 import { countryCoords } from "@/lib/dashboard/geo";
 import {
   useBreakdown,
@@ -14,37 +14,12 @@ import {
 } from "@/lib/dashboard/use-analytics";
 import { countryFlag, countryName } from "./shared";
 
-const Globe = dynamic(() => import("@/components/ui/globe").then((m) => m.Globe), {
-  ssr: false,
-  loading: () => <Sk className="h-full w-full rounded-xl" />,
-});
+// MapLibre needs window; load client-only (docs/redesign/06).
+const RealGlobe = dynamic(
+  () => import("@/components/dashboard/globe/real-globe").then((m) => m.RealGlobe),
+  { ssr: false, loading: () => <Sk className="h-full w-full" /> },
+);
 
-// Same visual language as the landing globe (components/landing/InteractiveGlobe):
-// the globe stays dark in both themes - the one intentionally dark surface.
-const GLOBE_CONFIG: GlobeConfig = {
-  pointSize: 2,
-  globeColor: "#0A241B",
-  showAtmosphere: true,
-  atmosphereColor: "#5FD3A6",
-  atmosphereAltitude: 0.16,
-  emissive: "#0A241B",
-  emissiveIntensity: 0.1,
-  shininess: 0.9,
-  polygonColor: "rgba(125,230,185,0.62)",
-  ambientLight: "#6FE0AE",
-  directionalLeftLight: "#ffffff",
-  directionalTopLight: "#ffffff",
-  pointLight: "#ffffff",
-  arcTime: 1600,
-  arcLength: 0.9,
-  rings: 1,
-  maxRings: 3,
-  initialPosition: { lat: 20, lng: 10 },
-  autoRotate: true,
-  autoRotateSpeed: 0.5,
-};
-
-const ARC_COLORS = ["#5FD3A6", "#34D399", "#84D2B7"];
 const GEO_TABS = [
   { key: "country", label: "Countries" },
   { key: "region", label: "Regions" },
@@ -59,9 +34,9 @@ export function GlobeScreen({ site }: { site: string }) {
 
   const liveCount = useLiveCount(site, encoded);
   const liveGeo = useLiveBreakdown(site, tab, encoded, 20);
-  const liveCountries = useLiveBreakdown(site, "country", encoded, 20);
+  const liveCountries = useLiveBreakdown(site, "country", encoded, 30);
   const rangeGeo = useBreakdown(site, params, tab, 20);
-  const rangeCountries = useBreakdown(site, params, "country", 20);
+  const rangeCountries = useBreakdown(site, params, "country", 30);
 
   const list =
     mode === "live"
@@ -73,44 +48,35 @@ export function GlobeScreen({ site }: { site: string }) {
       ? liveCountries.data?.map((r) => ({ value: r.value, count: r.visitors }))
       : rangeCountries.data?.map((r) => ({ value: r.value, count: r.visitors }));
 
-  // Arcs: every active country connects to the busiest one (capped ~10),
-  // which also gives pulsing rings at each endpoint.
-  const reducedMotion =
-    typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  const arcs = useMemo(() => {
-    const withCoords = (countryRows ?? [])
-      .map((r) => ({ ...r, coords: countryCoords(r.value) }))
-      .filter((r): r is typeof r & { coords: [number, number] } => r.coords !== null)
-      .slice(0, 11);
-    if (withCoords.length === 0) return [];
-    const hub = withCoords[0];
-    return withCoords.map((r, i) => ({
-      order: i + 1,
-      startLat: r.coords[0],
-      startLng: r.coords[1],
-      endLat: hub.coords[0],
-      endLng: hub.coords[1],
-      arcAlt: r.value === hub.value ? 0.08 : 0.25 + (i % 4) * 0.1,
-      color: ARC_COLORS[i % ARC_COLORS.length],
-    }));
-  }, [countryRows]);
-
-  const config = useMemo(
-    () => ({ ...GLOBE_CONFIG, autoRotate: !reducedMotion }),
-    [reducedMotion],
+  const points: GlobePoint[] = useMemo(
+    () =>
+      (countryRows ?? [])
+        .map((r) => {
+          const coords = countryCoords(r.value);
+          if (!coords) return null;
+          return {
+            code: r.value,
+            label: countryName(r.value),
+            lat: coords[0],
+            lng: coords[1],
+            count: r.count,
+          };
+        })
+        .filter((p): p is GlobePoint => p !== null),
+    [countryRows],
   );
 
   return (
     <div className="grid gap-4 xl:grid-cols-[1fr_340px]">
-      {/* Globe stage - intentionally dark in both themes */}
-      <section className="relative min-h-[520px] overflow-hidden rounded-2xl border border-border bg-[#07100C] shadow-[0_1px_2px_rgba(16,24,40,.04)]">
+      {/* Globe stage: real cartography on a space background */}
+      <section className="relative min-h-[560px] overflow-hidden rounded-2xl border border-border bg-[radial-gradient(ellipse_at_center,#101B2E_0%,#060B14_70%)] shadow-[0_1px_2px_rgba(16,24,40,.04)]">
         <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
-          <span className="flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 font-mono text-[11.5px] font-semibold text-[#EAF6EF] backdrop-blur">
+          <span className="flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 font-mono text-[11.5px] font-semibold text-[#EAF6EF] backdrop-blur">
             <span className="h-1.5 w-1.5 rounded-full bg-[#5FD3A6] [animation:wsBlink_1.4s_ease-in-out_infinite]" />
             {liveCount.data?.count ?? 0} online
           </span>
         </div>
-        <div className="absolute right-4 top-4 z-10 flex rounded-lg bg-white/5 p-0.5 backdrop-blur">
+        <div className="absolute right-4 top-4 z-10 flex rounded-lg bg-black/40 p-0.5 backdrop-blur">
           {(["live", "range"] as const).map((m) => (
             <button
               key={m}
@@ -124,17 +90,17 @@ export function GlobeScreen({ site }: { site: string }) {
           ))}
         </div>
         <div className="absolute inset-0">
-          {arcs.length > 0 ? (
-            <Globe data={arcs} globeConfig={config} />
-          ) : (
-            <div className="flex h-full items-center justify-center">
-              <EmptyState
-                title={mode === "live" ? "No one online right now" : "No traffic in this range"}
-                hint="The globe lights up the moment visitors arrive."
-              />
-            </div>
-          )}
+          <RealGlobe points={points} onSelect={(code) => add("country", code)} />
         </div>
+        {points.length === 0 && !liveGeo.isPending && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-6 z-10 flex justify-center">
+            <span className="rounded-full bg-black/45 px-3 py-1.5 text-[12px] text-[#9AB5A8] backdrop-blur">
+              {mode === "live"
+                ? "No one online right now - the globe lights up when visitors arrive"
+                : "No traffic in this range"}
+            </span>
+          </div>
+        )}
       </section>
 
       {/* Geo drill-down panel */}
