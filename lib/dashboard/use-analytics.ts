@@ -9,7 +9,9 @@ import type {
   DimensionValue,
   EventBreakdownRow,
   Granularity,
+  LiveBreakdownRow,
   Overview,
+  TickerEvent,
   TimeseriesPoint,
 } from "@/lib/analytics/queries";
 import {
@@ -156,4 +158,57 @@ export function useDashboardParams() {
   }, [range, compare, encoded]);
 
   return { range, compare: compare as CompareMode, setCompare, params, compareParams };
+}
+
+// ------------------------------------------------------------------ realtime
+
+/** Poll cadences per docs/redesign/06; TanStack pauses in background tabs. */
+export function useLiveCount(site: string, f = "") {
+  return useQuery<{ count: number }>({
+    queryKey: ["analytics", site, "live-count", f],
+    queryFn: () => fetchAnalytics(site, { kind: "live-count", range: "24h", f }),
+    refetchInterval: 15_000,
+    staleTime: 10_000,
+  });
+}
+
+export function useLiveBreakdown(site: string, dim: string, f = "", limit = 10) {
+  return useQuery<LiveBreakdownRow[]>({
+    queryKey: ["analytics", site, "live-breakdown", dim, f, limit],
+    queryFn: () =>
+      fetchAnalytics(site, {
+        kind: "live-breakdown",
+        dimension: dim,
+        limit: String(limit),
+        range: "24h",
+        f,
+      }),
+    refetchInterval: 10_000,
+    staleTime: 5_000,
+  });
+}
+
+export function useLiveSeries(site: string, f = "") {
+  return useQuery<TimeseriesPoint[]>({
+    queryKey: ["analytics", site, "live-series", f],
+    queryFn: () => fetchAnalytics(site, { kind: "live-series", range: "24h", f }),
+    refetchInterval: 30_000,
+    staleTime: 15_000,
+  });
+}
+
+export function useLiveTicker(site: string) {
+  return useQuery<TickerEvent[]>({
+    queryKey: ["analytics", site, "live-ticker"],
+    queryFn: async () => {
+      const rows = await fetchAnalytics<TickerEvent[]>(site, {
+        kind: "live-ticker",
+        range: "24h",
+        limit: "50",
+      });
+      return rows;
+    },
+    refetchInterval: 5_000,
+    staleTime: 2_500,
+  });
 }

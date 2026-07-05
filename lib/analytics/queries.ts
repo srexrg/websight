@@ -12,7 +12,7 @@ import type { Filter } from "./filters";
  */
 
 export type QueryRange = { from: Date; to: Date };
-export type Granularity = "hour" | "day" | "week" | "month";
+export type Granularity = "minute" | "hour" | "day" | "week" | "month";
 export type BreakdownDimension =
   | "path"
   | "entry_path"
@@ -209,5 +209,89 @@ export async function getDimensionValues(
     });
     if (error) throw new Error(`analytics_dimension_values failed: ${error.message}`);
     return (data as DimensionValue[]).map((r) => ({ value: r.value, count: Number(r.count) }));
+  });
+}
+
+// ------------------------------------------------------------------ realtime
+
+/** Distinct sessionized visitors with an event in the last `minutes`. */
+export async function getLiveCount(
+  siteId: string,
+  minutes = 5,
+  filters: Filter[] = [],
+  supabase?: SupabaseClient,
+): Promise<number> {
+  return timed(`live-count site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_live_count", {
+      p_site: siteId,
+      p_minutes: minutes,
+      p_filters: filters,
+    });
+    if (error) throw new Error(`analytics_live_count failed: ${error.message}`);
+    return Number(data ?? 0);
+  });
+}
+
+export type LiveBreakdownRow = { value: string; visitors: number };
+
+export async function getLiveBreakdown(
+  siteId: string,
+  dimension: string,
+  minutes = 5,
+  limit = 10,
+  filters: Filter[] = [],
+  supabase?: SupabaseClient,
+): Promise<LiveBreakdownRow[]> {
+  return timed(`live-breakdown site=${siteId} dim=${dimension}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_live_breakdown", {
+      p_site: siteId,
+      p_dimension: dimension,
+      p_minutes: minutes,
+      p_limit: limit,
+      p_filters: filters,
+    });
+    if (error) throw new Error(`analytics_live_breakdown failed: ${error.message}`);
+    return (data as LiveBreakdownRow[]).map((r) => ({
+      value: r.value,
+      visitors: Number(r.visitors),
+    }));
+  });
+}
+
+export type TickerEvent = {
+  id: number;
+  name: string;
+  path: string;
+  country: string | null;
+  device_type: string | null;
+  browser: string | null;
+  referrer_domain: string | null;
+  created_at: string;
+};
+
+/**
+ * Reverse-chronological event feed. Cursor by `events.id` so the client only
+ * fetches new rows. No visitor ids are exposed (privacy).
+ */
+export async function getLiveTicker(
+  siteId: string,
+  afterId = 0,
+  limit = 50,
+  supabase?: SupabaseClient,
+): Promise<TickerEvent[]> {
+  return timed(`live-ticker site=${siteId}`, async () => {
+    const since = new Date(Date.now() - 30 * 60_000).toISOString();
+    const { data, error } = await client(supabase)
+      .from("events")
+      .select("id, name, path, country, device_type, browser, referrer_domain, created_at")
+      .eq("site_id", siteId)
+      .gt("created_at", since)
+      .gt("id", afterId)
+      .not("session_id", "is", null)
+      .order("created_at", { ascending: false })
+      .order("id", { ascending: false })
+      .limit(limit);
+    if (error) throw new Error(`live ticker failed: ${error.message}`);
+    return (data ?? []) as TickerEvent[];
   });
 }
