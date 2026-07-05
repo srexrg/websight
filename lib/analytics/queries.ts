@@ -4,6 +4,8 @@ import type { Filter } from "./filters";
 import type { GoalKind, PathOp } from "./goals";
 import type { Funnel, FunnelStep } from "./funnels";
 import { mapFunnelRow } from "./funnels";
+import type { JourneyParams, JourneyResult } from "./journeys";
+import { computeJourneys } from "./journeys";
 
 /**
  * THE analytics read layer (docs/redesign/02). Every dashboard fetch goes
@@ -597,6 +599,31 @@ export async function getFunnelResults(
     steps: funnel.steps,
     results,
   };
+}
+
+const JOURNEY_LIMIT = 200_000;
+
+/** Journey/path Sankey data for a site (docs/redesign/10). */
+export async function getJourneys(
+  siteId: string,
+  range: QueryRange,
+  params: JourneyParams,
+  supabase?: SupabaseClient,
+  filters: Filter[] = [],
+): Promise<JourneyResult> {
+  return timed(`journeys site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_session_paths", {
+      p_site: siteId,
+      p_from: range.from.toISOString(),
+      p_to: range.to.toISOString(),
+      p_filters: filters,
+      p_limit: JOURNEY_LIMIT,
+    });
+    if (error) throw new Error(`analytics_session_paths failed: ${error.message}`);
+    const rows = data as { paths: string[] | null }[];
+    const sequences = rows.map((r) => r.paths ?? []).filter((s) => s.length > 0);
+    return computeJourneys(sequences, params, rows.length >= JOURNEY_LIMIT);
+  });
 }
 
 export type FunnelTtcBucket = { bucket: number; count: number };

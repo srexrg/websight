@@ -39,6 +39,7 @@ import {
   type FilterOp,
 } from "@/lib/analytics/filters";
 import type { Funnel } from "@/lib/analytics/funnels";
+import type { JourneyParams, JourneyResult } from "@/lib/analytics/journeys";
 import {
   compareParser,
   comparisonRange,
@@ -214,6 +215,24 @@ export function useFunnelResults(site: string, p: AnalyticsParams, funnelId: str
     queryKey: ["analytics", site, "funnel-results", funnelId, p],
     queryFn: () => fetchAnalytics(site, { kind: "funnel-results", funnel: funnelId, ...base(p) }),
     enabled: !!funnelId,
+    staleTime: STALE_MS,
+  });
+}
+
+/** Journey/path Sankey data (docs/redesign/10). */
+export function useJourneys(site: string, p: AnalyticsParams, jp: JourneyParams) {
+  return useQuery<JourneyResult>({
+    queryKey: ["analytics", site, "journeys", jp, p],
+    queryFn: () =>
+      fetchAnalytics(site, {
+        kind: "journeys",
+        anchor: jp.anchor ?? "",
+        dir: jp.direction,
+        steps: String(jp.steps),
+        topN: String(jp.topN),
+        group: (jp.grouping ?? []).join(","),
+        ...base(p),
+      }),
     staleTime: STALE_MS,
   });
 }
