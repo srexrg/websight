@@ -22,8 +22,8 @@ export const NAV_SECTIONS: NavSection[] = [
     title: "Analytics",
     items: [
       { slug: "overview", label: "Overview", icon: "chart-line", enabled: true },
-      { slug: "realtime", label: "Realtime", icon: "broadcast", enabled: false }, // plan 06
-      { slug: "globe", label: "Globe", icon: "globe-hemisphere-west", enabled: false }, // plan 07
+      { slug: "realtime", label: "Realtime", icon: "broadcast", enabled: true },
+      { slug: "globe", label: "Globe", icon: "globe-hemisphere-west", enabled: true },
       { slug: "pages", label: "Pages", icon: "file-text", enabled: true },
       { slug: "sources", label: "Sources", icon: "arrow-bend-down-right", enabled: true },
       { slug: "audience", label: "Audience", icon: "users-three", enabled: true },

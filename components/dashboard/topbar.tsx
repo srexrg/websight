@@ -1,9 +1,11 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { useParams, usePathname } from "next/navigation";
 import { useQueryState } from "nuqs";
 import type { ReactNode } from "react";
 import { screenTitle } from "@/lib/dashboard/nav";
+import { useLiveCount } from "@/lib/dashboard/use-analytics";
 import {
   COMPARE_LABELS,
   COMPARE_MODES,
@@ -25,7 +27,12 @@ export function Topbar({ actions }: { actions?: ReactNode }) {
 
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-border bg-page/85 px-6 py-3.5 backdrop-blur">
-      <h1 className="text-[21px] font-bold tracking-[-.4px] text-foreground">{screenTitle(slug)}</h1>
+      <div className="flex items-center gap-3">
+        <h1 className="text-[21px] font-bold tracking-[-.4px] text-foreground">
+          {screenTitle(slug)}
+        </h1>
+        <LivePill />
+      </div>
       <div className="flex items-center gap-2">
         {slug !== "settings" && (
           <select
@@ -61,5 +68,30 @@ export function Topbar({ actions }: { actions?: ReactNode }) {
         {actions}
       </div>
     </header>
+  );
+}
+
+/** "N online" pill (last 5 minutes); click jumps to Realtime. */
+function LivePill() {
+  const { site } = useParams<{ site: string }>();
+  const live = useLiveCount(site);
+  const count = live.data?.count ?? 0;
+  return (
+    <Link
+      href={`/${site}/realtime`}
+      className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[11.5px] font-semibold transition-colors ${
+        count > 0
+          ? "border-brand/25 bg-accent text-accent-foreground"
+          : "border-border bg-card text-muted-foreground"
+      }`}
+      title="Visitors online now - open Realtime"
+    >
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${
+          count > 0 ? "bg-success [animation:wsBlink_1.4s_ease-in-out_infinite]" : "bg-muted-foreground/40"
+        }`}
+      />
+      {count} online
+    </Link>
   );
 }

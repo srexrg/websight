@@ -4,6 +4,9 @@ import {
   getBreakdown,
   getDimensionValues,
   getEventBreakdown,
+  getLiveBreakdown,
+  getLiveCount,
+  getLiveTicker,
   getOverview,
   getTimeseries,
   type BreakdownDimension,
@@ -118,6 +121,23 @@ export async function GET(
       }
       case "events":
         return NextResponse.json(await getEventBreakdown(site.id, range, limit, undefined, filters));
+      case "live-count":
+        return NextResponse.json({ count: await getLiveCount(site.id, 5, filters) });
+      case "live-breakdown": {
+        const dim = q.get("dimension") ?? "";
+        return NextResponse.json(await getLiveBreakdown(site.id, dim, 5, limit, filters));
+      }
+      case "live-series": {
+        const to = new Date();
+        const from = new Date(to.getTime() - 30 * 60_000);
+        return NextResponse.json(
+          await getTimeseries(site.id, { from, to }, "minute", undefined, filters),
+        );
+      }
+      case "live-ticker": {
+        const after = Math.max(Number(q.get("after")) || 0, 0);
+        return NextResponse.json(await getLiveTicker(site.id, after, limit));
+      }
       case "dimension-values": {
         const dim = q.get("dimension") ?? "";
         if (!isValidDim(dim) || dim.startsWith("prop:")) {
