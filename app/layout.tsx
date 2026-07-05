@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import Script from "next/script";
 import { DATA } from "@/data/site.config";
@@ -98,7 +99,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
       {/* Self-tracking via the v2 tracker, served from our own origin.
           The script no-ops on localhost, so dev stays clean. */}
@@ -116,7 +117,9 @@ export default function RootLayout({
       <body
         className={`${hanken.variable} ${jetbrains.variable} font-sans antialiased`}
       >
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

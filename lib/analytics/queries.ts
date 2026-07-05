@@ -146,3 +146,32 @@ export async function getBreakdown(
     }));
   });
 }
+
+export type EventBreakdownRow = {
+  name: string;
+  count: number;
+  visitors: number;
+};
+
+/** Custom (non-pageview) events by name for the Events screen. */
+export async function getEventBreakdown(
+  siteId: string,
+  range: QueryRange,
+  limit = 50,
+  supabase?: SupabaseClient,
+): Promise<EventBreakdownRow[]> {
+  return timed(`events site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_event_breakdown", {
+      p_site: siteId,
+      p_from: range.from.toISOString(),
+      p_to: range.to.toISOString(),
+      p_limit: limit,
+    });
+    if (error) throw new Error(`analytics_event_breakdown failed: ${error.message}`);
+    return (data as EventBreakdownRow[]).map((r) => ({
+      name: r.name,
+      count: Number(r.count),
+      visitors: Number(r.visitors),
+    }));
+  });
+}

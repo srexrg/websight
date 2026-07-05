@@ -75,34 +75,40 @@
   --ring: #0E9C6E;
 }
 
-/* dark theme not shipped yet - revamp sub-project, do not rely on this */
-:root.dark {
-  /* Dark mode - deep space theme */
-  --background: oklch(0.1 0.02 240); /* Deep dark blue-black */
-  --foreground: oklch(0.9 0.02 240);
+/* Dark theme: #0E1310-family surfaces from the landing StatsBand
+   (design/design-system.md "Dark surfaces"), emerald brand unchanged. */
+.dark {
+  --page: #0B0F0D;
+  --surface: #101512;
+  --surface-2: #151B17;
 
-  --card: oklch(0.13 0.02 240);
-  --card-foreground: oklch(0.9 0.02 240);
+  --background: #0B0F0D;
+  --foreground: #EAF6EF;
 
-  --popover: oklch(0.13 0.02 240);
-  --popover-foreground: oklch(0.9 0.02 240);
+  --card: #101512;
+  --card-foreground: #EAF6EF;
+  --popover: #131916;
+  --popover-foreground: #EAF6EF;
 
-  --primary: oklch(0.65 0.25 260); /* Vibrant purple */
-  --primary-foreground: oklch(0.1 0.02 240);
+  --brand: #0E9C6E;
+  --brand-fg: #FFFFFF;
+  --primary: #0E9C6E;
+  --primary-foreground: #FFFFFF;
 
-  --secondary: oklch(0.2 0.04 240);
-  --secondary-foreground: oklch(0.9 0.02 240);
+  --secondary: #1B221E;
+  --secondary-foreground: #EAF6EF;
+  --muted: #151B17;
+  --muted-foreground: #8FA89B;
+  --accent: #12291F;
+  --accent-foreground: #5FC2A0;
 
-  --muted: oklch(0.18 0.03 240);
-  --muted-foreground: oklch(0.6 0.05 240);
+  --success: #34C08B;
+  --danger: #E0736D;
+  --destructive: #E0736D;
 
-  --accent: oklch(0.2 0.04 260);
-  --accent-foreground: oklch(0.9 0.02 240);
-
-  --destructive: oklch(0.6 0.25 20);
-  --border: oklch(0.2 0.03 240);
-  --input: oklch(0.2 0.03 240);
-  --ring: oklch(0.6 0.15 260);
+  --border: rgba(234, 246, 239, 0.09);
+  --input: rgba(234, 246, 239, 0.12);
+  --ring: #0E9C6E;
 }
 
 @layer base {
