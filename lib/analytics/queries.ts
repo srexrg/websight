@@ -599,6 +599,82 @@ export async function getFunnelResults(
   };
 }
 
+export type FunnelTtcBucket = { bucket: number; count: number };
+
+/** Time-to-convert distribution for a saved funnel's completers (docs/redesign/09 M4). */
+export async function getFunnelTimeToConvert(
+  siteId: string,
+  range: QueryRange,
+  funnelId: string,
+  supabase?: SupabaseClient,
+  filters: Filter[] = [],
+): Promise<FunnelTtcBucket[]> {
+  const { data: f, error } = await client(supabase)
+    .from("funnels")
+    .select("steps, window_minutes, base_filters")
+    .eq("id", funnelId)
+    .eq("site_id", siteId)
+    .is("archived_at", null)
+    .maybeSingle();
+  if (error) throw new Error(`funnel load failed: ${error.message}`);
+  if (!f) return [];
+  const merged = [...((f.base_filters as Filter[] | null) ?? []), ...filters];
+  const { data, error: e2 } = await client(supabase).rpc("analytics_funnel_ttc", {
+    p_site: siteId,
+    p_from: range.from.toISOString(),
+    p_to: range.to.toISOString(),
+    p_steps: f.steps,
+    p_window_minutes: f.window_minutes,
+    p_filters: merged,
+  });
+  if (e2) throw new Error(`analytics_funnel_ttc failed: ${e2.message}`);
+  return (data as Record<string, unknown>[]).map((r) => ({
+    bucket: Number(r.bucket),
+    count: Number(r.count),
+  }));
+}
+
+export type FunnelVisitor = { visitorId: string; userId: string | null };
+
+/** Visitors who converted to / dropped off at one funnel step (docs/redesign/09 M3). */
+export async function getFunnelStepVisitors(
+  siteId: string,
+  range: QueryRange,
+  funnelId: string,
+  step: number,
+  outcome: "converted" | "dropped",
+  supabase?: SupabaseClient,
+  filters: Filter[] = [],
+): Promise<FunnelVisitor[]> {
+  const { data: f, error } = await client(supabase)
+    .from("funnels")
+    .select("steps, window_minutes, base_filters")
+    .eq("id", funnelId)
+    .eq("site_id", siteId)
+    .is("archived_at", null)
+    .maybeSingle();
+  if (error) throw new Error(`funnel load failed: ${error.message}`);
+  if (!f) return [];
+  const merged = [...((f.base_filters as Filter[] | null) ?? []), ...filters];
+  const { data, error: e2 } = await client(supabase).rpc("analytics_funnel_step_visitors", {
+    p_site: siteId,
+    p_from: range.from.toISOString(),
+    p_to: range.to.toISOString(),
+    p_steps: f.steps,
+    p_window_minutes: f.window_minutes,
+    p_step: step,
+    p_outcome: outcome,
+    p_limit: 50,
+    p_offset: 0,
+    p_filters: merged,
+  });
+  if (e2) throw new Error(`analytics_funnel_step_visitors failed: ${e2.message}`);
+  return (data as Record<string, unknown>[]).map((r) => ({
+    visitorId: r.visitor_id as string,
+    userId: (r.user_id as string | null) ?? null,
+  }));
+}
+
 /** Goal definition fields the compiler needs (docs/redesign/08). */
 export type GoalDef = {
   kind: GoalKind;

@@ -16,6 +16,8 @@ import type {
   Granularity,
   LiveBreakdownRow,
   FunnelResults,
+  FunnelTtcBucket,
+  FunnelVisitor,
   GoalSeriesPoint,
   GoalWithStats,
   Overview,
@@ -212,6 +214,40 @@ export function useFunnelResults(site: string, p: AnalyticsParams, funnelId: str
     queryKey: ["analytics", site, "funnel-results", funnelId, p],
     queryFn: () => fetchAnalytics(site, { kind: "funnel-results", funnel: funnelId, ...base(p) }),
     enabled: !!funnelId,
+    staleTime: STALE_MS,
+  });
+}
+
+/** Time-to-convert distribution buckets for a funnel's completers. */
+export function useFunnelTimeToConvert(site: string, p: AnalyticsParams, funnelId: string) {
+  return useQuery<FunnelTtcBucket[]>({
+    queryKey: ["analytics", site, "funnel-ttc", funnelId, p],
+    queryFn: () => fetchAnalytics(site, { kind: "funnel-ttc", funnel: funnelId, ...base(p) }),
+    enabled: !!funnelId,
+    staleTime: STALE_MS,
+  });
+}
+
+/** Drill-down: visitors converted to / dropped off at a funnel step. */
+export function useFunnelStepVisitors(
+  site: string,
+  p: AnalyticsParams,
+  funnelId: string,
+  step: number,
+  outcome: "converted" | "dropped",
+  enabled: boolean,
+) {
+  return useQuery<FunnelVisitor[]>({
+    queryKey: ["analytics", site, "funnel-step-visitors", funnelId, step, outcome, p],
+    queryFn: () =>
+      fetchAnalytics(site, {
+        kind: "funnel-step-visitors",
+        funnel: funnelId,
+        step: String(step),
+        outcome,
+        ...base(p),
+      }),
+    enabled,
     staleTime: STALE_MS,
   });
 }

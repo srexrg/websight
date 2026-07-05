@@ -8,6 +8,8 @@ import {
   getLiveCount,
   getLiveTicker,
   getFunnelResults,
+  getFunnelStepVisitors,
+  getFunnelTimeToConvert,
   getGoalsWithStats,
   getGoalTimeseries,
   getOverview,
@@ -191,6 +193,27 @@ export async function GET(
         const res = await getFunnelResults(site.id, range, funnel, undefined, filters);
         if (!res) return NextResponse.json({ error: "Not found" }, { status: 404 });
         return NextResponse.json(res);
+      }
+      case "funnel-step-visitors": {
+        const funnel = q.get("funnel") ?? "";
+        const step = Number(q.get("step"));
+        const outcome = q.get("outcome");
+        if (!/^[0-9a-f-]{36}$/i.test(funnel) || !Number.isInteger(step) || step < 1) {
+          return NextResponse.json({ error: "Invalid funnel/step" }, { status: 400 });
+        }
+        if (outcome !== "converted" && outcome !== "dropped") {
+          return NextResponse.json({ error: "Invalid outcome" }, { status: 400 });
+        }
+        return NextResponse.json(
+          await getFunnelStepVisitors(site.id, range, funnel, step, outcome, undefined, filters),
+        );
+      }
+      case "funnel-ttc": {
+        const funnel = q.get("funnel") ?? "";
+        if (!/^[0-9a-f-]{36}$/i.test(funnel)) {
+          return NextResponse.json({ error: "Invalid funnel" }, { status: 400 });
+        }
+        return NextResponse.json(await getFunnelTimeToConvert(site.id, range, funnel, undefined, filters));
       }
       case "live-count":
         return NextResponse.json({ count: await getLiveCount(site.id, 5, filters) });
