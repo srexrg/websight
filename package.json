@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "npm run build:tracker",
     "build": "next build",
+    "build:tracker": "tsup --config packages/tracker/tsup.config.ts",
     "start": "next start",
     "lint": "eslint .",
+    "pretest": "npm run build:tracker",
     "test": "vitest run",
     "test:watch": "vitest",
     "backfill": "tsx scripts/backfill.ts"
@@ -52,6 +55,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.3.1",
+    "@types/jsdom": "^28.0.3",
     "@types/jspdf": "^1.3.3",
     "@types/node": "^20",
     "@types/react": "^19.2.17",
@@ -59,11 +63,14 @@
     "@types/three": "^0.185.0",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.9",
+    "jsdom": "^29.1.1",
     "supabase": "^2.109.0",
     "tailwindcss": "^4.3.1",
+    "tsup": "^8.5.1",
     "tsx": "^4.23.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.9",
+    "web-vitals": "^5.3.0"
   },
   "overrides": {
     "react-simple-maps": {
