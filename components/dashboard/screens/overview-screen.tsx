@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { BreakdownCard } from "@/components/dashboard/breakdown-card";
+import { GoalSummaryCard } from "@/components/dashboard/goals/goal-summary-card";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { TimeseriesChart, type TimeseriesMetric } from "@/components/dashboard/timeseries-chart";
 import type { BreakdownDimension } from "@/lib/analytics/queries";
@@ -208,6 +209,8 @@ export function OverviewScreen({ site }: { site: string }) {
           </Link>
         }
       />
+
+      <GoalSummaryCard site={site} />
     </div>
   );
 }

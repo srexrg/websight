@@ -36,7 +36,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { slug: "sessions", label: "Sessions", icon: "list-bullets", enabled: true }, // plan 07
       { slug: "profiles", label: "Profiles", icon: "user-circle", enabled: true }, // plan 07
       { slug: "funnels", label: "Funnels", icon: "funnel", enabled: false }, // plan 09
-      { slug: "goals", label: "Goals", icon: "flag", enabled: false }, // plan 09
+      { slug: "goals", label: "Goals", icon: "flag", enabled: true }, // plan 08
       { slug: "journeys", label: "Journeys", icon: "path", enabled: false }, // plan 10
       { slug: "retention", label: "Retention", icon: "arrows-clockwise", enabled: false }, // plan 11
     ],

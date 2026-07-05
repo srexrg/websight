@@ -49,12 +49,19 @@ export const FILTER_DIMENSIONS: { dim: string; label: string }[] = [
 const KNOWN_DIMS = new Set(FILTER_DIMENSIONS.map((d) => d.dim));
 
 export function isValidDim(dim: string): boolean {
-  return KNOWN_DIMS.has(dim) || (/^prop:.{1,64}$/.test(dim) && !dim.includes(";"));
+  // `goal` is a programmatic dimension (set by goal drill-downs, not the manual
+  // editor), so it is valid to encode/decode but absent from FILTER_DIMENSIONS.
+  return (
+    KNOWN_DIMS.has(dim) ||
+    dim === "goal" ||
+    (/^prop:.{1,64}$/.test(dim) && !dim.includes(";"))
+  );
 }
 
 export function dimLabel(dim: string): string {
   const known = FILTER_DIMENSIONS.find((d) => d.dim === dim);
   if (known) return known.label;
+  if (dim === "goal") return "Goal";
   return dim.startsWith("prop:") ? `Prop ${dim.slice(5)}` : dim;
 }
 
