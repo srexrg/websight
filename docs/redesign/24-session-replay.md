@@ -4,7 +4,7 @@
 
 ## Overview
 
-Record real user sessions as rrweb DOM snapshot streams, store the payloads in Supabase Storage with metadata rows joined to the `02` `sessions` table, and play them back inside the `07` session detail drawer and a dedicated Replays screen. Replay is **off by default**, opt-in per site, sampled, aggressively masked, and TTL-expired - "Rybbit-class replay with a privacy story we can defend". The recorder ships as a lazy extension chunk so the core tracker stays under its 3KB budget.
+Record real user sessions as rrweb DOM snapshot streams, store the payloads in an S3-compatible object store (Cloudflare R2 on cloud - zero egress fees; any S3 endpoint when self-hosting) with metadata rows joined to the `02` `sessions` table, and play them back inside the `07` session detail drawer and a dedicated Replays screen. Replay is **off by default**, opt-in per site, sampled, aggressively masked, and TTL-expired - "Rybbit-class replay with a privacy story we can defend". The recorder ships as a lazy extension chunk so the core tracker stays under its 3KB budget.
 
 ## Feature breakdown
 
@@ -28,10 +28,10 @@ Record real user sessions as rrweb DOM snapshot streams, store the payloads in S
 ## Technical approach
 
 - **Recording**: rrweb is ~35KB gzipped - acceptable only as a lazy chunk. `packages/tracker/src/replay.ts` builds to `public/t-r.js`; core loads it via dynamic import when the config flag says so. Recorder assigns a random `recording_id` (UUID) per page load and resumes appending chunks to it across SPA routes; a full snapshot is re-taken when rrweb signals checkout (every 2min) to bound chunk replay cost.
-- **Storage**: Supabase Storage bucket `replays` (private), object path `{site_id}/{recording_id}/{seq}.json.gz`. Metadata in Postgres: one `replay_recordings` row per recording, one `replay_chunks` row per object. Stays within the `23` infrastructure decision (no new vendors); if a ClickHouse split ever happens, replay blobs are unaffected.
-- **Ingest**: `POST /api/replay` validates the site (same registry + origin rules as `/api/track` in `02`), enforces per-site quotas and per-request size cap (5MB), decompresses headers only (payload stored as-is), upserts the recording row, resolves `session_id` from the visitor's open session, uploads the object with the service-role client, returns 202.
-- **Playback**: server action issues short-lived signed URLs for a recording's chunks in order; the player fetches, decompresses, and feeds rrweb-player. No replay payload ever flows through PostgREST.
-- **Expiry**: `expires_at` stamped at ingest from site settings. A daily job (Vercel cron hitting an internal route - pg_cron cannot delete storage objects) deletes expired storage objects then metadata rows, oldest first, with a batch cap.
+- **Storage**: private bucket `replays` on an **S3-compatible object store**, object path `{site_id}/{recording_id}/{seq}.json.gz`. Metadata in Postgres: one `replay_recordings` row per recording, one `replay_chunks` row per object. The storage layer is written against the S3 protocol (presigned URLs, PutObject/DeleteObjects), never a vendor SDK - cloud default is **Cloudflare R2** (zero egress fees, ~10GB-month + 1M writes/10M reads free, then $0.015/GB-month; egress matters because playback re-downloads everything that was ingested), while self-hosters point the same config at MinIO, AWS S3, or Supabase Storage's S3 endpoint. This is a deliberate, recorded amendment to the `23` "no new vendors" posture: `23` governs the events database; blob storage economics are a different problem, and the S3 interface keeps the vendor swappable. Config: `REPLAY_S3_ENDPOINT`, `REPLAY_S3_BUCKET`, `REPLAY_S3_ACCESS_KEY_ID`, `REPLAY_S3_SECRET_ACCESS_KEY`, `REPLAY_S3_REGION` (`auto` for R2).
+- **Ingest**: `POST /api/replay` validates the site (same registry + origin rules as `/api/track` in `02`), enforces per-site quotas and per-request size cap (5MB), decompresses headers only (payload stored as-is), upserts the recording row, resolves `session_id` from the visitor's open session, uploads the object to the S3 bucket, returns 202.
+- **Playback**: server action issues short-lived S3 presigned GET URLs for a recording's chunks in order; the player fetches, decompresses, and feeds rrweb-player. No replay payload ever flows through PostgREST or the Next.js server (R2's free egress makes direct-to-browser the cheap path too).
+- **Expiry**: `expires_at` stamped at ingest from site settings. A daily job (Vercel cron hitting an internal route - pg_cron cannot delete S3 objects) issues batched `DeleteObjects` calls then removes metadata rows, oldest first, with a batch cap.
 
 ## Frontend implementation
 
@@ -42,7 +42,7 @@ Record real user sessions as rrweb DOM snapshot streams, store the payloads in S
 ## Backend implementation
 
 - `app/api/replay/route.ts` (public beacon endpoint, CORS per `02`, 202 responses).
-- `lib/analytics/replay.ts`: recording upsert, chunk registration, signed-URL issuance, quota checks - the only module that touches the `replays` bucket.
+- `lib/analytics/replay.ts`: recording upsert, chunk registration, presigned-URL issuance, quota checks - the only module that touches the object store (S3 signing via `aws4fetch`; swapping providers is a config change, not a code change).
 - Retention route `app/api/internal/replay-expiry/route.ts` guarded by `CRON_SECRET`; GDPR delete path from `07` extended to call replay deletion.
 - `lib/analytics/queries.ts` gains `getReplays(params, cursor)` and `getReplay(recordingId)`.
 
@@ -72,7 +72,7 @@ RLS on both tables, service-role access only (same posture as `events`/`sessions
 
 ## Dependencies
 
-- `rrweb` + `rrweb-player` (recorder chunk and dashboard player only - never in the core tracker bundle), `fflate` only if the `CompressionStream` fallback proves necessary. Supabase Storage (already in the stack). Builds on `01` (extension chunks), `02` (sites registry, sessionization, origin rules), `05` (filters), `07` (sessions UI). Billing caps land with `18`.
+- `rrweb` + `rrweb-player` (recorder chunk and dashboard player only - never in the core tracker bundle), `fflate` only if the `CompressionStream` fallback proves necessary. `aws4fetch` (~6KB, edge-compatible) for S3 request signing - deliberately not the AWS SDK. A Cloudflare account with an R2 bucket + API token for cloud; any S3-compatible endpoint otherwise. Builds on `01` (extension chunks), `02` (sites registry, sessionization, origin rules), `05` (filters), `07` (sessions UI). Billing caps land with `18`.
 
 ## Edge cases
 
@@ -83,11 +83,11 @@ RLS on both tables, service-role access only (same posture as `events`/`sessions
 - Mutation storms (animated dashboards, canvas apps): rrweb sampling options (`mutation` throttle) + the byte cap; document known-noisy patterns.
 - Stateless mode midnight rollover (`02`): visitor hash changes, session lookup misses - recording continues under the same `recording_id` with the new session stamped; acceptable.
 - Storage failures must never break tracking: `/api/replay` errors are swallowed client-side, core analytics is unaffected.
-- Self-hosted without Storage configured: feature hides behind a capability check, settings card explains the requirement.
+- Self-hosted without an S3 endpoint configured: feature hides behind a capability check (`REPLAY_S3_*` env presence), settings card explains the requirement and lists known-good providers (R2, MinIO, S3, Supabase Storage S3 endpoint).
 
 ## Development milestones
 
-1. Schema + `replays` bucket + `POST /api/replay` storing compressed chunks with recording/session linkage; feature flag in site settings (no UI yet); quotas + size caps.
+1. Schema + S3 storage module (`aws4fetch` signing, R2 bucket provisioned, `REPLAY_S3_*` env) + `POST /api/replay` storing compressed chunks with recording/session linkage; feature flag in site settings (no UI yet); quotas + size caps.
 2. Recorder chunk: rrweb capture, masking defaults, sampling, batching/compression, SPA continuity; size gate; verified end-to-end against a local site.
 3. Playback: signed URLs, rrweb-player page, Replays list + session-drawer entry point, empty/error/expired states.
 4. Retention cron + GDPR cascade + per-recording delete; consent dialog + settings card + docs page.
@@ -95,4 +95,4 @@ RLS on both tables, service-role access only (same posture as `events`/`sessions
 
 ## Future improvements
 
-- Console log + network request capture as optional rrweb plugins (PostHog parity); filmstrip hover previews; rage-click/dead-click detection feeding `20` AI insights; heatmaps derived from replay mouse data; replay links in `13` error detail (jump to the moment of the error); S3 export for self-hosters who outgrow Supabase Storage.
+- Console log + network request capture as optional rrweb plugins (PostHog parity); filmstrip hover previews; rage-click/dead-click detection feeding `20` AI insights; heatmaps derived from replay mouse data; replay links in `13` error detail (jump to the moment of the error); lifecycle rules pushed down to the store (R2 object lifecycle policies) so expiry needs no application cron.
