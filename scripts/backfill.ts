@@ -14,6 +14,7 @@
 
 import { createHash } from "crypto";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { loadEnvLocal } from "../lib/env-local";
 import { classifyChannel } from "../lib/analytics/channels";
 import type { Channel, IngestEventRow, Site } from "../lib/analytics/types";
 
@@ -48,10 +49,14 @@ type LegacyVisit = {
 };
 
 function admin(): SupabaseClient {
+  loadEnvLocal();
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const key =
+    process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) {
-    console.error("NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required");
+    console.error(
+      "NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SECRET_KEY (or legacy SUPABASE_SERVICE_ROLE_KEY) are required",
+    );
     process.exit(1);
   }
   return createClient(url, key, { auth: { persistSession: false } });
