@@ -25,6 +25,7 @@ function bucketLabel(bucket: string, granularity: Granularity): string {
  *  mode re-themes without a remount. Comparison series lands with plan 05. */
 export function TimeseriesChart({
   data,
+  comparison,
   granularity,
   metric = "visitors",
   isLoading = false,
@@ -32,6 +33,8 @@ export function TimeseriesChart({
   height = 280,
 }: {
   data: TimeseriesPoint[] | undefined;
+  /** Comparison period series, aligned by bucket index (dashed line). */
+  comparison?: TimeseriesPoint[];
   granularity: Granularity;
   metric?: TimeseriesMetric;
   isLoading?: boolean;
@@ -55,7 +58,12 @@ export function TimeseriesChart({
     );
   }
 
-  const points = data.map((p) => ({ ...p, label: bucketLabel(p.bucket, granularity) }));
+  const points = data.map((p, i) => ({
+    ...p,
+    label: bucketLabel(p.bucket, granularity),
+    prev: comparison?.[i]?.[metric] ?? null,
+  }));
+  const hasComparison = Boolean(comparison && comparison.length > 0);
 
   return (
     <div style={{ height }} className="w-full">
@@ -86,20 +94,47 @@ export function TimeseriesChart({
           />
           <Tooltip
             cursor={{ stroke: "var(--brand)", strokeOpacity: 0.35 }}
-            content={({ active, payload, label }) =>
-              active && payload?.length ? (
+            content={({ active, payload, label }) => {
+              if (!active || !payload?.length) return null;
+              const current = payload.find((p) => p.dataKey === metric)?.value as number;
+              const prev = payload.find((p) => p.dataKey === "prev")?.value as number | null;
+              return (
                 <div className="rounded-lg border border-border bg-popover px-3 py-2 shadow-[0_4px_14px_rgba(16,24,40,.08)]">
                   <p className="text-[11px] font-medium text-muted-foreground">{label}</p>
                   <p className="font-mono text-[13px] font-semibold text-foreground">
-                    {formatNumber(payload[0].value as number)}{" "}
+                    {formatNumber(current ?? 0)}{" "}
                     <span className="font-sans text-[11px] font-medium text-muted-foreground">
                       {METRIC_LABELS[metric].toLowerCase()}
                     </span>
                   </p>
+                  {prev != null && (
+                    <p className="font-mono text-[12px] text-muted-foreground">
+                      {formatNumber(prev)}{" "}
+                      <span className="font-sans text-[11px]">previous</span>
+                      {prev > 0 && (
+                        <span className="ml-1 font-sans text-[11px]">
+                          ({current >= prev ? "+" : ""}
+                          {(((current - prev) / prev) * 100).toFixed(0)}%)
+                        </span>
+                      )}
+                    </p>
+                  )}
                 </div>
-              ) : null
-            }
+              );
+            }}
           />
+          {hasComparison && (
+            <Area
+              type="monotone"
+              dataKey="prev"
+              stroke="var(--muted-foreground)"
+              strokeWidth={1.5}
+              strokeDasharray="4 4"
+              fill="none"
+              dot={false}
+              activeDot={false}
+            />
+          )}
           <Area
             type="monotone"
             dataKey={metric}

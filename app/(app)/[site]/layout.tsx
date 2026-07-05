@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { Sidebar, type SidebarSite } from "@/components/dashboard/sidebar";
 import { Topbar } from "@/components/dashboard/topbar";
+import { FilterBar } from "@/components/dashboard/filters/filter-bar";
 
 /**
  * Per-site shell: resolves the site by public_id AS THE SIGNED-IN USER
@@ -48,6 +49,7 @@ export default async function SiteLayout({
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar />
+        <FilterBar />
         <main className="flex-1 px-6 py-5">{children}</main>
       </div>
     </div>

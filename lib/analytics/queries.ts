@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/utils/supabase/admin";
+import type { Filter } from "./filters";
 
 /**
  * THE analytics read layer (docs/redesign/02). Every dashboard fetch goes
@@ -14,6 +15,8 @@ export type QueryRange = { from: Date; to: Date };
 export type Granularity = "hour" | "day" | "week" | "month";
 export type BreakdownDimension =
   | "path"
+  | "entry_path"
+  | "exit_path"
   | "referrer_domain"
   | "channel"
   | "country"
@@ -73,6 +76,7 @@ export async function getOverview(
   siteId: string,
   range: QueryRange,
   supabase?: SupabaseClient,
+  filters: Filter[] = [],
 ): Promise<Overview> {
   return timed(`overview site=${siteId}`, async () => {
     const { data, error } = await client(supabase)
@@ -80,6 +84,7 @@ export async function getOverview(
         p_site: siteId,
         p_from: range.from.toISOString(),
         p_to: range.to.toISOString(),
+        p_filters: filters,
       })
       .single();
     if (error) throw new Error(`analytics_overview failed: ${error.message}`);
@@ -105,6 +110,7 @@ export async function getTimeseries(
   range: QueryRange,
   granularity: Granularity = "day",
   supabase?: SupabaseClient,
+  filters: Filter[] = [],
 ): Promise<TimeseriesPoint[]> {
   return timed(`timeseries site=${siteId} g=${granularity}`, async () => {
     const { data, error } = await client(supabase).rpc("analytics_timeseries", {
@@ -112,6 +118,7 @@ export async function getTimeseries(
       p_from: range.from.toISOString(),
       p_to: range.to.toISOString(),
       p_granularity: granularity,
+      p_filters: filters,
     });
     if (error) throw new Error(`analytics_timeseries failed: ${error.message}`);
     return (data as TimeseriesPoint[]).map((r) => ({
@@ -129,6 +136,7 @@ export async function getBreakdown(
   dimension: BreakdownDimension,
   limit = 10,
   supabase?: SupabaseClient,
+  filters: Filter[] = [],
 ): Promise<BreakdownRow[]> {
   return timed(`breakdown site=${siteId} dim=${dimension}`, async () => {
     const { data, error } = await client(supabase).rpc("analytics_breakdown", {
@@ -137,6 +145,7 @@ export async function getBreakdown(
       p_to: range.to.toISOString(),
       p_dimension: dimension,
       p_limit: limit,
+      p_filters: filters,
     });
     if (error) throw new Error(`analytics_breakdown failed: ${error.message}`);
     return (data as BreakdownRow[]).map((r) => ({
@@ -159,6 +168,7 @@ export async function getEventBreakdown(
   range: QueryRange,
   limit = 50,
   supabase?: SupabaseClient,
+  filters: Filter[] = [],
 ): Promise<EventBreakdownRow[]> {
   return timed(`events site=${siteId}`, async () => {
     const { data, error } = await client(supabase).rpc("analytics_event_breakdown", {
@@ -166,6 +176,7 @@ export async function getEventBreakdown(
       p_from: range.from.toISOString(),
       p_to: range.to.toISOString(),
       p_limit: limit,
+      p_filters: filters,
     });
     if (error) throw new Error(`analytics_event_breakdown failed: ${error.message}`);
     return (data as EventBreakdownRow[]).map((r) => ({
@@ -173,5 +184,30 @@ export async function getEventBreakdown(
       count: Number(r.count),
       visitors: Number(r.visitors),
     }));
+  });
+}
+
+export type DimensionValue = { value: string; count: number };
+
+/** Type-ahead values for the filter editor, ranked by traffic in range. */
+export async function getDimensionValues(
+  siteId: string,
+  range: QueryRange,
+  dimension: string,
+  query = "",
+  limit = 10,
+  supabase?: SupabaseClient,
+): Promise<DimensionValue[]> {
+  return timed(`dimension-values site=${siteId} dim=${dimension}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_dimension_values", {
+      p_site: siteId,
+      p_from: range.from.toISOString(),
+      p_to: range.to.toISOString(),
+      p_dimension: dimension,
+      p_query: query,
+      p_limit: limit,
+    });
+    if (error) throw new Error(`analytics_dimension_values failed: ${error.message}`);
+    return (data as DimensionValue[]).map((r) => ({ value: r.value, count: Number(r.count) }));
   });
 }
