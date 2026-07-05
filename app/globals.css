@@ -117,6 +117,14 @@
 }
 
 @keyframes wsPulse { 0% { transform: scale(.7); opacity: .55 } 70% { transform: scale(2.6); opacity: 0 } 100% { transform: scale(2.6); opacity: 0 } }
+
+/* Live-globe markers (components/dashboard/globe/real-globe.tsx) */
+.ws-globe-marker { position: relative; width: 26px; height: 26px; cursor: pointer; background: none; border: none; padding: 0; }
+.ws-globe-dot { position: absolute; inset: 6px; border-radius: 9999px; background: #0E9C6E; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+.ws-globe-pulse { position: absolute; inset: 2px; border-radius: 9999px; background: rgba(14,156,110,.45); animation: wsPulse 2.2s ease-out infinite; }
+.ws-globe-count { position: absolute; top: -7px; right: -7px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 9999px; background: #0B7E58; color: #fff; font-family: var(--font-jetbrains), monospace; font-size: 10px; font-weight: 700; line-height: 16px; text-align: center; }
+.maplibregl-ctrl-attrib { background: rgba(0,0,0,.35) !important; }
+.maplibregl-ctrl-attrib, .maplibregl-ctrl-attrib a { color: #9AB5A8 !important; font-size: 10px; }
 @keyframes wsBlink { 0%, 100% { opacity: 1 } 50% { opacity: .3 } }
 @keyframes wsRise { 0% { opacity: 0; transform: translateY(-6px) } 100% { opacity: 1; transform: translateY(0) } }
 @keyframes wsFloat { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
