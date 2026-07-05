@@ -2,6 +2,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/utils/supabase/admin";
 import type { Filter } from "./filters";
 import type { GoalKind, PathOp } from "./goals";
+import type { Funnel, FunnelStep } from "./funnels";
+import { mapFunnelRow } from "./funnels";
 
 /**
  * THE analytics read layer (docs/redesign/02). Every dashboard fetch goes
@@ -517,6 +519,84 @@ export async function getProfileSessions(
       os: (r.os as string | null) ?? null,
     }));
   });
+}
+
+/** One step's result in a funnel (docs/redesign/09). */
+export type FunnelStepResult = {
+  step: number;
+  visitors: number;
+  medianFromPrevS: number | null;
+};
+
+/** Sequential funnel over the given steps: per-step unique visitors + median time. */
+export async function computeFunnel(
+  siteId: string,
+  range: QueryRange,
+  steps: FunnelStep[],
+  windowMinutes: number,
+  supabase?: SupabaseClient,
+  filters: Filter[] = [],
+): Promise<FunnelStepResult[]> {
+  return timed(`funnel site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_funnel", {
+      p_site: siteId,
+      p_from: range.from.toISOString(),
+      p_to: range.to.toISOString(),
+      p_steps: steps,
+      p_window_minutes: windowMinutes,
+      p_filters: filters,
+    });
+    if (error) throw new Error(`analytics_funnel failed: ${error.message}`);
+    return (data as Record<string, unknown>[]).map((r) => ({
+      step: Number(r.step),
+      visitors: Number(r.visitors),
+      medianFromPrevS: r.median_from_prev_s == null ? null : Number(r.median_from_prev_s),
+    }));
+  });
+}
+
+export type FunnelResults = {
+  id: string;
+  name: string;
+  windowMinutes: number;
+  steps: FunnelStep[];
+  results: FunnelStepResult[];
+};
+
+/** Compute a saved funnel over the range, merging its base filters with dashboard filters. */
+export async function getFunnelResults(
+  siteId: string,
+  range: QueryRange,
+  funnelId: string,
+  supabase?: SupabaseClient,
+  filters: Filter[] = [],
+): Promise<FunnelResults | null> {
+  const { data, error } = await client(supabase)
+    .from("funnels")
+    .select("*")
+    .eq("id", funnelId)
+    .eq("site_id", siteId)
+    .is("archived_at", null)
+    .maybeSingle();
+  if (error) throw new Error(`funnel load failed: ${error.message}`);
+  if (!data) return null;
+  const funnel: Funnel = mapFunnelRow(data);
+  const merged = [...funnel.baseFilters, ...filters];
+  const results = await computeFunnel(
+    siteId,
+    range,
+    funnel.steps,
+    funnel.windowMinutes,
+    supabase,
+    merged,
+  );
+  return {
+    id: funnel.id,
+    name: funnel.name,
+    windowMinutes: funnel.windowMinutes,
+    steps: funnel.steps,
+    results,
+  };
 }
 
 /** Goal definition fields the compiler needs (docs/redesign/08). */

@@ -7,6 +7,7 @@ import {
   getLiveBreakdown,
   getLiveCount,
   getLiveTicker,
+  getFunnelResults,
   getGoalsWithStats,
   getGoalTimeseries,
   getOverview,
@@ -181,6 +182,15 @@ export async function GET(
         return NextResponse.json(
           await getGoalTimeseries(site.id, range, goal, GRANULARITIES.includes(g) ? g : "day", undefined, filters),
         );
+      }
+      case "funnel-results": {
+        const funnel = q.get("funnel") ?? "";
+        if (!/^[0-9a-f-]{36}$/i.test(funnel)) {
+          return NextResponse.json({ error: "Invalid funnel" }, { status: 400 });
+        }
+        const res = await getFunnelResults(site.id, range, funnel, undefined, filters);
+        if (!res) return NextResponse.json({ error: "Not found" }, { status: 404 });
+        return NextResponse.json(res);
       }
       case "live-count":
         return NextResponse.json({ count: await getLiveCount(site.id, 5, filters) });

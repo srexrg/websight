@@ -15,6 +15,7 @@ import type {
   EventBreakdownRow,
   Granularity,
   LiveBreakdownRow,
+  FunnelResults,
   GoalSeriesPoint,
   GoalWithStats,
   Overview,
@@ -35,6 +36,7 @@ import {
   type Filter,
   type FilterOp,
 } from "@/lib/analytics/filters";
+import type { Funnel } from "@/lib/analytics/funnels";
 import {
   compareParser,
   comparisonRange,
@@ -187,6 +189,29 @@ export function useGoalTimeseries(site: string, p: AnalyticsParams, goalId: stri
     queryFn: () =>
       fetchAnalytics(site, { kind: "goal-timeseries", goal: goalId, granularity: "day", ...base(p) }),
     enabled: !!goalId,
+    staleTime: STALE_MS,
+  });
+}
+
+/** Saved funnel definitions for a site (docs/redesign/09). */
+export function useFunnels(site: string) {
+  return useQuery<Funnel[]>({
+    queryKey: ["funnels", site],
+    queryFn: async () => {
+      const res = await fetch(`/api/sites/${site}/funnels`);
+      if (!res.ok) throw new Error(`funnels failed (${res.status})`);
+      return res.json();
+    },
+    staleTime: STALE_MS,
+  });
+}
+
+/** Computed results for one saved funnel over the range (range + filter aware). */
+export function useFunnelResults(site: string, p: AnalyticsParams, funnelId: string) {
+  return useQuery<FunnelResults>({
+    queryKey: ["analytics", site, "funnel-results", funnelId, p],
+    queryFn: () => fetchAnalytics(site, { kind: "funnel-results", funnel: funnelId, ...base(p) }),
+    enabled: !!funnelId,
     staleTime: STALE_MS,
   });
 }
