@@ -21,3 +21,20 @@ export function formatDuration(seconds: number): string {
   if (m < 60) return `${m}m ${s % 60}s`;
   return `${Math.floor(m / 60)}h ${m % 60}m`;
 }
+
+/** ISO timestamp -> compact relative time, e.g. "just now", "4m ago", "3d ago". */
+export function formatRelativeTime(iso: string, now: number = Date.now()): string {
+  const then = new Date(iso).getTime();
+  if (!Number.isFinite(then)) return "";
+  const sec = Math.max(0, Math.round((now - then) / 1000));
+  if (sec < 45) return "just now";
+  const min = Math.round(sec / 60);
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.round(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  const day = Math.round(hr / 24);
+  if (day < 30) return `${day}d ago`;
+  const mon = Math.round(day / 30);
+  if (mon < 12) return `${mon}mo ago`;
+  return `${Math.round(mon / 12)}y ago`;
+}

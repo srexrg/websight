@@ -54,6 +54,60 @@ export type BreakdownRow = {
   visitors: number;
 };
 
+/** One row in the Sessions list (docs/redesign/07). */
+export type SessionRow = {
+  id: string;
+  visitorId: string;
+  userId: string | null;
+  startedAt: string;
+  lastEventAt: string;
+  durationS: number;
+  entryPath: string | null;
+  exitPath: string | null;
+  pageviews: number;
+  events: number;
+  isBounce: boolean;
+  isOpen: boolean;
+  referrerDomain: string | null;
+  channel: string | null;
+  country: string | null;
+  region: string | null;
+  city: string | null;
+  deviceType: string | null;
+  browser: string | null;
+  os: string | null;
+};
+
+export type SessionsCursor = { startedAt: string; id: string };
+export type SessionsPage = { rows: SessionRow[]; nextCursor: SessionsCursor | null };
+
+/** Lifetime aggregate for one visitor/user identity (docs/redesign/07 M3). */
+export type ProfileRow = {
+  profileKey: string;
+  visitorId: string;
+  userId: string | null;
+  traits: Record<string, unknown>;
+  sessions: number;
+  pageviews: number;
+  firstSeen: string;
+  lastSeen: string;
+  topCountry: string | null;
+  topDevice: string | null;
+};
+
+export type ProfileEventFreq = { name: string; count: number };
+
+/** One event in a session's timeline (docs/redesign/07 M2). */
+export type SessionEvent = {
+  id: string;
+  name: string;
+  path: string | null;
+  title: string | null;
+  createdAt: string;
+  referrerDomain: string | null;
+  props: Record<string, unknown> | null;
+};
+
 /** Per-query timing logs (docs/redesign/23): enable with ANALYTICS_QUERY_LOG=1. */
 async function timed<T>(label: string, fn: () => Promise<T>): Promise<T> {
   const start = performance.now();
@@ -293,5 +347,192 @@ export async function getLiveTicker(
       .limit(limit);
     if (error) throw new Error(`live ticker failed: ${error.message}`);
     return (data ?? []) as TickerEvent[];
+  });
+}
+
+/**
+ * Sessions list (docs/redesign/07). Keyset-paginated newest-first over the
+ * `sessions` table; filters (05 model) match a session when it has an event
+ * satisfying the filter. Returns the page plus the next cursor (null at end).
+ */
+export async function getSessions(
+  siteId: string,
+  range: QueryRange,
+  cursor: SessionsCursor | null = null,
+  limit = 50,
+  supabase?: SupabaseClient,
+  filters: Filter[] = [],
+): Promise<SessionsPage> {
+  return timed(`sessions site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_sessions_list", {
+      p_site: siteId,
+      p_from: range.from.toISOString(),
+      p_to: range.to.toISOString(),
+      p_cursor_started: cursor?.startedAt ?? null,
+      p_cursor_id: cursor?.id ?? null,
+      p_limit: limit,
+      p_filters: filters,
+    });
+    if (error) throw new Error(`analytics_sessions_list failed: ${error.message}`);
+    const rows: SessionRow[] = (data as Record<string, unknown>[]).map((r) => ({
+      id: r.id as string,
+      visitorId: r.visitor_id as string,
+      userId: (r.user_id as string | null) ?? null,
+      startedAt: r.started_at as string,
+      lastEventAt: r.last_event_at as string,
+      durationS: Number(r.duration_s),
+      entryPath: (r.entry_path as string | null) ?? null,
+      exitPath: (r.exit_path as string | null) ?? null,
+      pageviews: Number(r.pageviews),
+      events: Number(r.events),
+      isBounce: Boolean(r.is_bounce),
+      isOpen: Boolean(r.is_open),
+      referrerDomain: (r.referrer_domain as string | null) ?? null,
+      channel: (r.channel as string | null) ?? null,
+      country: (r.country as string | null) ?? null,
+      region: (r.region as string | null) ?? null,
+      city: (r.city as string | null) ?? null,
+      deviceType: (r.device_type as string | null) ?? null,
+      browser: (r.browser as string | null) ?? null,
+      os: (r.os as string | null) ?? null,
+    }));
+    const last = rows[rows.length - 1];
+    const nextCursor =
+      rows.length === limit && last ? { startedAt: last.startedAt, id: last.id } : null;
+    return { rows, nextCursor };
+  });
+}
+
+/** Ordered event timeline for one session (docs/redesign/07 M2). */
+export async function getSessionEvents(
+  siteId: string,
+  sessionId: string,
+  supabase?: SupabaseClient,
+): Promise<SessionEvent[]> {
+  return timed(`session-events site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_session_events", {
+      p_site: siteId,
+      p_session: sessionId,
+    });
+    if (error) throw new Error(`analytics_session_events failed: ${error.message}`);
+    return (data as Record<string, unknown>[]).map((r) => ({
+      id: String(r.id),
+      name: r.name as string,
+      path: (r.path as string | null) ?? null,
+      title: (r.title as string | null) ?? null,
+      createdAt: r.created_at as string,
+      referrerDomain: (r.referrer_domain as string | null) ?? null,
+      props: (r.props as Record<string, unknown> | null) ?? null,
+    }));
+  });
+}
+
+function mapProfile(r: Record<string, unknown>): ProfileRow {
+  return {
+    profileKey: r.profile_key as string,
+    visitorId: r.visitor_id as string,
+    userId: (r.user_id as string | null) ?? null,
+    traits: (r.traits as Record<string, unknown> | null) ?? {},
+    sessions: Number(r.sessions),
+    pageviews: Number(r.pageviews),
+    firstSeen: r.first_seen as string,
+    lastSeen: r.last_seen as string,
+    topCountry: (r.top_country as string | null) ?? null,
+    topDevice: (r.top_device as string | null) ?? null,
+  };
+}
+
+/** Profiles list: lifetime aggregate per identity (docs/redesign/07 M3). */
+export async function getProfiles(
+  siteId: string,
+  search: string,
+  limit = 50,
+  offset = 0,
+  supabase?: SupabaseClient,
+): Promise<ProfileRow[]> {
+  return timed(`profiles site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_profiles_list", {
+      p_site: siteId,
+      p_search: search || null,
+      p_limit: limit,
+      p_offset: offset,
+    });
+    if (error) throw new Error(`analytics_profiles_list failed: ${error.message}`);
+    return (data as Record<string, unknown>[]).map(mapProfile);
+  });
+}
+
+/** One profile's lifetime aggregate + traits. Null if the key has no sessions. */
+export async function getProfileDetail(
+  siteId: string,
+  key: string,
+  supabase?: SupabaseClient,
+): Promise<ProfileRow | null> {
+  return timed(`profile-detail site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_profile_detail", {
+      p_site: siteId,
+      p_key: key,
+    });
+    if (error) throw new Error(`analytics_profile_detail failed: ${error.message}`);
+    const rows = data as Record<string, unknown>[];
+    return rows.length ? mapProfile(rows[0]) : null;
+  });
+}
+
+/** Sessions belonging to one profile (newest first). */
+export async function getProfileSessions(
+  siteId: string,
+  key: string,
+  limit = 50,
+  supabase?: SupabaseClient,
+): Promise<SessionRow[]> {
+  return timed(`profile-sessions site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_profile_sessions", {
+      p_site: siteId,
+      p_key: key,
+      p_limit: limit,
+    });
+    if (error) throw new Error(`analytics_profile_sessions failed: ${error.message}`);
+    return (data as Record<string, unknown>[]).map((r) => ({
+      id: r.id as string,
+      visitorId: r.visitor_id as string,
+      userId: (r.user_id as string | null) ?? null,
+      startedAt: r.started_at as string,
+      lastEventAt: r.last_event_at as string,
+      durationS: Number(r.duration_s),
+      entryPath: (r.entry_path as string | null) ?? null,
+      exitPath: (r.exit_path as string | null) ?? null,
+      pageviews: Number(r.pageviews),
+      events: Number(r.events),
+      isBounce: Boolean(r.is_bounce),
+      isOpen: Boolean(r.is_open),
+      referrerDomain: (r.referrer_domain as string | null) ?? null,
+      channel: (r.channel as string | null) ?? null,
+      country: (r.country as string | null) ?? null,
+      region: (r.region as string | null) ?? null,
+      city: (r.city as string | null) ?? null,
+      deviceType: (r.device_type as string | null) ?? null,
+      browser: (r.browser as string | null) ?? null,
+      os: (r.os as string | null) ?? null,
+    }));
+  });
+}
+
+/** Event-name frequency for one profile. */
+export async function getProfileEventFreq(
+  siteId: string,
+  key: string,
+  supabase?: SupabaseClient,
+): Promise<ProfileEventFreq[]> {
+  return timed(`profile-event-freq site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_profile_event_freq", {
+      p_site: siteId,
+      p_key: key,
+    });
+    if (error) throw new Error(`analytics_profile_event_freq failed: ${error.message}`);
+    return (data as Record<string, unknown>[]).map((r) => ({
+      name: r.name as string,
+      count: Number(r.count),
+    }));
   });
 }

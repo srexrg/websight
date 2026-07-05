@@ -1,6 +1,11 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+  type InfiniteData,
+} from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import { useCallback, useMemo } from "react";
 import type {
@@ -11,6 +16,12 @@ import type {
   Granularity,
   LiveBreakdownRow,
   Overview,
+  ProfileEventFreq,
+  ProfileRow,
+  SessionEvent,
+  SessionRow,
+  SessionsCursor,
+  SessionsPage,
   TickerEvent,
   TimeseriesPoint,
 } from "@/lib/analytics/queries";
@@ -106,6 +117,89 @@ export function useEventBreakdown(site: string, p: AnalyticsParams, limit = 50) 
   return useQuery<EventBreakdownRow[]>({
     queryKey: ["analytics", site, "events", p, limit],
     queryFn: () => fetchAnalytics(site, { kind: "events", limit: String(limit), ...base(p) }),
+    staleTime: STALE_MS,
+  });
+}
+
+/** Infinite (keyset-paginated) sessions list for the Sessions screen (07). */
+export function useSessions(site: string, p: AnalyticsParams, pageSize = 50) {
+  return useInfiniteQuery<
+    SessionsPage,
+    Error,
+    InfiniteData<SessionsPage>,
+    unknown[],
+    SessionsCursor | null
+  >({
+    queryKey: ["analytics", site, "sessions", base(p), pageSize],
+    initialPageParam: null,
+    queryFn: ({ pageParam }) =>
+      fetchAnalytics<SessionsPage>(site, {
+        kind: "sessions",
+        limit: String(pageSize),
+        ...(pageParam ? { cur_s: pageParam.startedAt, cur_id: pageParam.id } : {}),
+        ...base(p),
+      }),
+    getNextPageParam: (last) => last.nextCursor,
+    staleTime: STALE_MS,
+  });
+}
+
+/** A session's event timeline; fetched on drawer open, polled while the session is live. */
+export function useSessionEvents(site: string, sessionId: string | null, live = false) {
+  return useQuery<SessionEvent[]>({
+    queryKey: ["analytics", site, "session-events", sessionId],
+    queryFn: () => fetchAnalytics(site, { kind: "session-events", session: sessionId! }),
+    enabled: !!sessionId,
+    staleTime: live ? 3_000 : STALE_MS,
+    refetchInterval: live ? 5_000 : false,
+  });
+}
+
+/** Warm a session's event timeline on row hover so the drawer opens instantly (M5). */
+export function usePrefetchSessionEvents(site: string) {
+  const qc = useQueryClient();
+  return useCallback(
+    (sessionId: string) => {
+      qc.prefetchQuery({
+        queryKey: ["analytics", site, "session-events", sessionId],
+        queryFn: () => fetchAnalytics(site, { kind: "session-events", session: sessionId }),
+        staleTime: STALE_MS,
+      });
+    },
+    [qc, site],
+  );
+}
+
+/** Profiles list (lifetime aggregates), searchable by user/visitor id. */
+export function useProfiles(site: string, search: string) {
+  return useQuery<ProfileRow[]>({
+    queryKey: ["analytics", site, "profiles", search],
+    queryFn: () =>
+      fetchAnalytics(site, { kind: "profiles", q: search, limit: "100" }),
+    staleTime: STALE_MS,
+  });
+}
+
+export function useProfileDetail(site: string, key: string) {
+  return useQuery<ProfileRow | null>({
+    queryKey: ["analytics", site, "profile-detail", key],
+    queryFn: () => fetchAnalytics(site, { kind: "profile-detail", key }),
+    staleTime: STALE_MS,
+  });
+}
+
+export function useProfileSessions(site: string, key: string) {
+  return useQuery<SessionRow[]>({
+    queryKey: ["analytics", site, "profile-sessions", key],
+    queryFn: () => fetchAnalytics(site, { kind: "profile-sessions", key }),
+    staleTime: STALE_MS,
+  });
+}
+
+export function useProfileEventFreq(site: string, key: string) {
+  return useQuery<ProfileEventFreq[]>({
+    queryKey: ["analytics", site, "profile-event-freq", key],
+    queryFn: () => fetchAnalytics(site, { kind: "profile-event-freq", key }),
     staleTime: STALE_MS,
   });
 }
