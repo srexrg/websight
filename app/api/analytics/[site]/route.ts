@@ -8,9 +8,16 @@ import {
   getLiveCount,
   getLiveTicker,
   getOverview,
+  getProfileDetail,
+  getProfileEventFreq,
+  getProfiles,
+  getProfileSessions,
+  getSessionEvents,
+  getSessions,
   getTimeseries,
   type BreakdownDimension,
   type Granularity,
+  type SessionsCursor,
 } from "@/lib/analytics/queries";
 import { decodeFilters, isValidDim } from "@/lib/analytics/filters";
 import { RANGE_PRESETS, rangeToDates, type RangePreset } from "@/lib/dashboard/range";
@@ -23,7 +30,9 @@ import { RANGE_PRESETS, rangeToDates, type RangePreset } from "@/lib/dashboard/r
  * actual analytics queries then run through lib/analytics/queries.ts.
  *
  * Query params:
- *   kind=overview|timeseries|breakdown|events|dimension-values  (required)
+ *   kind=overview|timeseries|breakdown|events|sessions|session-events|dimension-values
+ *   cur_s=<ISO>&cur_id=<uuid>                   (sessions keyset cursor)
+ *   session=<uuid>                              (session-events)
  *   range=24h|7d|30d|90d                        (default 7d)
  *   from=<ISO>&to=<ISO>                         (override range, e.g. comparison)
  *   f=<encoded filters>                         (docs/redesign/05 codec)
@@ -121,6 +130,44 @@ export async function GET(
       }
       case "events":
         return NextResponse.json(await getEventBreakdown(site.id, range, limit, undefined, filters));
+      case "sessions": {
+        const curS = q.get("cur_s");
+        const curId = q.get("cur_id");
+        const cursor: SessionsCursor | null =
+          curS && curId ? { startedAt: curS, id: curId } : null;
+        const pageSize = Math.min(Math.max(Number(q.get("limit")) || 50, 1), 100);
+        return NextResponse.json(
+          await getSessions(site.id, range, cursor, pageSize, undefined, filters),
+        );
+      }
+      case "session-events": {
+        const sessionId = q.get("session") ?? "";
+        if (!/^[0-9a-f-]{36}$/i.test(sessionId)) {
+          return NextResponse.json({ error: "Invalid session" }, { status: 400 });
+        }
+        return NextResponse.json(await getSessionEvents(site.id, sessionId));
+      }
+      case "profiles": {
+        const offset = Math.max(Number(q.get("offset")) || 0, 0);
+        return NextResponse.json(
+          await getProfiles(site.id, q.get("q") ?? "", limit, offset),
+        );
+      }
+      case "profile-detail": {
+        const key = q.get("key") ?? "";
+        if (!key) return NextResponse.json({ error: "Missing key" }, { status: 400 });
+        return NextResponse.json(await getProfileDetail(site.id, key));
+      }
+      case "profile-sessions": {
+        const key = q.get("key") ?? "";
+        if (!key) return NextResponse.json({ error: "Missing key" }, { status: 400 });
+        return NextResponse.json(await getProfileSessions(site.id, key, 100));
+      }
+      case "profile-event-freq": {
+        const key = q.get("key") ?? "";
+        if (!key) return NextResponse.json({ error: "Missing key" }, { status: 400 });
+        return NextResponse.json(await getProfileEventFreq(site.id, key));
+      }
       case "live-count":
         return NextResponse.json({ count: await getLiveCount(site.id, 5, filters) });
       case "live-breakdown": {
