@@ -63,6 +63,7 @@ What to take: the *ideas* (revenue attribution, AI chat, digests, event-based pr
 | 4 | `12-web-vitals.md` | Performance monitoring |
 | 4 | `13-error-tracking.md` | JS error capture and grouping |
 | 4 | `14-custom-events.md` | Event API v2 with JSON properties |
+| 4 | `24-session-replay.md` | rrweb session replay: capture, storage, player |
 | 5 | `15-public-dashboards-and-sharing.md` | Public/password share links |
 | 5 | `16-organizations-and-team.md` | Orgs, members, roles |
 | 5 | `17-onboarding.md` | Site setup wizard, integration guides |
