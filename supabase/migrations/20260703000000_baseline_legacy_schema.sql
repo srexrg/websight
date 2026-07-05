@@ -13,10 +13,11 @@
 create extension if not exists pgcrypto;
 
 -- App users (mirror of auth.users maintained by the app; `api` is the Bearer
--- key for POST /api/events).
+-- key for POST /api/events). id references auth.users - rows can only exist
+-- for real auth users (verified against production 2026-07-05).
 create table if not exists public.users (
-    id uuid primary key,
-    email text not null,
+    id uuid primary key references auth.users (id),
+    email text not null unique,
     full_name text,
     api text,
     created_at timestamptz default now(),

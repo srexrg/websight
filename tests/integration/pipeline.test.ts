@@ -1,6 +1,8 @@
 /**
- * End-to-end pipeline tests against the local Supabase stack
- * (`npx supabase start`). The suite self-skips when no stack is running.
+ * End-to-end pipeline tests against a Supabase stack: the cloud project from
+ * .env.local (NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY) or, as a
+ * fallback, a local `npx supabase start`. Self-skips when neither is available.
+ * All rows are run-scoped (unique throwaway domains) and cleaned up in afterAll.
  *
  * Covers plan 02 milestones 1-3: ingest route (v2 + legacy dual-write),
  * sessionization, bounce accounting, rollups, dedupe, bot filtering,
@@ -45,9 +47,10 @@ function trackRequest(
   });
 }
 
-describe.skipIf(!stack)("ingestion pipeline (local Supabase)", () => {
+describe.skipIf(!stack)("ingestion pipeline (Supabase)", () => {
   beforeAll(async () => {
     process.env.NEXT_PUBLIC_SUPABASE_URL = stack!.url;
+    process.env.SUPABASE_SECRET_KEY = stack!.serviceKey;
     process.env.SUPABASE_SERVICE_ROLE_KEY = stack!.serviceKey;
 
     db = createClient(stack!.url, stack!.serviceKey, {
@@ -70,7 +73,13 @@ describe.skipIf(!stack)("ingestion pipeline (local Supabase)", () => {
     if (e2) throw new Error(e2.message);
     legacySiteId = legacySite.id;
 
-    apiUserId = crypto.randomUUID();
+    // public.users.id references auth.users, so create a real auth user first.
+    const { data: authUser, error: eAuth } = await db.auth.admin.createUser({
+      email: `it-${runId}@test.local`,
+      email_confirm: true,
+    });
+    if (eAuth) throw new Error(eAuth.message);
+    apiUserId = authUser.user.id;
     const { error: e3 } = await db.from("users").insert({
       id: apiUserId,
       email: `it-${runId}@test.local`,
@@ -92,7 +101,10 @@ describe.skipIf(!stack)("ingestion pipeline (local Supabase)", () => {
     await db.from("page_views").delete().eq("domain", LEGACY_DOMAIN);
     await db.from("daily_stats").delete().eq("domain", LEGACY_DOMAIN);
     await db.from("events_legacy").delete().eq("website_id", LEGACY_DOMAIN);
-    if (apiUserId) await db.from("users").delete().eq("id", apiUserId);
+    if (apiUserId) {
+      await db.from("users").delete().eq("id", apiUserId);
+      await db.auth.admin.deleteUser(apiUserId);
+    }
   });
 
   it("accepts a v2 pageview, enriches it, and opens a session", async () => {
