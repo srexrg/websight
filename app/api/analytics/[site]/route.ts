@@ -36,6 +36,15 @@ import {
   VITAL_METRICS,
   type VitalMetric,
 } from "@/lib/analytics/vitals";
+import {
+  getErrorBreakdown,
+  getErrorGroup,
+  getErrorGroups,
+  getErrorGroupStats,
+  getErrorOccurrences,
+  getErrorTimeseries,
+  type ErrorStatus,
+} from "@/lib/analytics/errors";
 import { decodeFilters, isValidDim } from "@/lib/analytics/filters";
 import { RANGE_PRESETS, rangeToDates, type RangePreset } from "@/lib/dashboard/range";
 
@@ -310,6 +319,46 @@ export async function GET(
         return NextResponse.json(
           await getVitalsAttribution(site.id, range, path, metric, undefined, filters),
         );
+      }
+      case "errors": {
+        const st = q.get("status");
+        const status = st === "open" || st === "resolved" || st === "ignored" ? (st as ErrorStatus) : null;
+        const pageSize = Math.min(Math.max(Number(q.get("limit")) || 50, 1), 200);
+        return NextResponse.json(await getErrorGroups(site.id, range, status, undefined, filters, pageSize));
+      }
+      case "error-group": {
+        const group = q.get("group") ?? "";
+        if (!/^[0-9a-f-]{36}$/i.test(group)) return NextResponse.json({ error: "Invalid group" }, { status: 400 });
+        const g = await getErrorGroup(site.id, group);
+        if (!g) return NextResponse.json({ error: "Not found" }, { status: 404 });
+        return NextResponse.json(g);
+      }
+      case "error-stats": {
+        const group = q.get("group") ?? "";
+        if (!/^[0-9a-f-]{36}$/i.test(group)) return NextResponse.json({ error: "Invalid group" }, { status: 400 });
+        return NextResponse.json(await getErrorGroupStats(site.id, group, range, undefined, filters));
+      }
+      case "error-timeseries": {
+        const group = q.get("group") ?? "";
+        if (!/^[0-9a-f-]{36}$/i.test(group)) return NextResponse.json({ error: "Invalid group" }, { status: 400 });
+        const g = q.get("granularity") as Granularity;
+        return NextResponse.json(
+          await getErrorTimeseries(site.id, group, range, GRANULARITIES.includes(g) ? g : "day", undefined, filters),
+        );
+      }
+      case "error-breakdown": {
+        const group = q.get("group") ?? "";
+        const dim = q.get("dimension") ?? "";
+        if (!/^[0-9a-f-]{36}$/i.test(group)) return NextResponse.json({ error: "Invalid group" }, { status: 400 });
+        if (!["path", "browser", "os", "country", "device_type"].includes(dim)) {
+          return NextResponse.json({ error: "Invalid dimension" }, { status: 400 });
+        }
+        return NextResponse.json(await getErrorBreakdown(site.id, group, range, dim, undefined, filters));
+      }
+      case "error-occurrences": {
+        const group = q.get("group") ?? "";
+        if (!/^[0-9a-f-]{36}$/i.test(group)) return NextResponse.json({ error: "Invalid group" }, { status: 400 });
+        return NextResponse.json(await getErrorOccurrences(site.id, group, range, undefined, filters));
       }
       case "live-count":
         return NextResponse.json({ count: await getLiveCount(site.id, 5, filters) });
