@@ -44,21 +44,36 @@ type Attrib = { target?: string; largestShiftTarget?: string; interactionTarget?
   }
 
   if (ws.errors) {
+    // Client-side dedupe: cap the same light fingerprint to 5 per page session,
+    // so an error loop can't flood the beacon queue (server caps again).
+    const seen: Record<string, number> = {};
+    const origin = location.origin;
+    const emit = (props: Record<string, unknown>) => {
+      const key = `${props.message}|${props.filename ?? ""}|${props.line ?? ""}`;
+      seen[key] = (seen[key] || 0) + 1;
+      if (seen[key] > 5) return;
+      ws.send("error", props);
+    };
     addEventListener("error", (e) => {
       if (!(e instanceof ErrorEvent)) return; // resource load errors: not JS errors
-      ws.send("error", {
+      const fn = e.filename ? String(e.filename) : undefined;
+      emit({
         message: String(e.message).slice(0, 500),
-        source: e.filename ? String(e.filename).slice(0, 300) : undefined,
+        type: (e.error && e.error.name ? String(e.error.name) : "Error").slice(0, 60),
+        filename: fn ? fn.slice(0, 300) : undefined,
         line: e.lineno || undefined,
         col: e.colno || undefined,
-        stack: e.error && e.error.stack ? String(e.error.stack).slice(0, 1500) : undefined,
+        stack: e.error && e.error.stack ? String(e.error.stack).slice(0, 4000) : undefined,
+        // Errors from scripts off our own origin are the #1 noise source.
+        external: fn ? !fn.startsWith(origin) : undefined,
       });
     });
     addEventListener("unhandledrejection", (e) => {
       const r = (e as PromiseRejectionEvent).reason;
-      ws.send("error", {
+      emit({
         message: String((r && r.message) || r).slice(0, 500),
-        stack: r && r.stack ? String(r.stack).slice(0, 1500) : undefined,
+        type: (r && r.name ? String(r.name) : "UnhandledRejection").slice(0, 60),
+        stack: r && r.stack ? String(r.stack).slice(0, 4000) : undefined,
         promise: true,
       });
     });

@@ -50,6 +50,13 @@ import type {
   VitalSummaryRow,
   VitalTimeseriesPoint,
 } from "@/lib/analytics/vitals";
+import type {
+  ErrorBreakdownRow,
+  ErrorGroup,
+  ErrorOccurrence,
+  ErrorStatus,
+  ErrorTimeseriesPoint,
+} from "@/lib/analytics/errors";
 import {
   compareParser,
   comparisonRange,
@@ -348,6 +355,56 @@ export function useVitalsAttribution(
       fetchAnalytics(site, { kind: "vitals-attribution", path: path!, metric, ...base(p) }),
     enabled: !!path,
     staleTime: VITALS_STALE,
+  });
+}
+
+// ------------------------------------------------------------------ errors
+
+export function useErrorGroups(site: string, p: AnalyticsParams, status: ErrorStatus | null) {
+  return useQuery<ErrorGroup[]>({
+    queryKey: ["analytics", site, "errors", status, p],
+    queryFn: () => fetchAnalytics(site, { kind: "errors", status: status ?? "", ...base(p) }),
+    staleTime: STALE_MS,
+  });
+}
+
+export function useErrorGroup(site: string, group: string) {
+  return useQuery<ErrorGroup>({
+    queryKey: ["analytics", site, "error-group", group],
+    queryFn: () => fetchAnalytics(site, { kind: "error-group", group, range: "7d" }),
+    staleTime: STALE_MS,
+  });
+}
+
+export function useErrorGroupStats(site: string, p: AnalyticsParams, group: string) {
+  return useQuery<{ occurrences: number; visitors: number }>({
+    queryKey: ["analytics", site, "error-stats", group, p],
+    queryFn: () => fetchAnalytics(site, { kind: "error-stats", group, ...base(p) }),
+    staleTime: STALE_MS,
+  });
+}
+
+export function useErrorTimeseries(site: string, p: AnalyticsParams, group: string, granularity: Granularity = "day") {
+  return useQuery<ErrorTimeseriesPoint[]>({
+    queryKey: ["analytics", site, "error-timeseries", group, granularity, p],
+    queryFn: () => fetchAnalytics(site, { kind: "error-timeseries", group, granularity, ...base(p) }),
+    staleTime: STALE_MS,
+  });
+}
+
+export function useErrorBreakdown(site: string, p: AnalyticsParams, group: string, dimension: string) {
+  return useQuery<ErrorBreakdownRow[]>({
+    queryKey: ["analytics", site, "error-breakdown", group, dimension, p],
+    queryFn: () => fetchAnalytics(site, { kind: "error-breakdown", group, dimension, ...base(p) }),
+    staleTime: STALE_MS,
+  });
+}
+
+export function useErrorOccurrences(site: string, p: AnalyticsParams, group: string) {
+  return useQuery<ErrorOccurrence[]>({
+    queryKey: ["analytics", site, "error-occurrences", group, p],
+    queryFn: () => fetchAnalytics(site, { kind: "error-occurrences", group, ...base(p) }),
+    staleTime: STALE_MS,
   });
 }
 

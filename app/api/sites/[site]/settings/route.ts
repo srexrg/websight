@@ -19,6 +19,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ site: str
 
   const patch: Record<string, unknown> = {};
   if ("vitals_enabled" in body) patch.vitals_enabled = body.vitals_enabled === true;
+  if ("errors_enabled" in body) patch.errors_enabled = body.errors_enabled === true;
   if ("vitals_sample_rate" in body) {
     const r = Number(body.vitals_sample_rate);
     if (!(r >= 0 && r <= 1)) {
