@@ -44,7 +44,7 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     title: "Health",
     items: [
-      { slug: "vitals", label: "Web Vitals", icon: "heartbeat", enabled: false }, // plan 12
+      { slug: "vitals", label: "Web Vitals", icon: "heartbeat", enabled: true }, // plan 12
       { slug: "errors", label: "Errors", icon: "warning-octagon", enabled: false }, // plan 13
     ],
   },
