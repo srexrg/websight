@@ -242,7 +242,14 @@ interface WsStub {
 
   // Lazy extension chunk (web vitals / error capture).
   if (attr("vitals") != null || attr("errors") != null) {
-    W.__ws = { send, vitals: attr("vitals") != null, errors: attr("errors") != null };
+    // data-vitals may carry a 0..1 sample rate ("0.1"); bare presence = 100%.
+    const vs = parseFloat(attr("vitals") as string);
+    W.__ws = {
+      send,
+      vitals: attr("vitals") != null,
+      vitalsSample: vs >= 0 && vs <= 1 ? vs : undefined,
+      errors: attr("errors") != null,
+    };
     const s = D.createElement("script");
     s.src = new URL("t-x.js", script.src).href;
     s.defer = true;

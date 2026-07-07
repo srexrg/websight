@@ -42,6 +42,14 @@ import {
 import type { Funnel } from "@/lib/analytics/funnels";
 import type { JourneyParams, JourneyResult } from "@/lib/analytics/journeys";
 import type { RetentionParams, RetentionResult } from "@/lib/analytics/retention";
+import type {
+  VitalAttributionRow,
+  VitalBreakdownRow,
+  VitalMetric,
+  VitalPageRow,
+  VitalSummaryRow,
+  VitalTimeseriesPoint,
+} from "@/lib/analytics/vitals";
 import {
   compareParser,
   comparisonRange,
@@ -277,6 +285,69 @@ export function useRetentionVisitors(
       }),
     enabled: !!cell,
     staleTime: STALE_MS,
+  });
+}
+
+// ------------------------------------------------------------------ web vitals
+
+const VITALS_STALE = 5 * 60_000; // vitals are slow-moving
+
+export function useVitalsSummary(site: string, p: AnalyticsParams) {
+  return useQuery<VitalSummaryRow[]>({
+    queryKey: ["analytics", site, "vitals-summary", p],
+    queryFn: () => fetchAnalytics(site, { kind: "vitals-summary", ...base(p) }),
+    staleTime: VITALS_STALE,
+  });
+}
+
+export function useVitalsTimeseries(
+  site: string,
+  p: AnalyticsParams,
+  metric: VitalMetric,
+  granularity: Granularity = "day",
+) {
+  return useQuery<VitalTimeseriesPoint[]>({
+    queryKey: ["analytics", site, "vitals-timeseries", metric, granularity, p],
+    queryFn: () =>
+      fetchAnalytics(site, { kind: "vitals-timeseries", metric, granularity, ...base(p) }),
+    staleTime: VITALS_STALE,
+  });
+}
+
+export function useVitalsPages(site: string, p: AnalyticsParams) {
+  return useQuery<VitalPageRow[]>({
+    queryKey: ["analytics", site, "vitals-pages", p],
+    queryFn: () => fetchAnalytics(site, { kind: "vitals-pages", limit: "50", ...base(p) }),
+    staleTime: VITALS_STALE,
+  });
+}
+
+export function useVitalsBreakdown(
+  site: string,
+  p: AnalyticsParams,
+  dimension: string,
+  metric: VitalMetric,
+) {
+  return useQuery<VitalBreakdownRow[]>({
+    queryKey: ["analytics", site, "vitals-breakdown", dimension, metric, p],
+    queryFn: () =>
+      fetchAnalytics(site, { kind: "vitals-breakdown", dimension, metric, ...base(p) }),
+    staleTime: VITALS_STALE,
+  });
+}
+
+export function useVitalsAttribution(
+  site: string,
+  p: AnalyticsParams,
+  path: string | null,
+  metric: VitalMetric,
+) {
+  return useQuery<VitalAttributionRow[]>({
+    queryKey: ["analytics", site, "vitals-attribution", path, metric, p],
+    queryFn: () =>
+      fetchAnalytics(site, { kind: "vitals-attribution", path: path!, metric, ...base(p) }),
+    enabled: !!path,
+    staleTime: VITALS_STALE,
   });
 }
 

@@ -4,16 +4,27 @@
  * only when the embed sets data-vitals / data-errors, so its weight (the
  * web-vitals library) never touches the core budget.
  */
-import { onCLS, onFCP, onINP, onLCP, onTTFB, type Metric } from "web-vitals";
+import { onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals/attribution";
+import type { Metric } from "web-vitals";
 
 type Send = (name: string, props?: Record<string, unknown>) => void;
+type Attrib = { target?: string; largestShiftTarget?: string; interactionTarget?: string; loadState?: string };
 
 (() => {
-  const ws = (window as unknown as { __ws?: { send: Send; vitals?: boolean; errors?: boolean } }).__ws;
+  const ws = (window as unknown as { __ws?: { send: Send; vitals?: boolean; vitalsSample?: number; errors?: boolean } }).__ws;
   if (!ws) return;
 
-  if (ws.vitals) {
+  // Sample whole-page vitals together (one coin flip per load), so a sampled
+  // site still yields complete per-load metric sets. Default: report all.
+  if (ws.vitals && (ws.vitalsSample == null || Math.random() < ws.vitalsSample)) {
     const report = (m: Metric) => {
+      const a = (m as { attribution?: Attrib }).attribution || {};
+      // The element/selector responsible, per metric (attribution build only).
+      const element =
+        m.name === "LCP" ? a.target
+        : m.name === "CLS" ? a.largestShiftTarget
+        : m.name === "INP" ? a.interactionTarget
+        : undefined;
       ws.send("web_vital", {
         metric: m.name,
         // CLS is a unitless score (~0-1); everything else is milliseconds.
@@ -21,6 +32,8 @@ type Send = (name: string, props?: Record<string, unknown>) => void;
         rating: m.rating,
         nav: m.navigationType,
         id: m.id,
+        element: element ? String(element).slice(0, 120) : undefined,
+        loadState: a.loadState,
       });
     };
     onLCP(report);

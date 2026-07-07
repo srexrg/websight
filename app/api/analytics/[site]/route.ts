@@ -27,6 +27,15 @@ import {
   type Granularity,
   type SessionsCursor,
 } from "@/lib/analytics/queries";
+import {
+  getVitalsAttribution,
+  getVitalsBreakdown,
+  getVitalsPages,
+  getVitalsSummary,
+  getVitalsTimeseries,
+  VITAL_METRICS,
+  type VitalMetric,
+} from "@/lib/analytics/vitals";
 import { decodeFilters, isValidDim } from "@/lib/analytics/filters";
 import { RANGE_PRESETS, rangeToDates, type RangePreset } from "@/lib/dashboard/range";
 
@@ -256,6 +265,50 @@ export async function GET(
         }
         return NextResponse.json(
           await getRetentionVisitors(site.id, tz, rp, cohort, active, undefined, filters),
+        );
+      }
+      case "vitals-summary":
+        return NextResponse.json(await getVitalsSummary(site.id, range, undefined, filters));
+      case "vitals-timeseries": {
+        const metric = q.get("metric") as VitalMetric;
+        if (!VITAL_METRICS.includes(metric)) {
+          return NextResponse.json({ error: "Invalid metric" }, { status: 400 });
+        }
+        const g = q.get("granularity") as Granularity;
+        return NextResponse.json(
+          await getVitalsTimeseries(
+            site.id,
+            range,
+            metric,
+            GRANULARITIES.includes(g) ? g : "day",
+            undefined,
+            filters,
+          ),
+        );
+      }
+      case "vitals-pages":
+        return NextResponse.json(await getVitalsPages(site.id, range, undefined, filters, limit));
+      case "vitals-breakdown": {
+        const metric = q.get("metric") as VitalMetric;
+        const dim = q.get("dimension") ?? "";
+        if (!VITAL_METRICS.includes(metric)) {
+          return NextResponse.json({ error: "Invalid metric" }, { status: 400 });
+        }
+        if (!["device_type", "browser", "os", "country", "channel"].includes(dim)) {
+          return NextResponse.json({ error: "Invalid dimension" }, { status: 400 });
+        }
+        return NextResponse.json(
+          await getVitalsBreakdown(site.id, range, dim, metric, undefined, filters, limit),
+        );
+      }
+      case "vitals-attribution": {
+        const metric = q.get("metric") as VitalMetric;
+        const path = q.get("path") ?? "";
+        if (!VITAL_METRICS.includes(metric) || !path) {
+          return NextResponse.json({ error: "Invalid metric/path" }, { status: 400 });
+        }
+        return NextResponse.json(
+          await getVitalsAttribution(site.id, range, path, metric, undefined, filters),
         );
       }
       case "live-count":
