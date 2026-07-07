@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { CopySnippet } from "@/components/dashboard/copy-snippet";
+import { InstallTabs } from "@/components/onboarding/install-tabs";
 import { ShareSettingsCard } from "@/components/share/share-settings-card";
 
 export const metadata = { title: "Site Settings" };
@@ -24,9 +24,6 @@ export default async function SiteSettingsPage({ params }: { params: Promise<{ s
     .maybeSingle();
   if (!site) notFound();
 
-  const origin = process.env.NEXT_PUBLIC_APP_URL ?? "https://websight.srexrg.me";
-  const snippet = `<script defer src="${origin}/t.js" data-site="${site.domains[0] ?? site.public_id}"></script>`;
-
   return (
     <div className="flex max-w-3xl flex-col gap-4">
       <section className="rounded-2xl border border-border bg-card px-[18px] py-2 shadow-[0_1px_2px_rgba(16,24,40,.04)]">
@@ -39,13 +36,13 @@ export default async function SiteSettingsPage({ params }: { params: Promise<{ s
       </section>
 
       <section className="rounded-2xl border border-border bg-card px-[18px] pb-4 pt-3 shadow-[0_1px_2px_rgba(16,24,40,.04)]">
-        <h3 className="pb-2 text-[14.5px] font-semibold text-foreground">Tracking snippet</h3>
+        <h3 className="pb-2 text-[14.5px] font-semibold text-foreground">Installation</h3>
         <p className="pb-3 text-[12.5px] leading-relaxed text-muted-foreground">
           Paste this inside your site&apos;s <code className="font-mono">&lt;head&gt;</code>. Custom
           events: <code className="font-mono">websight.track(&quot;signup&quot;)</code> or{" "}
           <code className="font-mono">data-ws-event</code> attributes.
         </p>
-        <CopySnippet code={snippet} />
+        <InstallTabs domain={site.domains[0] ?? site.public_id} />
       </section>
 
       <ShareSettingsCard site={site.public_id} />

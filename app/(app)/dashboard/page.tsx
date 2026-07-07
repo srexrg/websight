@@ -22,6 +22,9 @@ export default async function DashboardPage() {
     .order("created_at", { ascending: false })
     .returns<SiteRow[]>();
 
+  // First-run: no sites yet -> guided onboarding (docs/redesign/17).
+  if (!sites || sites.length === 0) redirect("/onboarding");
+
   const range = rangeToDates("7d");
   const cards: SiteCard[] = await Promise.all(
     (sites ?? []).map(async (s) => {

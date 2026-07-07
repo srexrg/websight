@@ -6,6 +6,7 @@ import { BreakdownCard } from "@/components/dashboard/breakdown-card";
 import { GoalSummaryCard } from "@/components/dashboard/goals/goal-summary-card";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { ErrorsIndicator } from "@/components/dashboard/errors/errors-indicator";
+import { GettingStartedCard } from "@/components/onboarding/getting-started-card";
 import { TimeseriesChart, type TimeseriesMetric } from "@/components/dashboard/timeseries-chart";
 import type { BreakdownDimension } from "@/lib/analytics/queries";
 import { formatDuration, formatNumber, formatPercent } from "@/lib/dashboard/format";
@@ -99,6 +100,7 @@ export function OverviewScreen({ site }: { site: string }) {
 
   return (
     <div className="flex flex-col gap-4">
+      {!readOnly && <GettingStartedCard site={site} />}
       {!readOnly && <ErrorsIndicator site={site} />}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
         <MetricCard
