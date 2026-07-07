@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { CopySnippet } from "@/components/dashboard/copy-snippet";
+import { ShareSettingsCard } from "@/components/share/share-settings-card";
 
 export const metadata = { title: "Site Settings" };
 
@@ -46,6 +47,8 @@ export default async function SiteSettingsPage({ params }: { params: Promise<{ s
         </p>
         <CopySnippet code={snippet} />
       </section>
+
+      <ShareSettingsCard site={site.public_id} />
     </div>
   );
 }
