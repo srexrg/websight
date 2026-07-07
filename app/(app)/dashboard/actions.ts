@@ -41,6 +41,48 @@ export async function createSite(formData: FormData): Promise<{ error?: string }
   return {};
 }
 
+/** Onboarding site creation: captures timezone + privacy mode and returns the
+ * new site's public_id so the flow can continue to install/verify. */
+export async function createSiteOnboarding(input: {
+  domain: string;
+  timezone?: string;
+  privacyMode?: "stateless" | "persistent";
+}): Promise<{ publicId?: string; error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not signed in" };
+
+  const domain = normalizeSiteKey(input.domain);
+  if (!domain || !domain.includes(".")) return { error: "Enter a valid domain like example.com" };
+
+  const admin = createAdminClient();
+  const { data: existing } = await admin
+    .from("sites")
+    .select("public_id")
+    .contains("domains", [domain])
+    .maybeSingle<{ public_id: string }>();
+  if (existing) return { publicId: existing.public_id }; // re-adding a known domain: skip ahead
+
+  const { data, error } = await admin
+    .from("sites")
+    .insert({
+      name: domain,
+      domains: [domain],
+      user_id: user.id,
+      timezone: input.timezone || "UTC",
+      privacy_mode: input.privacyMode === "persistent" ? "persistent" : "stateless",
+    })
+    .select("public_id")
+    .single<{ public_id: string }>();
+  if (error) return { error: error.message };
+
+  await admin.from("domains").insert({ domain, user_id: user.id });
+  revalidatePath("/dashboard");
+  return { publicId: data.public_id };
+}
+
 export async function deleteSite(publicId: string): Promise<{ error?: string }> {
   const supabase = await createClient();
   const {
