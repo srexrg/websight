@@ -6,6 +6,8 @@ import type { Funnel, FunnelStep } from "./funnels";
 import { mapFunnelRow } from "./funnels";
 import type { JourneyParams, JourneyResult } from "./journeys";
 import { computeJourneys } from "./journeys";
+import type { RetentionParams, RetentionResult, RetentionRow } from "./retention";
+import { computeRetention } from "./retention";
 
 /**
  * THE analytics read layer (docs/redesign/02). Every dashboard fetch goes
@@ -869,6 +871,85 @@ export async function getProfileEventFreq(
     return (data as Record<string, unknown>[]).map((r) => ({
       name: r.name as string,
       count: Number(r.count),
+    }));
+  });
+}
+
+// ------------------------------------------------------------------ retention
+
+/** Cohort window start for the last `periods` intervals (approx; SQL truncates
+ * to the site-tz bucket and computeRetention caps to the newest `periods`). */
+function retentionFrom(interval: RetentionParams["interval"], periods: number): Date {
+  const d = new Date();
+  if (interval === "day") d.setUTCDate(d.getUTCDate() - periods);
+  else if (interval === "week") d.setUTCDate(d.getUTCDate() - periods * 7);
+  else d.setUTCMonth(d.getUTCMonth() - periods);
+  return d;
+}
+
+/** Cohort retention grid (docs/redesign/11). Entry/return default to any-visit
+ * (first-seen cohorts); saved goals scope event-based entry/return. */
+export async function getRetention(
+  siteId: string,
+  tz: string,
+  params: RetentionParams,
+  supabase?: SupabaseClient,
+  filters: Filter[] = [],
+): Promise<RetentionResult> {
+  return timed(`retention site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_retention", {
+      p_site: siteId,
+      p_from: retentionFrom(params.interval, params.periods).toISOString(),
+      p_to: new Date().toISOString(),
+      p_interval: params.interval,
+      p_tz: tz || "UTC",
+      p_filters: filters,
+      p_entry_goal: params.entryGoal ?? null,
+      p_return_goal: params.returnGoal ?? null,
+    });
+    if (error) throw new Error(`analytics_retention failed: ${error.message}`);
+    const rows = (data as Record<string, unknown>[]).map((r) => ({
+      cohort: r.cohort as string,
+      active: r.active as string,
+      cnt: Number(r.cnt),
+      cohort_size: Number(r.cohort_size),
+      now_bucket: r.now_bucket as string,
+    })) as RetentionRow[];
+    return computeRetention(rows, params);
+  });
+}
+
+export type RetentionVisitor = { profileKey: string; visitorId: string; userId: string | null };
+
+/** Identities from one cohort who returned in one period (cell drill-down). */
+export async function getRetentionVisitors(
+  siteId: string,
+  tz: string,
+  params: RetentionParams,
+  cohort: string,
+  active: string,
+  supabase?: SupabaseClient,
+  filters: Filter[] = [],
+): Promise<RetentionVisitor[]> {
+  return timed(`retention-visitors site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_retention_visitors", {
+      p_site: siteId,
+      p_from: retentionFrom(params.interval, params.periods).toISOString(),
+      p_to: new Date().toISOString(),
+      p_interval: params.interval,
+      p_cohort: cohort,
+      p_active: active,
+      p_tz: tz || "UTC",
+      p_filters: filters,
+      p_entry_goal: params.entryGoal ?? null,
+      p_return_goal: params.returnGoal ?? null,
+      p_limit: 200,
+    });
+    if (error) throw new Error(`analytics_retention_visitors failed: ${error.message}`);
+    return (data as Record<string, unknown>[]).map((r) => ({
+      profileKey: r.profile_key as string,
+      visitorId: r.visitor_id as string,
+      userId: (r.user_id as string) ?? null,
     }));
   });
 }
