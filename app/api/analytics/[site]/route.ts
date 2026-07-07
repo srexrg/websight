@@ -18,6 +18,8 @@ import {
   getProfileEventFreq,
   getProfiles,
   getProfileSessions,
+  getRetention,
+  getRetentionVisitors,
   getSessionEvents,
   getSessions,
   getTimeseries,
@@ -86,7 +88,7 @@ export async function GET(
   // RLS: the signed-in user only sees their own sites.
   const { data: site } = await supabase
     .from("sites")
-    .select("id")
+    .select("id, timezone")
     .eq("public_id", publicId)
     .maybeSingle();
   if (!site) {
@@ -224,6 +226,36 @@ export async function GET(
         const grouping = (q.get("group") ?? "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 20);
         return NextResponse.json(
           await getJourneys(site.id, range, { anchor, direction: dir, steps, topN, grouping }, undefined, filters),
+        );
+      }
+      case "retention":
+      case "retention-visitors": {
+        const interval = (["day", "week", "month"] as const).includes(
+          q.get("interval") as "day" | "week" | "month",
+        )
+          ? (q.get("interval") as "day" | "week" | "month")
+          : "week";
+        const periods = Math.min(Math.max(Number(q.get("periods")) || 12, 2), 26);
+        const basis = q.get("basis") === "previous" ? "previous" : "cohort";
+        const uuid = (v: string | null) => (v && /^[0-9a-f-]{36}$/i.test(v) ? v : null);
+        const rp = {
+          interval,
+          periods,
+          basis: basis as "cohort" | "previous",
+          entryGoal: uuid(q.get("entryGoal")),
+          returnGoal: uuid(q.get("returnGoal")),
+        };
+        const tz = (site as { timezone?: string }).timezone ?? "UTC";
+        if (q.get("kind") === "retention") {
+          return NextResponse.json(await getRetention(site.id, tz, rp, undefined, filters));
+        }
+        const cohort = q.get("cohort") ?? "";
+        const active = q.get("active") ?? "";
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(cohort) || !/^\d{4}-\d{2}-\d{2}$/.test(active)) {
+          return NextResponse.json({ error: "Invalid cohort/active" }, { status: 400 });
+        }
+        return NextResponse.json(
+          await getRetentionVisitors(site.id, tz, rp, cohort, active, undefined, filters),
         );
       }
       case "live-count":

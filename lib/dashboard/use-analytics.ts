@@ -23,6 +23,7 @@ import type {
   Overview,
   ProfileEventFreq,
   ProfileRow,
+  RetentionVisitor,
   SessionEvent,
   SessionRow,
   SessionsCursor,
@@ -40,6 +41,7 @@ import {
 } from "@/lib/analytics/filters";
 import type { Funnel } from "@/lib/analytics/funnels";
 import type { JourneyParams, JourneyResult } from "@/lib/analytics/journeys";
+import type { RetentionParams, RetentionResult } from "@/lib/analytics/retention";
 import {
   compareParser,
   comparisonRange,
@@ -233,6 +235,47 @@ export function useJourneys(site: string, p: AnalyticsParams, jp: JourneyParams)
         group: (jp.grouping ?? []).join(","),
         ...base(p),
       }),
+    staleTime: STALE_MS,
+  });
+}
+
+function retentionQuery(rp: RetentionParams): Record<string, string> {
+  return {
+    interval: rp.interval,
+    periods: String(rp.periods),
+    basis: rp.basis,
+    entryGoal: rp.entryGoal ?? "",
+    returnGoal: rp.returnGoal ?? "",
+  };
+}
+
+/** Cohort retention grid (docs/redesign/11). */
+export function useRetention(site: string, p: AnalyticsParams, rp: RetentionParams) {
+  return useQuery<RetentionResult>({
+    queryKey: ["analytics", site, "retention", rp, p],
+    queryFn: () => fetchAnalytics(site, { kind: "retention", ...retentionQuery(rp), ...base(p) }),
+    staleTime: 60 * 60_000, // retention is expensive and slow-moving (1h)
+  });
+}
+
+/** Identities behind one retention cell (drill-down); enabled only when a cell is selected. */
+export function useRetentionVisitors(
+  site: string,
+  p: AnalyticsParams,
+  rp: RetentionParams,
+  cell: { cohort: string; active: string } | null,
+) {
+  return useQuery<RetentionVisitor[]>({
+    queryKey: ["analytics", site, "retention-visitors", rp, cell, p],
+    queryFn: () =>
+      fetchAnalytics(site, {
+        kind: "retention-visitors",
+        cohort: cell!.cohort,
+        active: cell!.active,
+        ...retentionQuery(rp),
+        ...base(p),
+      }),
+    enabled: !!cell,
     staleTime: STALE_MS,
   });
 }
