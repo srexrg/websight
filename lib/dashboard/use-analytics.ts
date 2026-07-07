@@ -57,6 +57,13 @@ import type {
   ErrorStatus,
   ErrorTimeseriesPoint,
 } from "@/lib/analytics/errors";
+import type {
+  EventName,
+  EventOccurrence,
+  EventTimeseriesPoint,
+  PropKey,
+  PropValue,
+} from "@/lib/analytics/events-custom";
 import {
   compareParser,
   comparisonRange,
@@ -355,6 +362,49 @@ export function useVitalsAttribution(
       fetchAnalytics(site, { kind: "vitals-attribution", path: path!, metric, ...base(p) }),
     enabled: !!path,
     staleTime: VITALS_STALE,
+  });
+}
+
+// ------------------------------------------------------------------ custom events
+
+export function useEventNames(site: string, p: AnalyticsParams) {
+  return useQuery<EventName[]>({
+    queryKey: ["analytics", site, "event-names", p],
+    queryFn: () => fetchAnalytics(site, { kind: "event-names", ...base(p) }),
+    staleTime: STALE_MS,
+  });
+}
+
+export function useEventTimeseries(site: string, p: AnalyticsParams, name: string, granularity: Granularity = "day") {
+  return useQuery<EventTimeseriesPoint[]>({
+    queryKey: ["analytics", site, "event-timeseries", name, granularity, p],
+    queryFn: () => fetchAnalytics(site, { kind: "event-timeseries", name, granularity, ...base(p) }),
+    staleTime: STALE_MS,
+  });
+}
+
+export function useEventPropKeys(site: string, p: AnalyticsParams, name: string) {
+  return useQuery<PropKey[]>({
+    queryKey: ["analytics", site, "event-prop-keys", name, p.range],
+    queryFn: () => fetchAnalytics(site, { kind: "event-prop-keys", name, ...base(p) }),
+    staleTime: 10 * 60_000, // prop-key sampling is cacheable
+  });
+}
+
+export function useEventPropValues(site: string, p: AnalyticsParams, name: string, key: string | null) {
+  return useQuery<PropValue[]>({
+    queryKey: ["analytics", site, "event-prop-values", name, key, p],
+    queryFn: () => fetchAnalytics(site, { kind: "event-prop-values", name, key: key!, ...base(p) }),
+    enabled: !!key,
+    staleTime: STALE_MS,
+  });
+}
+
+export function useEventOccurrences(site: string, p: AnalyticsParams, name: string) {
+  return useQuery<EventOccurrence[]>({
+    queryKey: ["analytics", site, "event-occurrences", name, p],
+    queryFn: () => fetchAnalytics(site, { kind: "event-occurrences", name, ...base(p) }),
+    staleTime: STALE_MS,
   });
 }
 

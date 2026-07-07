@@ -45,6 +45,13 @@ import {
   getErrorTimeseries,
   type ErrorStatus,
 } from "@/lib/analytics/errors";
+import {
+  getEventNames,
+  getEventOccurrences,
+  getEventTimeseries,
+  getPropKeys,
+  getPropValues,
+} from "@/lib/analytics/events-custom";
 import { decodeFilters, isValidDim } from "@/lib/analytics/filters";
 import { RANGE_PRESETS, rangeToDates, type RangePreset } from "@/lib/dashboard/range";
 
@@ -359,6 +366,32 @@ export async function GET(
         const group = q.get("group") ?? "";
         if (!/^[0-9a-f-]{36}$/i.test(group)) return NextResponse.json({ error: "Invalid group" }, { status: 400 });
         return NextResponse.json(await getErrorOccurrences(site.id, group, range, undefined, filters));
+      }
+      case "event-names":
+        return NextResponse.json(await getEventNames(site.id, range, undefined, filters));
+      case "event-timeseries": {
+        const name = q.get("name") ?? "";
+        if (!name) return NextResponse.json({ error: "Missing name" }, { status: 400 });
+        const g = q.get("granularity") as Granularity;
+        return NextResponse.json(
+          await getEventTimeseries(site.id, name, range, GRANULARITIES.includes(g) ? g : "day", undefined, filters),
+        );
+      }
+      case "event-prop-keys": {
+        const name = q.get("name") ?? "";
+        if (!name) return NextResponse.json({ error: "Missing name" }, { status: 400 });
+        return NextResponse.json(await getPropKeys(site.id, name, range));
+      }
+      case "event-prop-values": {
+        const name = q.get("name") ?? "";
+        const key = q.get("key") ?? "";
+        if (!name || !key) return NextResponse.json({ error: "Missing name/key" }, { status: 400 });
+        return NextResponse.json(await getPropValues(site.id, name, key, range, undefined, filters));
+      }
+      case "event-occurrences": {
+        const name = q.get("name") ?? "";
+        if (!name) return NextResponse.json({ error: "Missing name" }, { status: 400 });
+        return NextResponse.json(await getEventOccurrences(site.id, name, range, undefined, filters));
       }
       case "live-count":
         return NextResponse.json({ count: await getLiveCount(site.id, 5, filters) });
