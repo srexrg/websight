@@ -18,6 +18,7 @@ import {
   useOverview,
   useTimeseries,
 } from "@/lib/dashboard/use-analytics";
+import { useReadOnly } from "@/lib/dashboard/share-context";
 import { countryItems, toItems } from "./shared";
 
 const PAGE_TABS = [
@@ -51,6 +52,7 @@ function useTab<T extends readonly { key: string }[]>(tabs: T) {
 
 export function OverviewScreen({ site }: { site: string }) {
   const { range, params, compareParams } = useDashboardParams();
+  const readOnly = useReadOnly(); // public share view: hide member-only cards
   const { filters, add } = useFilters();
   const granularity = rangeGranularity(range);
   const [metric, setMetric] = useState<TimeseriesMetric>("visitors");
@@ -97,7 +99,7 @@ export function OverviewScreen({ site }: { site: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <ErrorsIndicator site={site} />
+      {!readOnly && <ErrorsIndicator site={site} />}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
         <MetricCard
           label="Unique Visitors"
@@ -195,24 +197,26 @@ export function OverviewScreen({ site }: { site: string }) {
         />
       </div>
 
-      <BreakdownCard
-        title="Custom Events"
-        valueLabel="Count"
-        items={eventsQ.data?.map((e) => ({ label: e.name, value: e.count, secondary: `${formatNumber(e.visitors)} unique` }))}
-        isLoading={eventsQ.isPending}
-        isError={eventsQ.isError}
-        emptyTitle="No custom events in this range"
-        emptyHint={`Track them with websight.track("signup") or data-ws-event attributes.`}
-        onRowClick={(v) => add("name", v)}
-        activeValues={activeFor("name")}
-        action={
-          <Link href={`/${site}/events`} className="text-[12px] font-semibold text-accent-foreground hover:underline">
-            Details →
-          </Link>
-        }
-      />
+      {!readOnly && (
+        <BreakdownCard
+          title="Custom Events"
+          valueLabel="Count"
+          items={eventsQ.data?.map((e) => ({ label: e.name, value: e.count, secondary: `${formatNumber(e.visitors)} unique` }))}
+          isLoading={eventsQ.isPending}
+          isError={eventsQ.isError}
+          emptyTitle="No custom events in this range"
+          emptyHint={`Track them with websight.track("signup") or data-ws-event attributes.`}
+          onRowClick={(v) => add("name", v)}
+          activeValues={activeFor("name")}
+          action={
+            <Link href={`/${site}/events`} className="text-[12px] font-semibold text-accent-foreground hover:underline">
+              Details →
+            </Link>
+          }
+        />
+      )}
 
-      <GoalSummaryCard site={site} />
+      {!readOnly && <GoalSummaryCard site={site} />}
     </div>
   );
 }

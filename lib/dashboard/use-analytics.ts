@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import { useCallback, useMemo } from "react";
+import { useShareToken } from "./share-context";
 import type {
   BreakdownDimension,
   BreakdownRow,
@@ -86,6 +87,8 @@ export type AnalyticsParams = {
   /** Explicit ISO range override (comparison periods). */
   from?: string;
   to?: string;
+  /** Share token for public (share-scope) reads (docs/redesign/15). */
+  share?: string;
 };
 
 async function fetchAnalytics<T>(site: string, params: Record<string, string>): Promise<T> {
@@ -102,6 +105,7 @@ function base(p: AnalyticsParams): Record<string, string> {
     range: p.range,
     f: p.f ?? "",
     ...(p.from && p.to ? { from: p.from, to: p.to } : {}),
+    ...(p.share ? { share: p.share } : {}),
   };
 }
 
@@ -565,13 +569,14 @@ export function useDashboardParams() {
   const [range] = useQueryState("range", rangeParser);
   const [compare, setCompare] = useQueryState("compare", compareParser);
   const { encoded } = useFilters();
+  const share = useShareToken() ?? undefined; // public views append ?share=<token>
 
-  const params: AnalyticsParams = useMemo(() => ({ range, f: encoded }), [range, encoded]);
+  const params: AnalyticsParams = useMemo(() => ({ range, f: encoded, share }), [range, encoded, share]);
   const compareParams: AnalyticsParams | null = useMemo(() => {
     const prev = comparisonRange(rangeToDates(range), compare as CompareMode);
     if (!prev) return null;
-    return { range, f: encoded, from: prev.from.toISOString(), to: prev.to.toISOString() };
-  }, [range, compare, encoded]);
+    return { range, f: encoded, share, from: prev.from.toISOString(), to: prev.to.toISOString() };
+  }, [range, compare, encoded, share]);
 
   return { range, compare: compare as CompareMode, setCompare, params, compareParams };
 }

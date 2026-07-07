@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
+import { resolveSiteAccess, shareAllows } from "@/lib/analytics/share";
 import {
   getBreakdown,
   getDimensionValues,
@@ -102,25 +102,22 @@ export async function GET(
   ctx: { params: Promise<{ site: string }> },
 ) {
   const { site: publicId } = await ctx.params;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
 
-  // RLS: the signed-in user only sees their own sites.
-  const { data: site } = await supabase
-    .from("sites")
-    .select("id, timezone")
-    .eq("public_id", publicId)
-    .maybeSingle();
-  if (!site) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  // Member (session) OR share-token access; share scope is gated per kind below.
+  const access = await resolveSiteAccess(publicId, req);
+  if (!access.ok) {
+    return NextResponse.json({ error: access.reason }, { status: access.status });
   }
+  const site = { id: access.siteId, timezone: access.timezone };
 
   const q = req.nextUrl.searchParams;
+  const kind = q.get("kind") ?? "";
+  if (
+    access.scope === "share" &&
+    !shareAllows(kind, access.exposedScreens, access.hideEvents)
+  ) {
+    return NextResponse.json({ error: "Not shared" }, { status: 403 });
+  }
   const preset = (RANGE_PRESETS as readonly string[]).includes(q.get("range") ?? "")
     ? (q.get("range") as RangePreset)
     : "7d";
@@ -139,7 +136,7 @@ export async function GET(
   const limit = Math.min(Math.max(Number(q.get("limit")) || 10, 1), 100);
 
   try {
-    switch (q.get("kind")) {
+    switch (kind) {
       case "overview":
         return NextResponse.json(await getOverview(site.id, range, undefined, filters));
       case "timeseries": {
@@ -270,7 +267,7 @@ export async function GET(
           entryGoal: uuid(q.get("entryGoal")),
           returnGoal: uuid(q.get("returnGoal")),
         };
-        const tz = (site as { timezone?: string }).timezone ?? "UTC";
+        const tz = site.timezone ?? "UTC";
         if (q.get("kind") === "retention") {
           return NextResponse.json(await getRetention(site.id, tz, rp, undefined, filters));
         }
