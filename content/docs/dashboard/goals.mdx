@@ -1,0 +1,38 @@
+---
+title: Goals
+description: Count conversions from pageviews or custom events.
+---
+
+A goal turns a pageview or a custom event into a conversion you can track over time, attach a value to, and use as a funnel step.
+
+## Create a goal
+
+Every goal needs a name (up to 120 characters) and one of two kinds:
+
+- **Page view goal** matches a path. Choose how it matches: **is exactly**, **contains**, or **matches wildcard** using `*` (for example `/blog/*`).
+- **Custom event goal** matches an [event name](/docs/dashboard/events), with optional property conditions using **is**, **is not**, or **contains**.
+
+You can attach an optional value per conversion, a currency amount. The goal's total Value is unique converters multiplied by that value.
+
+While you edit, a live preview tells you how the goal would perform: "would have matched N events from M visitors in the last 7 days". If your site has no goals yet, WebSight offers starter templates (a Newsletter signup event, a Purchase page, a Signed up event) to fill in the dialog.
+
+## Reading the list
+
+Each goal is a row with a sparkline plus three numbers:
+
+| Column | Meaning |
+|---|---|
+| Uniques | Unique converters |
+| Conversions | Total conversions |
+| Rate | Conversion rate |
+
+Edit and Archive appear on hover. Archiving is a soft delete: the goal stops counting but its history is not destroyed.
+
+## Goal detail
+
+Click a goal to open its detail page:
+
+- Tiles for Conversions, Unique converters, Conversion rate, and Value.
+- A conversion trend over time.
+- Top countries and referrers of the visitors who converted.
+- The recent converting sessions, so you can inspect the real journeys behind the number.

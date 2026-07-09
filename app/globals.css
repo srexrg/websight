@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -73,6 +75,25 @@
   --border: #ECEDF1;
   --input: #ECEDF1;
   --ring: #0E9C6E;
+
+  /* Fumadocs docs theme, mapped onto the WebSight palette (light).
+     Overrides the --color-fd-* tokens defined by fumadocs-ui/css/neutral.css. */
+  --color-fd-background: #F6F7F9;
+  --color-fd-foreground: #1A1B25;
+  --color-fd-card: #FFFFFF;
+  --color-fd-card-foreground: #1A1B25;
+  --color-fd-popover: #FFFFFF;
+  --color-fd-popover-foreground: #1A1B25;
+  --color-fd-muted: #F1F2F5;
+  --color-fd-muted-foreground: #6B6E7B;
+  --color-fd-border: #ECEDF1;
+  --color-fd-primary: #0E9C6E;
+  --color-fd-primary-foreground: #FFFFFF;
+  --color-fd-secondary: #F1F2F5;
+  --color-fd-secondary-foreground: #1A1B25;
+  --color-fd-accent: #E3F5EC;
+  --color-fd-accent-foreground: #0B7E58;
+  --color-fd-ring: #0E9C6E;
 }
 
 /* Dark theme: #0E1310-family surfaces from the landing StatsBand
@@ -109,6 +130,24 @@
   --border: rgba(234, 246, 239, 0.09);
   --input: rgba(234, 246, 239, 0.12);
   --ring: #0E9C6E;
+
+  /* Fumadocs docs theme, mapped onto the WebSight palette (dark). */
+  --color-fd-background: #0B0F0D;
+  --color-fd-foreground: #EAF6EF;
+  --color-fd-card: #101512;
+  --color-fd-card-foreground: #EAF6EF;
+  --color-fd-popover: #101512;
+  --color-fd-popover-foreground: #EAF6EF;
+  --color-fd-muted: #151B17;
+  --color-fd-muted-foreground: #8FA89B;
+  --color-fd-border: rgba(234, 246, 239, 0.09);
+  --color-fd-primary: #0E9C6E;
+  --color-fd-primary-foreground: #FFFFFF;
+  --color-fd-secondary: #1B221E;
+  --color-fd-secondary-foreground: #EAF6EF;
+  --color-fd-accent: #12291F;
+  --color-fd-accent-foreground: #5FC2A0;
+  --color-fd-ring: #0E9C6E;
 }
 
 /* Light-only brand surfaces (landing, auth). These hardcode light backgrounds

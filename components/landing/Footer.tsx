@@ -25,13 +25,13 @@ export default function Footer() {
               {col.title}
             </div>
             <div className="flex flex-col gap-[10px]">
-              {col.links.map((label) => (
+              {col.links.map((link) => (
                 <Link
-                  key={label}
-                  href="#"
+                  key={link.label}
+                  href={link.href}
                   className="text-[13.5px] text-[#6B6E7B] hover:text-brand transition-colors"
                 >
-                  {label}
+                  {link.label}
                 </Link>
               ))}
             </div>

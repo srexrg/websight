@@ -1,0 +1,45 @@
+---
+title: Sources
+description: "Where traffic comes from: channels, referrers, and UTM campaigns."
+---
+
+Sources shows how people arrive at your site, from the broad channel down to the exact campaign. Everything here respects the shared [date range and filters](/docs/dashboard/filters).
+
+## What you see
+
+Four cards:
+
+- **Channels** - top 10, the high-level bucket each visit is grouped into.
+- **Referrers** - top 20, the sites that linked to you.
+- **UTM Sources** - top 20, the `utm_source` values on your inbound links.
+- **UTM Campaigns** - top 20, the `utm_campaign` values on your inbound links.
+
+## What you can do
+
+- Click any row to filter the dashboard to that channel, referrer, or UTM value.
+- Combine with a [comparison](/docs/dashboard/filters#comparisons) to see which channels are growing.
+
+## How channels are classified
+
+Every visit is sorted into exactly one of six channels. WebSight checks in priority order and stops at the first match:
+
+1. **Paid** - a paid medium (cpc, ppc, display, affiliate, and similar) or a click id such as `gclid`, `fbclid`, `msclkid`, `ttclid`, `twclid`, or `li_fat_id`.
+2. **Email** - an email medium, an email source, or a webmail referrer domain.
+3. **Social** - a social medium or a known social domain (Facebook, X, LinkedIn, Reddit, Hacker News, Bluesky, and others).
+4. **Organic Search** - a known search domain (Google, Bing, DuckDuckGo, and others).
+5. **Referral** - any other referring site. UTM tags with no referrer also land here.
+6. **Direct** - no referrer and no campaign tags at all.
+
+A self-referral, where the referrer is one of your own domains, counts as **Direct** rather than Referral.
+
+## UTM tracking
+
+WebSight keeps only a small allowlist of query parameters and strips the rest for privacy. The parameters retained are `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, `ref`, and `source`. Anything else in the URL is dropped before storage.
+
+For example, this inbound link:
+
+```
+https://yourdomain.com/pricing?utm_source=newsletter&utm_medium=email&utm_campaign=launch&session=abc123
+```
+
+is stored as `utm_source=newsletter`, `utm_medium=email`, `utm_campaign=launch`, and the `session=abc123` parameter is discarded.

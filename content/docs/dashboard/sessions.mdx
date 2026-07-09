@@ -1,0 +1,33 @@
+---
+title: Sessions
+description: Every visit with its full event timeline.
+---
+
+Sessions is the per-visit record: one row per session, newest first, each expandable into its full event timeline. It works in stateless mode, so you get the visit-level view without cookies or stored ids.
+
+## What you see
+
+The list shows the newest sessions first and loads 50 at a time as you scroll. Each row carries:
+
+| Column | What it shows |
+|---|---|
+| Visitor | A short label for the visitor. |
+| Location | Country and city where known. |
+| Device | Device, browser, and OS. |
+| Channel | How the visit was acquired. |
+| Entry / Exit | First and last page of the visit. |
+| Pageviews | Pageviews in the session. |
+| Duration | First event to last event. |
+| Bounce | Whether the session bounced. |
+
+Open sessions carry a **LIVE** badge.
+
+## What you can do
+
+- Scroll to load more; the list pages in 50 sessions at a time.
+- Click a row to open a drawer with the session's metadata and a timeline of its events. Live sessions refresh every 5 seconds. From the drawer you can jump to the visitor's [profile](/docs/dashboard/profiles).
+- Export the current view to CSV. The file is generated client-side and carries these columns: Started, Visitor, Country, City, Device, Browser, OS, Channel, Referrer, Entry, Exit, Pageviews, Duration, Bounce.
+
+## How filters apply
+
+The shared [filters](/docs/dashboard/filters) apply here too, with one rule worth knowing: a session matches a filter if any of its events match. Filter by a page and you get every session that touched that page, not only the ones that entered on it.

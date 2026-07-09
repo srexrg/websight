@@ -1,0 +1,31 @@
+---
+title: Profiles
+description: Lifetime activity per visitor or identified user.
+---
+
+Profiles gives you one lifetime record per identity: every session and event tied to a single person, rather than a windowed aggregate.
+
+## Before you start
+
+<Callout type="warn">
+Profiles is locked in stateless mode. A lifetime record needs a stable identity, and stateless visitor ids reset daily. Switch the site to persistent mode or call [identify()](/docs/tracking/identify) to unlock it.
+</Callout>
+
+## What you see
+
+There is one profile per identity: the user id you set with [identify()](/docs/tracking/identify) when the visitor is identified, otherwise the persistent visitor id. Each profile summarizes:
+
+- Sessions and pageviews.
+- First seen and last seen.
+- Top country and device.
+- Any traits passed to `identify()`.
+
+Search by id to jump to a specific person. The list shows up to 100 profiles.
+
+## Profile detail
+
+Open a profile to see its full session history. Each session expands in a drawer with its event timeline, and a per-event-name frequency shows which actions this person takes most.
+
+## Deleting a visitor
+
+Deleting a visitor is a permanent, GDPR-style erasure. It removes every event, session, and profile row tied to that identity, with no recovery. Only the site owner can do this.
