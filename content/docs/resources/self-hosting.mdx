@@ -1,0 +1,93 @@
+---
+title: Self-hosting
+description: Run your own WebSight instance.
+---
+
+WebSight is open source and MIT licensed. If you want to own the data end to end, run it yourself.
+
+## What you are running
+
+WebSight is a single Next.js 16 application backed by a Supabase Postgres database. The tracker (`t.js`, its lazy chunk, and `embed.js`) is built into the app's `public/` directory, so there is no separate service to deploy. You host one Next.js app and point it at one Supabase project.
+
+## Setup
+
+<Steps>
+
+<Step>
+### Clone the repository
+
+```bash
+git clone https://github.com/srexrg/websight.git
+cd websight
+```
+</Step>
+
+<Step>
+### Create a Supabase project and apply the migrations
+
+Create a project at [supabase.com](https://supabase.com). The schema lives as SQL migrations in `supabase/migrations`. Apply them with the Supabase CLI (already a dev dependency of the repo):
+
+```bash
+npx supabase link --project-ref <your-project-ref>
+npx supabase db push
+```
+
+This creates the tables, the row-level security policies, and the SECURITY DEFINER functions the app reads through.
+</Step>
+
+<Step>
+### Configure environment variables
+
+Copy the example file and fill in the values:
+
+```bash
+cp .env.example .env.local
+```
+
+| Variable | Purpose |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL. |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Public key for browser and auth clients. |
+| `SUPABASE_SECRET_KEY` | Server-only key. Required by the analytics pipeline (ingestion, queries, backfill). |
+| `NEXT_PUBLIC_APP_URL` | The public origin of your instance, e.g. `https://yourdomain.com`. |
+
+The legacy JWT keys (`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) still work as fallbacks if your project has not migrated to the new key system.
+</Step>
+
+<Step>
+### Install and build
+
+```bash
+npm install
+npm run build
+```
+
+The tracker is compiled automatically: `prebuild` runs `build:tracker`, which bundles the tracker into `public/` before Next.js builds.
+</Step>
+
+<Step>
+### Deploy
+
+Deploy to Vercel or any Node host that can run `npm start`. Point your domain at the deployment and you are live.
+</Step>
+
+</Steps>
+
+## Point the snippet at your own origin
+
+Once your instance is running, load the snippet from it instead of the hosted origin:
+
+```html
+<script defer src="https://analytics.yourdomain.com/t.js" data-site="yourdomain.com"></script>
+```
+
+The tracker posts events to the origin it was served from, so no `data-api` is needed when loading the script straight from your instance. Add `data-api` only when you put a [first-party proxy](/docs/tracking/adblockers) in front.
+
+## Things to get right
+
+<Callout type="warn">
+**Geo needs a CDN.** Country, region, and city come from CDN request headers, not a bundled database. There is no MaxMind fallback. Deploy behind a CDN that sets location headers (Vercel, Cloudflare, Fastly, or CloudFront). A self-host without one records no location.
+</Callout>
+
+- **Google sign-in.** Authentication is Google OAuth only. Configure the Google provider in your Supabase project's Auth settings, otherwise nobody can sign in.
+- **Scheduled jobs.** Salt rotation (daily, for the cookieless hash) and stale-session closing (every 15 minutes) run as `pg_cron` jobs. They ship with the migrations and are scheduled automatically when `pg_cron` is available on your database. If `pg_cron` is not enabled, the migration logs a notice and skips scheduling, and you will need to run these jobs yourself.

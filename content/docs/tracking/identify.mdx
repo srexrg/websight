@@ -1,0 +1,51 @@
+---
+title: Identify users
+description: Attach your own user ids to visitors in persistent mode.
+---
+
+Identify attaches your own user id to a visitor, so you can follow a real account across visits instead of an anonymous id. It requires persistent mode.
+
+## Turn on persistent mode
+
+`identify()` only works when the site runs in persistent mode. In stateless mode the call is a silent no-op.
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"
+  data-mode="persistent"></script>
+```
+
+A random id in localStorage gives visitors a durable identity across days. Still no cookies. See [data-mode](/docs/tracking/script#data-mode) for the full picture.
+
+## Identify a visitor
+
+Call `identify` with your user id, usually right after login or signup:
+
+```js
+websight.identify("user_8f21");
+```
+
+The id is capped at 128 characters and stored in localStorage under `websight_uid`, so it sticks to the visitor on later visits. From then on their events carry your id.
+
+Pass a second argument to attach traits. Traits emit an `identify` event so the profile picks them up:
+
+```js
+websight.identify("user_8f21", { plan: "pro", team: "acme" });
+```
+
+To sign a visitor out, call `identify` with `null`. This clears the stored id:
+
+```js
+websight.identify(null);
+```
+
+## What it unlocks
+
+A stable id per visitor is what powers the multi-visit views:
+
+- [Profiles](/docs/dashboard/profiles), where a single person's whole history is stitched together.
+- [Retention](/docs/dashboard/retention) cohorts.
+- [Funnels](/docs/dashboard/funnels) that span more than a single day.
+
+<Callout type="info">
+The id is yours, not a fingerprint. It is a value you already have (your account id), stored in localStorage. There are still no cookies, and nothing is derived from the visitor's device or network.
+</Callout>

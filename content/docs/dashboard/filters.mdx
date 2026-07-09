@@ -1,0 +1,54 @@
+---
+title: Filters and date ranges
+description: Slice every screen by page, source, location, device, and more.
+---
+
+Date range, comparison, and filters are shared controls that sit above every dashboard screen. Set them once and they follow you as you move between [Overview](/docs/dashboard/overview), [Sources](/docs/dashboard/sources), [Sessions](/docs/dashboard/sessions), and the rest. They also live in the URL, so any view you are looking at is a link you can share.
+
+## Date ranges
+
+Pick from four presets: 24h, 7d, 30d, and 90d. The default is 7d. There is no custom date input yet, so you cannot enter an arbitrary start and end.
+
+Chart granularity follows the range automatically:
+
+| Range | Granularity |
+|---|---|
+| 24h | Hourly |
+| 7d | Daily |
+| 30d | Daily |
+| 90d | Weekly |
+
+The selected range is stored in the URL as `?range=`, so a view stays put when you refresh or send the link to a teammate.
+
+## Comparisons
+
+Turn on a comparison to see how the current range stacks up against an earlier one. Three modes:
+
+- **Off** - no comparison.
+- **Previous period** - the equal-length window immediately before the current range.
+- **Year over year** - the same range one year earlier.
+
+When a comparison is on, each metric card shows a delta against the comparison window. Bounce rate is the exception: its delta is inverted, because a lower bounce rate is the improvement.
+
+## Filters
+
+A filter narrows every screen to the traffic you care about. Each filter is a dimension, an operator, and one or more values.
+
+Operators: **is**, **is not**, **contains**, **does not contain**.
+
+Filterable dimensions:
+
+- Page (path), Entry page, Exit page
+- Channel, Referrer
+- UTM source, medium, campaign, term, content
+- Country, Region, City
+- Device type, Browser, OS, Language
+- Event name
+
+You can also filter on any custom event property with the `prop:<key>` syntax, for example `prop:plan`. As you type a value, WebSight suggests matches ranked by traffic. A single filter accepts up to 20 values.
+
+## Click to filter
+
+You rarely need to build filters by hand. Click any row in any breakdown, anywhere in the dashboard, and it becomes a filter. Click a country in [Audience](/docs/dashboard/audience), a referrer in Sources, a page in [Pages](/docs/dashboard/pages), and the whole dashboard narrows to it.
+
+Filters are encoded in the URL alongside the range, so a filtered view is fully shareable. Press **Esc** to clear all filters at once.

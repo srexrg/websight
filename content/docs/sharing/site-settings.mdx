@@ -1,0 +1,44 @@
+---
+title: Site settings
+description: Site details, installation, and feature toggles.
+---
+
+Everything you configure for a single site lives here: its identity, the install snippet, and the handful of features you can turn on.
+
+## Site details
+
+The details panel shows the core facts about your site. These are read-only:
+
+| Field | What it is |
+|---|---|
+| Name | The display name for the site. |
+| Domains | The domain(s) the tracker reports for. |
+| Site ID | The site's internal identifier. |
+| Privacy mode | Stateless or persistent. |
+| Timezone | The timezone your reports are bucketed in. |
+
+<Callout type="info">
+Privacy mode is fixed when the site is created. It is not editable afterwards. If you need to switch between stateless and persistent, create a new site. See [Privacy and data](/docs/resources/privacy) for what each mode does.
+</Callout>
+
+## Installation
+
+The installation tab carries the snippet for every supported platform: HTML, Next.js, React, Vue, WordPress, Shopify, Webflow, Framer, and Google Tag Manager. Copy the one that fits your stack. Full walkthroughs live in [Install WebSight](/docs/getting-started/install).
+
+## Feature toggles
+
+Two features are opt-in and enabled from the dashboard:
+
+- **Web Vitals**: enabled from the "Turn on Web Vitals" card. You also need `data-vitals` on the snippet. See [Web Vitals](/docs/dashboard/web-vitals).
+- **Errors**: JS error capture, enabled alongside the `data-errors` attribute. See [Errors](/docs/dashboard/errors).
+
+## Public sharing
+
+The public sharing card lives in site settings too. Turn it on to create a read-only link to your dashboard, set a password, and choose which screens are visible. See [Public dashboards](/docs/sharing/public-dashboards).
+
+## Excluding traffic
+
+There is no IP-exclusion setting. It is not needed:
+
+- Localhost and loopback addresses are excluded by the tracker automatically, so local development never shows up.
+- To exclude your own visits from a live site, set the `websight_ignore` flag in your browser. See [Exclude traffic](/docs/tracking/exclude-traffic).

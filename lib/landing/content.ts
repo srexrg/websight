@@ -37,7 +37,7 @@ export type Plan = {
   features: string[];
 };
 
-export type FooterCol = { title: string; links: string[] };
+export type FooterCol = { title: string; links: NavLink[] };
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
@@ -235,14 +235,30 @@ export const plans: Plan[] = [
 export const footerCols: FooterCol[] = [
   {
     title: "Product",
-    links: ["Features", "Live globe", "Pricing", "Changelog", "Roadmap"],
+    links: [
+      { label: "Features", href: "#" },
+      { label: "Live globe", href: "#" },
+      { label: "Pricing", href: "#" },
+      { label: "Changelog", href: "#" },
+      { label: "Roadmap", href: "#" },
+    ],
   },
   {
     title: "Resources",
-    links: ["Docs", "Quickstart", "API", "Status"],
+    links: [
+      { label: "Docs", href: "/docs" },
+      { label: "Quickstart", href: "/docs/getting-started/quickstart" },
+      { label: "API", href: "/docs/tracking/api" },
+      { label: "Self-hosting", href: "/docs/resources/self-hosting" },
+    ],
   },
   {
     title: "Company",
-    links: ["About", "Blog", "Open source", "Contact"],
+    links: [
+      { label: "About", href: "#" },
+      { label: "Blog", href: "#" },
+      { label: "Open source", href: "#" },
+      { label: "Contact", href: "#" },
+    ],
   },
 ];

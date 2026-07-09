@@ -1,0 +1,33 @@
+---
+title: Errors
+description: JavaScript errors from real users, grouped and triaged.
+---
+
+Errors captures JavaScript exceptions from real visitors, groups them so one bug is one row, and gives you a triage workflow to work through them.
+
+## Enable it
+
+Add `data-errors` to the snippet. Its presence loads the lazy tracker chunk that does the capturing, so it costs nothing on sites that leave it off.
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com" data-errors></script>
+```
+
+See [The script](/docs/tracking/script) for the full attribute reference.
+
+**What is captured**: uncaught errors and unhandled promise rejections, with the message, error type, source file, line and column, and stack trace. Resource-load failures (a broken image or a script that 404s) are not captured.
+
+## Groups and triage
+
+Errors are fingerprinted by a normalized message plus the top stack frames, so the same bug groups together across different visitors and stays stable across deploys. Work through them using the tabs **Open**, **Ignored**, **Resolved**, and **All**, with actions to **Resolve**, **Ignore**, or **Reopen** a group.
+
+If a resolved group starts happening again it auto-reopens, flagged **Regressed**, so a fixed bug that comes back does not slip past you. An **External** badge marks groups coming from third-party scripts not served from your origin.
+
+## Limits
+
+- The client caps 5 identical errors per page load, so one runaway loop cannot flood a session.
+- Ingest caps 120 occurrences per group per minute; anything beyond that is counted as dropped rather than stored.
+
+## Error detail
+
+Open a group to see its occurrences, affected visitors, first and last seen, and a trend over time. Breakdowns split the group by page, browser, OS, and country, and a sample stack trace shows you where to start looking.

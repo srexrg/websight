@@ -1,0 +1,63 @@
+---
+title: Quickstart
+description: Add your site and see your first pageview in under five minutes.
+---
+
+Create a site, drop one script tag on your pages, and watch your first event arrive.
+
+<Steps>
+
+<Step>
+
+### Create your site
+
+Sign in with Google at [websight.srexrg.me](https://websight.srexrg.me). Your account is created automatically on first sign-in.
+
+Enter your domain, like `yourdomain.com`. The protocol and any `www.` prefix are stripped for you, so you never type `https://`.
+
+Then choose a privacy mode:
+
+- **Stateless** (recommended): no cookies, no consent banner, visitor ids reset daily.
+- **Persistent**: a durable visitor id in localStorage that unlocks Profiles and Retention.
+
+The privacy mode is fixed at creation and cannot be changed later in settings, so pick the one you need.
+
+</Step>
+
+<Step>
+
+### Add the snippet
+
+Paste this into your site's `<head>`, replacing `yourdomain.com` with your domain:
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"></script>
+```
+
+Using a framework or a CMS? See [Install on your platform](/docs/getting-started/install) for ready-made snippets for all nine platforms, including Next.js, WordPress, and Shopify.
+
+</Step>
+
+<Step>
+
+### Verify
+
+The setup screen polls until your first event arrives, then echoes it back with the visitor's location and browser. The tracker flushes the very first event immediately, so this usually takes only seconds after you deploy.
+
+<Callout type="warn">
+The tracker is disabled on localhost. Visit your deployed site to trigger the first event. See [Exclude traffic](/docs/tracking/exclude-traffic) for how self-exclusion works.
+</Callout>
+
+</Step>
+
+<Step>
+
+### What's next
+
+- Send [custom events](/docs/tracking/custom-events) for signups, clicks, and anything else you want to measure.
+- Turn key actions into [goals](/docs/dashboard/goals) to track conversions.
+- Serve the tracker first-party to get past [adblockers](/docs/tracking/adblockers).
+
+</Step>
+
+</Steps>

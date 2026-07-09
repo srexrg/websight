@@ -1,0 +1,84 @@
+---
+title: Script reference
+description: Every attribute the tracker script accepts.
+---
+
+The tracker is a single script tag. Add it once to every page you want to measure and it starts sending pageviews. Everything else on this page is optional configuration.
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"></script>
+```
+
+`data-site` is your site's primary domain, not a site id. Without it the tracker installs but does nothing.
+
+## Attributes
+
+Every option is a `data-*` attribute on the script tag.
+
+| Attribute | Effect | Default |
+|---|---|---|
+| `data-site` | Required. Your site's domain. Missing or empty and the tracker no-ops. | - |
+| `data-api` | Override the ingest endpoint. Relative paths allowed. | script origin + `/api/track` |
+| `data-mode` | `"persistent"` gives visitors a durable id and unlocks `identify()`. Anything else is stateless. | stateless |
+| `data-exclude` | Comma-separated path globs (`*` wildcard). A matching pathname suppresses every event. | none |
+| `data-hash` | Present: also count hash-based route changes (`hashchange`). | off |
+| `data-track-outbound` | `"false"` disables outbound link capture. | enabled |
+| `data-track-downloads` | `"false"` disables file download capture. | enabled |
+| `data-respect-dnt` | Present: honor `navigator.doNotTrack === "1"` and disable tracking. | off |
+| `data-vitals` | Present: load `t-x.js` and report Web Vitals. Optional value `0..1` sets a sample rate. | off |
+| `data-errors` | Present: load `t-x.js` and capture JavaScript errors. | off |
+
+### data-api
+
+The tracker posts events to `data-api` if you set it, otherwise to the origin the script was served from plus `/api/track`. Relative paths such as `/stats/api/track` are allowed and resolve against your own domain, which is how you serve the tracker past content blockers. See [Adblockers and proxying](/docs/tracking/adblockers).
+
+### data-mode
+
+Two privacy modes, chosen per site:
+
+- Stateless (default): no cookies, no stored ids. Visitors are counted with a salted hash that resets daily.
+- Persistent (`data-mode="persistent"`): a random id in localStorage gives visitors a durable identity across days. Still no cookies.
+
+Persistent mode is what unlocks `websight.identify()` and the Profiles, Retention, and multi-day funnel views. See [Identify users](/docs/tracking/identify).
+
+### data-exclude
+
+Suppress events on paths you never want in your stats. Values are globs where `*` matches any run of characters, compared against the pathname:
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"
+  data-exclude="/admin/*,/preview/*"></script>
+```
+
+See [Exclude traffic](/docs/tracking/exclude-traffic) for the other ways to keep noise out.
+
+### data-hash
+
+Add `data-hash` if your app routes with the URL fragment (hash routers). The tracker then counts `hashchange` navigations as pageviews and keeps the hash in the recorded URL. Leave it off for History-based routers, which are tracked automatically.
+
+### data-vitals
+
+Present with no value, Web Vitals are reported for every page load. Give it a sample rate between 0 and 1 to report only a fraction:
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"
+  data-vitals="0.1"></script>
+```
+
+`data-vitals="0.1"` reports vitals on roughly 10% of loads. Sampling is one coin flip per page load, so a sampled load always carries a complete set of metrics.
+
+## How events are sent
+
+Events are queued and sent in batches, not one request per event:
+
+- The queue flushes when it holds 3 events, when a 2 second timer fires, or when the tab is hidden (`visibilitychange` to hidden, or `pagehide`).
+- The very first event flushes immediately, so onboarding sees your first pageview without delay.
+- Each batch is sent with `navigator.sendBeacon`, falling back to a `fetch` POST with `keepalive` if the beacon is unavailable or refused.
+- The server accepts up to 50 events and 128 KB per request. Malformed items in a batch are dropped individually rather than failing the whole batch.
+- Accepted traffic always gets a `202` response. The tracker does not read it.
+
+## Bundle
+
+The core script `t.js` is a single minified IIFE with zero runtime dependencies. Its gzipped size is held under a 3 KB budget (about 1.9 KB in practice) by a test that fails the build if it grows past the limit.
+
+Web Vitals and error capture live in a separate chunk, `t-x.js` (about 5.2 KB gzipped). It loads only when you set `data-vitals` or `data-errors`, and it resolves relative to the core script's URL, so serving the core first-party also serves the extension first-party.

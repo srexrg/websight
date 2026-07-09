@@ -1,0 +1,26 @@
+---
+title: Globe
+description: A 3D view of live visitors and where your audience is in the world.
+---
+
+Globe plots your audience on a rotating 3D world. It has two modes: a Live mode for who is on the site right now, and a Range mode for where traffic came from over the selected [date range](/docs/dashboard/filters).
+
+## What you see
+
+A side panel lists your top 20 locations with tabs for Countries, Regions, and Cities, plus a badge for how many people are online. The globe itself changes with the mode.
+
+### Live mode
+
+One avatar per active session from the last 2 minutes, capped at 80 avatars. Each avatar sits at real city coordinates when the location is known, otherwise it is scattered near the country's center. This is the map counterpart to [Realtime](/docs/dashboard/realtime).
+
+### Range mode
+
+Country aggregates instead of individual sessions: up to 4 avatars per country and 55 avatars in total, sized to reflect volume over the range.
+
+## What you can do
+
+- In Live mode, click an avatar to open that visit's [session](/docs/dashboard/sessions) details.
+- In Range mode, click a country to filter the whole dashboard to it.
+- Switch the side-panel tabs to break locations down by country, region, or city.
+
+<Callout type="info">Location comes from your CDN's request headers, not a local database. Traffic from localhost or a dev environment has no location, so it will not appear on the globe.</Callout>

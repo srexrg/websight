@@ -1,0 +1,48 @@
+---
+title: Exclude traffic
+description: Keep localhost, your own visits, and bots out of your stats.
+---
+
+A few kinds of traffic should never reach your numbers: your local dev server, your own repeated visits, internal pages, and bots. Some of this is handled for you; the rest is a one-line setting.
+
+## Localhost
+
+The tracker disables itself automatically when the page is served from a local address: `localhost`, any `127.*` host, `::1`, `0.0.0.0`, or the `file:` protocol. Development traffic never counts, so you can leave the snippet in place while you build.
+
+## Exclude yourself
+
+To keep your own visits out of a live site, set a flag in localStorage from your browser's console:
+
+```js
+localStorage.setItem("websight_ignore", "1");
+```
+
+That browser is ignored from then on. Remove the flag to start counting yourself again:
+
+```js
+localStorage.removeItem("websight_ignore");
+```
+
+The flag lives in the browser, so set it in each browser and device you want excluded.
+
+## Exclude paths
+
+To stop tracking whole sections of the site, list them in `data-exclude` as comma-separated globs where `*` matches any run of characters. A matching pathname suppresses every event on that page:
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"
+  data-exclude="/admin/*,/preview/*"></script>
+```
+
+## Do Not Track
+
+The tracker ignores the browser's Do Not Track signal by default. To honor it, add `data-respect-dnt`; visitors whose browser sends `navigator.doNotTrack === "1"` are then not tracked.
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"
+  data-respect-dnt></script>
+```
+
+## Bots
+
+Bot traffic is filtered on the server, so you do not have to configure anything. Requests are dropped before they are stored when the user agent matches a crawler or spider, a headless browser (Puppeteer, Playwright, Selenium), an HTTP library or command-line tool, a social unfurler, an SEO tool, an AI crawler, or an uptime monitor. A missing or empty user agent is treated as a bot. This filtering is automatic and not configurable.

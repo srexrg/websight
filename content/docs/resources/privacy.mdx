@@ -1,0 +1,66 @@
+---
+title: Privacy and data
+description: What WebSight stores, what it never stores, and who can see it.
+---
+
+WebSight is built to measure traffic without tracking people. This page describes exactly how, so you can decide what fits your site. It describes mechanisms, not legal verdicts. For your obligations, consult your own counsel.
+
+## No cookies by default
+
+Every new site starts in stateless mode. In this mode WebSight sets no cookies and stores no identifier in the browser. There is nothing to consent to on the client.
+
+To count unique visitors, the server derives a visitor id from a one-way hash of a daily salt, the site, the IP address, and the user agent:
+
+```
+visitor_id = sha256(daily_salt : site : ip : user_agent)
+```
+
+The raw IP and user agent are used only inside this hash and are never stored. The salt rotates every day and the previous day's salt is deleted at 00:05 UTC. Once a salt is gone, its hashes cannot be reversed or reproduced, so visitor ids reset each day and yesterday's ids cannot be linked to today's.
+
+Because there is no persistent identifier and no cookie, stateless mode is designed so that no consent banner is required for the tracker itself. Many teams run it without a banner. Whether that is enough for your site is a decision for your own counsel.
+
+## What is stored
+
+For each event WebSight stores only the following. There is no free-form capture of the page or the person.
+
+| Field | Notes |
+|---|---|
+| Path | The URL path, without the raw query string. |
+| Query params | Only allowlisted marketing params (see below). |
+| Referrer and channel | Referrer, referrer domain, and the derived channel. |
+| UTMs | `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`. |
+| Device, browser, OS | Parsed from the user agent, then the user agent is discarded. |
+| Country, region, city | Derived from CDN request headers. |
+| Coordinates | Coarse, rounded to about 1 km. |
+| Screen size | Width and height. |
+| Language | The browser language. |
+| Timestamps | When the event happened. |
+| Custom event props | Only the properties you choose to send. |
+
+## What is never stored
+
+WebSight does not store any of these, anywhere:
+
+- IP addresses
+- Raw user agent strings
+- Cookies
+- Cross-site or third-party identifiers
+- Page content, form values, or keystrokes
+
+## Persistent mode
+
+If you opt a site into persistent mode, WebSight generates a random 20-character id and keeps it in `localStorage`. This gives visitors a durable identity across days, which unlocks [Profiles](/docs/dashboard/profiles) and [Retention](/docs/dashboard/retention).
+
+This id is random, not a fingerprint. WebSight still sets no cookies and does no fingerprinting. If you call [`identify()`](/docs/tracking/identify), activity is tied to your own user id, which you supply, so the mapping between a visitor and a person exists only because you created it.
+
+## Data ownership and deletion
+
+WebSight is open source. When you [self-host](/docs/resources/self-hosting), analytics data lives in your own Supabase project and never leaves it.
+
+You can permanently erase a single visitor from [Profiles](/docs/dashboard/profiles): the delete action removes all of that identity's events, sessions, and profile rows.
+
+Data is kept until you delete it. There is no automatic retention or purge today. If you need data to expire after a set period, you delete it yourself.
+
+## Query string hygiene
+
+The tracker cleans the URL before anything is sent. Only marketing attribution params leave the browser: `utm_*`, `ref`, `source`, and the common paid-click ids (`gclid`, `fbclid`, `msclkid`, `ttclid`, `twclid`, `li_fat_id`). Every other query parameter is stripped on the client and never transmitted, so tokens, emails, and session values in your URLs never reach WebSight.

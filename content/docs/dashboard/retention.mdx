@@ -1,0 +1,32 @@
+---
+title: Retention
+description: Cohort analysis of who comes back and when.
+---
+
+Retention groups visitors by when they first arrived and tracks how many come back in each following period, so you can see whether your product actually keeps people.
+
+## Before you start
+
+<Callout type="warn">
+Retention is locked in stateless mode. Measuring who returns across days needs a stable identity, and stateless visitor ids reset daily. Switch the site to persistent mode or call [identify()](/docs/tracking/identify) to unlock it.
+</Callout>
+
+## What you see
+
+The cohort triangle has one row per cohort and one column per period since entry. Each cell is the share of that cohort still active in that period.
+
+- **Interval**: Daily, Weekly, or Monthly (default Weekly).
+- **Periods**: how many columns to show, 8, 12, or 26 (default 12).
+- **Basis**: read each cell as a percentage of the original cohort, or as a percentage of the previous period.
+
+Two criteria define what counts:
+
+- **Entry criterion**: first seen (default) or a saved [goal](/docs/dashboard/goals).
+- **Return criterion**: any visit (default) or a saved goal.
+
+## Reading the cells
+
+- **Dashed** cells mark a period still in progress, so its number will keep rising.
+- **Hatched** cells mark low sample, fewer than 10 visitors, where the percentage is noisy.
+
+Click a cell to drill into its visitor list. Click a cohort label to plot its decay curve, and compare up to 6 cohorts on one chart. A weighted average retention curve summarizes all cohorts together.

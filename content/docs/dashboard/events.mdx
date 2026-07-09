@@ -1,0 +1,45 @@
+---
+title: Events
+description: Explore custom events, their properties, and recent occurrences.
+---
+
+Events is where your custom events show up: the actions you send from your own code, alongside the automatic ones the tracker captures.
+
+## Before you start
+
+Custom events only appear once your site sends them. Add a call wherever the action happens:
+
+```js
+websight.track("signup", { plan: "pro" });
+```
+
+See [Custom events](/docs/tracking/custom-events) for the full API, the no-code `data-ws-event` attribute, and property limits. Automatic events like outbound clicks and downloads show up here too without any extra work.
+
+## What you see
+
+The main screen lists every event name your site has sent, with three columns:
+
+| Column | Meaning |
+|---|---|
+| Count | Total occurrences in the selected range |
+| Visitors | Unique visitors who triggered it |
+| Last seen | Time since the most recent occurrence |
+
+An event that has not been seen in more than 30 days gets a **Stale** badge, so you can spot instrumentation you have since removed or renamed.
+
+## Event detail
+
+Click an event name to open its detail page. It shows:
+
+- A count-over-time chart of occurrences.
+- A property explorer: every property key on the event and a breakdown of its values. Value breakdowns are sampled, so treat them as a representative shape rather than an exact tally.
+- Recent occurrences, each expandable to the full JSON properties, with a link to the visitor's [profile](/docs/dashboard/profiles).
+
+## Event dictionary
+
+Every event name gets a dictionary row created automatically the first time it is ingested, so you never have to register events up front. As the site owner you can annotate each row to keep your team aligned:
+
+- A **description** of what the event means, up to 280 characters.
+- The **expected properties** it should carry, up to 30 keys of 60 characters each.
+
+These annotations are documentation only. They do not change ingestion or filter what is stored, and editing them is limited to the site owner.
