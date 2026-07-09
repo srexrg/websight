@@ -72,7 +72,25 @@ export function geoFromHeaders(headers: HeaderGetter): GeoInfo {
       headers.get("cf-ipcity") ??
       headers.get("cloudfront-viewer-city"),
   );
-  return { country, region, city };
+  const lat = parseCoord(
+    headers.get("x-vercel-ip-latitude") ??
+      headers.get("cf-iplatitude") ??
+      headers.get("cloudfront-viewer-latitude"),
+  );
+  const lng = parseCoord(
+    headers.get("x-vercel-ip-longitude") ??
+      headers.get("cf-iplongitude") ??
+      headers.get("cloudfront-viewer-longitude"),
+  );
+  return { country, region, city, lat, lng };
+}
+
+/** Parse a geo-header coordinate, rounded to ~1km (2dp) for privacy. */
+function parseCoord(value: string | null): number | null {
+  if (!value) return null;
+  const n = Number(value);
+  if (!Number.isFinite(n) || Math.abs(n) > 180) return null;
+  return Math.round(n * 100) / 100;
 }
 
 /** Client IP for visitor hashing (never stored). */

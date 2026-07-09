@@ -91,6 +91,8 @@ export type GeoInfo = {
   country: string | null;
   region: string | null;
   city: string | null;
+  lat: number | null;
+  lng: number | null;
 };
 
 export type DeviceInfo = {
