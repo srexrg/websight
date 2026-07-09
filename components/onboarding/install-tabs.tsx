@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CopySnippet } from "@/components/dashboard/copy-snippet";
+import { Check, Copy } from "@phosphor-icons/react";
 
 /**
  * Per-platform install instructions (docs/redesign/17). The base is a single
@@ -60,6 +60,66 @@ function snippet(platform: Platform, origin: string, domain: string): { code: st
   }
 }
 
+/**
+ * Lightweight, robust highlighter: colors strings and comments (the landing's
+ * emerald palette) and leaves the rest light. Works across every snippet shape
+ * (HTML script tag + JS) without a full tokenizer.
+ */
+function highlight(code: string) {
+  const parts: { t: string; c: string }[] = [];
+  // comments (HTML + //) | double-quoted strings
+  const re = /(<!--[\s\S]*?-->|\/\/[^\n]*)|("[^"]*")/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(code))) {
+    if (m.index > last) parts.push({ t: code.slice(last, m.index), c: "#EAF6EF" });
+    parts.push({ t: m[0], c: m[1] ? "#6B7B72" : "#5BE5A8" });
+    last = re.lastIndex;
+  }
+  if (last < code.length) parts.push({ t: code.slice(last), c: "#EAF6EF" });
+  return parts;
+}
+
+/** Landing-grade dark code block with window chrome and a warm emerald glow. */
+function CodeBlock({ code, label }: { code: string; label: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <div className="overflow-hidden rounded-[14px] bg-[#0E1310] shadow-[0_18px_50px_-24px_rgba(14,156,110,0.45)]">
+      <div className="flex items-center justify-between border-b border-white/[0.07] px-3.5 py-2">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+          <span className="ml-2 font-mono text-[11px] text-[#8FA89B]">{label}</span>
+        </div>
+        <button
+          onClick={async () => {
+            try {
+              await navigator.clipboard.writeText(code);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 1800);
+            } catch {}
+          }}
+          className="flex shrink-0 items-center gap-1.5 rounded-md bg-white/[0.08] px-2 py-1 font-sans text-[11.5px] font-semibold text-[#C9CBD6] transition-colors hover:bg-brand hover:text-white"
+          aria-label="Copy snippet"
+        >
+          {copied ? <Check size={13} weight="bold" className="text-[#5FD3A6]" /> : <Copy size={13} />}
+          {copied ? "Copied" : "Copy"}
+        </button>
+      </div>
+      <pre className="whitespace-pre-wrap px-4 py-3.5 font-mono text-[12.5px] leading-[1.65] [overflow-wrap:anywhere]">
+        <code>
+          {highlight(code).map((p, i) => (
+            <span key={i} style={{ color: p.c }}>
+              {p.t}
+            </span>
+          ))}
+        </code>
+      </pre>
+    </div>
+  );
+}
+
 export function InstallTabs({ domain }: { domain: string }) {
   const [platform, setPlatform] = useState<Platform>("HTML");
   const [origin] = useState(() => (typeof window !== "undefined" ? window.location.origin : "https://websight.srexrg.me"));
@@ -67,21 +127,23 @@ export function InstallTabs({ domain }: { domain: string }) {
 
   return (
     <div>
-      <div className="mb-3 flex flex-wrap gap-1">
+      <div className="mb-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {PLATFORMS.map((p) => (
           <button
             key={p}
             onClick={() => setPlatform(p)}
-            className={`rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors ${
-              platform === p ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground"
+            className={`shrink-0 rounded-lg px-3 py-1.5 text-[12.5px] font-medium transition-colors ${
+              platform === p
+                ? "bg-accent text-accent-foreground shadow-[0_1px_2px_rgba(16,24,40,.04)]"
+                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
             }`}
           >
             {p}
           </button>
         ))}
       </div>
-      <CopySnippet code={code} />
-      {note && <p className="mt-2 text-[12px] leading-relaxed text-muted-foreground">{note}</p>}
+      <CodeBlock code={code} label={platform === "HTML" ? "index.html" : platform} />
+      {note && <p className="mt-2.5 text-[12px] leading-relaxed text-muted-foreground">{note}</p>}
     </div>
   );
 }
