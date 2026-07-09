@@ -96,6 +96,7 @@ async function handleV2(req: NextRequest, body: unknown) {
   const salt = await getDailySalt(admin);
 
   const rows: IngestEventRow[] = [];
+  const geoTargets = new Map<string, { siteId: string; visitorId: string }>();
   for (const payload of payloads) {
     const site = await resolveSite(admin, payload.site);
     if (!site) {
@@ -111,10 +112,29 @@ async function handleV2(req: NextRequest, body: unknown) {
       userAgent: userAgent ?? "",
     });
     rows.push(buildEventRow({ payload, site, visitorId, device, geo }));
+    geoTargets.set(`${site.id}:${visitorId}`, { siteId: site.id, visitorId });
   }
 
   const accepted = await ingestEvents(admin, rows);
   debug("v2 accepted", accepted, "of", payloads.length);
+
+  // Stamp city-level coords onto the just-touched open sessions (globe placement).
+  if (geo.lat != null && geo.lng != null) {
+    await Promise.all(
+      [...geoTargets.values()].map((t) =>
+        admin
+          .rpc("ingest_session_geo", {
+            p_site: t.siteId,
+            p_visitor: t.visitorId,
+            p_lat: geo.lat,
+            p_lng: geo.lng,
+          })
+          .then(({ error }) => {
+            if (error) debug("session-geo stamp failed", error.message);
+          }),
+      ),
+    );
+  }
   return NextResponse.json(
     { accepted },
     { status: 202, headers: corsHeaders },
