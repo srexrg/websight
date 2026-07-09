@@ -3,16 +3,23 @@
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { EmptyState, RowsSkeleton, Sk } from "@/components/dashboard/states";
-import type { GlobePoint } from "@/components/dashboard/globe/real-globe";
-import { countryCoords } from "@/lib/dashboard/geo";
+import type { GlobeMarker } from "@/components/dashboard/globe/real-globe";
+import { SessionDrawer } from "@/components/dashboard/sessions/session-drawer";
+import type { SessionRow } from "@/lib/analytics/queries";
+import { countryCoords, jitterAround } from "@/lib/dashboard/geo";
 import {
   useBreakdown,
   useDashboardParams,
   useFilters,
   useLiveBreakdown,
   useLiveCount,
+  useLiveSessions,
 } from "@/lib/dashboard/use-analytics";
 import { countryFlag, countryName } from "./shared";
+
+// Aggregate (range) scatter caps so a busy globe stays readable.
+const PER_COUNTRY = 4;
+const TOTAL = 55;
 
 // MapLibre needs window; load client-only (docs/redesign/06).
 const RealGlobe = dynamic(
@@ -33,38 +40,62 @@ export function GlobeScreen({ site }: { site: string }) {
   const [tab, setTab] = useState<(typeof GEO_TABS)[number]["key"]>("country");
 
   const liveCount = useLiveCount(site, encoded);
+  const liveSessions = useLiveSessions(site, mode === "live");
   const liveGeo = useLiveBreakdown(site, tab, encoded, 20);
-  const liveCountries = useLiveBreakdown(site, "country", encoded, 30);
   const rangeGeo = useBreakdown(site, params, tab, 20);
   const rangeCountries = useBreakdown(site, params, "country", 30);
+  const [selected, setSelected] = useState<SessionRow | null>(null);
 
   const list =
     mode === "live"
       ? { rows: liveGeo.data?.map((r) => ({ value: r.value, count: r.visitors })), pending: liveGeo.isPending }
       : { rows: rangeGeo.data?.map((r) => ({ value: r.value, count: r.visitors })), pending: rangeGeo.isPending };
 
-  const countryRows =
-    mode === "live"
-      ? liveCountries.data?.map((r) => ({ value: r.value, count: r.visitors }))
-      : rangeCountries.data?.map((r) => ({ value: r.value, count: r.visitors }));
+  // Live: one clickable avatar per active session, at real coords if known else
+  // scattered around the country centroid, seeded by visitor id.
+  const liveMarkers: GlobeMarker[] = useMemo(() => {
+    const out: GlobeMarker[] = [];
+    for (const s of liveSessions.data ?? []) {
+      let lat = s.lat;
+      let lng = s.lng;
+      if (lat == null || lng == null) {
+        const c = countryCoords(s.country);
+        if (!c) continue;
+        [lat, lng] = jitterAround(c[0], c[1], s.id, { spread: 3 });
+      }
+      const label = [s.city, s.country ? countryName(s.country) : null].filter(Boolean).join(", ");
+      out.push({ id: s.id, seed: s.visitorId, label: label || "Unknown", lat, lng });
+    }
+    return out;
+  }, [liveSessions.data]);
 
-  const points: GlobePoint[] = useMemo(
-    () =>
-      (countryRows ?? [])
-        .map((r) => {
-          const coords = countryCoords(r.value);
-          if (!coords) return null;
-          return {
-            code: r.value,
-            label: countryName(r.value),
-            lat: coords[0],
-            lng: coords[1],
-            count: r.count,
-          };
-        })
-        .filter((p): p is GlobePoint => p !== null),
-    [countryRows],
-  );
+  // Range: country aggregates scattered into avatar slots (click filters country).
+  const rangeMarkers: GlobeMarker[] = useMemo(() => {
+    const rows = (rangeCountries.data ?? [])
+      .map((r) => ({ code: r.value, count: r.visitors, coords: countryCoords(r.value) }))
+      .filter((r): r is { code: string; count: number; coords: [number, number] } => r.coords !== null)
+      .sort((a, b) => b.count - a.count);
+    const out: GlobeMarker[] = [];
+    for (const r of rows) {
+      const n = Math.min(r.count, PER_COUNTRY);
+      for (let i = 0; i < n && out.length < TOTAL; i++) {
+        const [lat, lng] = jitterAround(r.coords[0], r.coords[1], `${r.code}-${i}`, { first: i === 0 });
+        out.push({ id: `c:${r.code}:${i}`, seed: `${r.code}-${i}`, label: countryName(r.code), lat, lng });
+      }
+    }
+    return out;
+  }, [rangeCountries.data]);
+
+  const markers = mode === "live" ? liveMarkers : rangeMarkers;
+
+  function handleSelect(id: string) {
+    if (id.startsWith("c:")) {
+      add("country", id.split(":")[1]);
+      return;
+    }
+    const s = liveSessions.data?.find((x) => x.id === id);
+    if (s) setSelected(s);
+  }
 
   return (
     <div className="grid gap-4 xl:grid-cols-[1fr_340px]">
@@ -91,9 +122,9 @@ export function GlobeScreen({ site }: { site: string }) {
           ))}
         </div>
         <div className="absolute inset-0">
-          <RealGlobe points={points} onSelect={(code) => add("country", code)} />
+          <RealGlobe markers={markers} onSelect={handleSelect} />
         </div>
-        {points.length === 0 && !liveGeo.isPending && (
+        {markers.length === 0 && !liveGeo.isPending && (
           <div className="pointer-events-none absolute inset-x-0 bottom-6 z-10 flex justify-center">
             <span className="rounded-full bg-black/45 px-3 py-1.5 text-[12px] text-[#9AB5A8] backdrop-blur">
               {mode === "live"
@@ -179,6 +210,8 @@ export function GlobeScreen({ site }: { site: string }) {
           )}
         </div>
       </section>
+
+      <SessionDrawer site={site} session={selected} onClose={() => setSelected(null)} />
     </div>
   );
 }

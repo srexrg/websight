@@ -20,6 +20,7 @@ import {
   getProfileSessions,
   getRetention,
   getRetentionVisitors,
+  getLiveSessions,
   getSessionEvents,
   getSessions,
   getTimeseries,
@@ -170,6 +171,8 @@ export async function GET(
           await getSessions(site.id, range, cursor, pageSize, undefined, filters),
         );
       }
+      case "live-sessions":
+        return NextResponse.json(await getLiveSessions(site.id));
       case "session-events": {
         const sessionId = q.get("session") ?? "";
         if (!/^[0-9a-f-]{36}$/i.test(sessionId)) {
