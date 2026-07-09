@@ -394,7 +394,7 @@ export async function GET(
         return NextResponse.json(await getEventOccurrences(site.id, name, range, undefined, filters));
       }
       case "live-count":
-        return NextResponse.json({ count: await getLiveCount(site.id, 2, filters) });
+        return NextResponse.json({ count: await getLiveCount(site.id, 5, filters) });
       case "live-breakdown": {
         const dim = q.get("dimension") ?? "";
         return NextResponse.json(await getLiveBreakdown(site.id, dim, 5, limit, filters));
