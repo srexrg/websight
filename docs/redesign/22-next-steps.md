@@ -91,6 +91,20 @@ Update this table as work proceeds so any future agent knows where things stand.
 | 16, 18-21 | not started | - | 16 (orgs) intentionally skipped in user's slice; 18 billing next major |
 | 24 session-replay | not started (plan written 2026-07-06) | - | phase 4; deps `01`/`02`/`05`/`07` all done - buildable anytime; needs an S3-compatible store (cloud default: Cloudflare R2, chosen for zero-egress playback) + `CRON_SECRET` |
 
+### ⚠️ Security: legacy-table RLS leak (found 2026-07-10, fix written, NOT yet applied to prod)
+
+Anon-key probe of the live project found the five legacy tables world-readable via
+the public publishable key with RLS off: `users` (31 rows incl. **emails**),
+`domains` (24), `visits` (2501), `page_views` (4729), `daily_stats` (767). Root
+cause: baseline migration reproduces the old `grant ... to anon` with no RLS (the
+old app read/wrote these with the anon key). All v2 tables are correctly
+RLS-protected. Fix: `20260710000000_legacy_rls_lockdown.sql` (enable RLS + owner
+policies; ingestion writes via service role so dual-write is unaffected).
+**Apply after the redesign app deploys** (new `/api/track` writes via service role,
+so no ingest gap), or immediately to close the email leak and accept a short
+legacy-write gap. Verify a fresh Google login after applying (auth callback
+inserts into `users` under the new self-insert policy).
+
 ### Deploy notes for `02` (prod rollout)
 
 **Done on prod 2026-07-05**: project linked, baseline repaired as applied, `0001` pushed (pg_cron enabled, all three `ws-*` jobs active), backfill run (4,576 events / 2,321 sessions / 702 rollup days from 23 sites), parity spot-checked vs `daily_stats` (matches; where they differ the legacy numbers were undercounts from the non-atomic old route), full 40-test suite green against the cloud project. The project uses the **new API key system** (`sb_publishable_...` / `sb_secret_...`); all clients accept the new env names `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` / `SUPABASE_SECRET_KEY` with the legacy names as fallback. Found on prod and folded back into the baseline migration: `public.users.id` references `auth.users(id)` and `users.email` is unique.
