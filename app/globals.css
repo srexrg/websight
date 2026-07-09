@@ -151,6 +151,7 @@
 .ws-globe-dot { position: absolute; inset: 6px; border-radius: 9999px; background: #0E9C6E; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
 .ws-globe-pulse { position: absolute; inset: 2px; border-radius: 9999px; background: rgba(14,156,110,.45); animation: wsPulse 2.2s ease-out infinite; }
 .ws-globe-count { position: absolute; top: -7px; right: -7px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 9999px; background: #0B7E58; color: #fff; font-family: var(--font-jetbrains), monospace; font-size: 10px; font-weight: 700; line-height: 16px; text-align: center; }
+/* Globe avatar markers are styled inline in real-globe.tsx (no class needed). */
 
 /* Starfield behind the data globe (components/dashboard/screens/globe-screen.tsx).
    MapLibre's canvas is transparent outside the sphere, so these stars show

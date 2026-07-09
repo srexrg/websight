@@ -15,6 +15,8 @@
     "backfill": "tsx scripts/backfill.ts"
   },
   "dependencies": {
+    "@dicebear/collection": "^9.4.2",
+    "@dicebear/core": "^9.4.3",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-dialog": "^1.1.6",
