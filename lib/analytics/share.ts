@@ -112,6 +112,9 @@ export function shareAllows(kind: string, exposedScreens: string[], hideEvents: 
   // Non-sensitive traffic reads that power Overview / Pages / Sources / Audience.
   const CORE = new Set(["overview", "timeseries", "breakdown", "dimension-values"]);
   if (CORE.has(kind)) return true;
+  // Per-session live data is sensitive (paths/device/city) - owner-only, even
+  // though it powers the globe. Public globes keep the aggregate live counts.
+  if (kind === "live-sessions") return false;
   // Realtime family requires an exposed realtime or globe screen.
   if (kind.startsWith("live-")) return exposed.has("realtime") || exposed.has("globe");
   // Custom events / goals are business-sensitive: only if not hidden AND exposed.

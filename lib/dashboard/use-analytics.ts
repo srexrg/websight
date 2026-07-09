@@ -593,6 +593,16 @@ export function useLiveCount(site: string, f = "") {
   });
 }
 
+export function useLiveSessions(site: string, enabled = true) {
+  return useQuery<SessionRow[]>({
+    queryKey: ["analytics", site, "live-sessions"],
+    queryFn: () => fetchAnalytics(site, { kind: "live-sessions", range: "24h" }),
+    enabled,
+    refetchInterval: 15_000,
+    staleTime: 10_000,
+  });
+}
+
 export function useLiveBreakdown(site: string, dim: string, f = "", limit = 10) {
   return useQuery<LiveBreakdownRow[]>({
     queryKey: ["analytics", site, "live-breakdown", dim, f, limit],
