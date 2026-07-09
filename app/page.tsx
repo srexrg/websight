@@ -1,7 +1,6 @@
 import AnnouncementBar from "@/components/landing/AnnouncementBar";
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/hero";
-import TrustBar from "@/components/landing/TrustBar";
 import Features from "@/components/landing/Features";
 import GlobeHighlight from "@/components/landing/GlobeHighlight";
 import RealtimeHighlight from "@/components/landing/RealtimeHighlight";
@@ -19,7 +18,6 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <TrustBar />
         <Features />
         <GlobeHighlight />
         <RealtimeHighlight />
