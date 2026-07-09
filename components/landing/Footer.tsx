@@ -1,124 +1,72 @@
-"use client"
-
 import Link from "next/link";
-import { Globe } from "lucide-react";
-import { motion } from "framer-motion";
-import { FaTwitter,FaInstagram,FaLinkedin } from "react-icons/fa";
+import { GithubLogo, XLogo } from "@phosphor-icons/react/dist/ssr";
+import { Logo } from "@/components/brand/Logo";
+import { footerCols } from "@/lib/landing/content";
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <footer className="relative pt-24 pb-12 overflow-hidden border-t border-zinc-800 bg-black">
-      {/* Background Elements */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_-100px,#2563eb10,transparent)]" />
-        <motion.div
-          className="absolute -bottom-80 -left-40 w-96 h-96 rounded-full bg-blue-500/5 filter blur-3xl"
-          animate={{
-            x: [0, 30, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute -bottom-20 right-0 w-80 h-80 rounded-full bg-blue-500/5 filter blur-3xl"
-          animate={{
-            x: [0, -20, 0],
-            y: [0, 20, 0],
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </div>
-
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          {/* Company Info */}
-          <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg blur-sm opacity-60"></div>
-                <div className="p-1.5 bg-zinc-900/80 rounded-lg border border-blue-500/20 relative">
-                  <Globe className="h-5 w-5 text-blue-400" />
-                </div>
-              </div>
-              <span className="text-lg font-semibold text-white">WebSight</span>
-            </div>
-
-            <p className="text-gray-400 mb-6 max-w-md">
-              WebSight provides modern web analytics to help businesses
-              understand their audience and make data-driven decisions without
-              compromising user privacy.
-            </p>
-
-            <div className="flex gap-4 mb-6">
-              <SocialLink
-                icon={<FaTwitter className="h-4 w-4" />}
-                href="https://x.com/srexrg"
-              />
-              <SocialLink
-                icon={<FaLinkedin className="h-4 w-4" />}
-                href="https://linkedin.com/in/sreeragp276"
-              />
-            </div>
+    <footer className="border-t border-[#F0F1F4]">
+      {/* 4-column grid */}
+      <div className="max-w-[1180px] mx-auto px-7 pt-[54px] pb-10 grid grid-cols-[1.6fr_1fr_1fr_1fr] gap-8">
+        {/* Brand column */}
+        <div>
+          <div className="mb-[13px]">
+            <Logo size={28} />
           </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-medium text-white mb-6">Product</h3>
-            <nav className="flex flex-col space-y-3">
-              <FooterLink href="#features">Features</FooterLink>
-              <FooterLink href="/docs">Documentation</FooterLink>
-            </nav>
-          </div>
+          <p className="text-[13.5px] leading-[1.55] text-[#9A9DA8] max-w-[240px]">
+            Privacy-first web analytics for people who build on the internet.
+          </p>
         </div>
 
-        {/* Bottom */}
-        <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-zinc-800">
-          <p className="text-sm text-gray-400 order-2 md:order-1 mt-4 md:mt-0">
-            © {new Date().getFullYear()} WebSight. All rights reserved.
-          </p>
+        {/* Data-driven link columns */}
+        {footerCols.map((col) => (
+          <div key={col.title}>
+            <div className="text-[12.5px] font-bold tracking-[0.4px] text-foreground mb-[13px]">
+              {col.title}
+            </div>
+            <div className="flex flex-col gap-[10px]">
+              {col.links.map((label) => (
+                <Link
+                  key={label}
+                  href="#"
+                  className="text-[13.5px] text-[#6B6E7B] hover:text-brand transition-colors"
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
 
-          <div className="text-sm text-gray-400 font-text">
-            Made with{" "}
-            <span
-              className="text-blue-500 animate-pulse inline-block hover:scale-110 transition-transform"
-              aria-label="love"
-            >
-              💙
-            </span>{" "}
-            by{" "}
+      {/* Bottom bar */}
+      <div className="border-t border-[#F0F1F4]">
+        <div className="max-w-[1180px] mx-auto px-7 py-[18px] flex items-center justify-between">
+          <span className="text-[13px] text-[#9A9DA8]">
+            &copy; 2026 WebSight &middot; MIT licensed
+          </span>
+          <div className="flex gap-4">
             <Link
-              href="https://srexrg.me"
+              href="https://github.com/srexrg/websight"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-300 transition-colors font-title focus:outline-none focus:ring-2 focus:ring-blue-500/20 rounded px-1"
+              aria-label="GitHub"
+              className="text-[#9A9DA8] hover:text-brand transition-colors"
             >
-              srexrg
+              <GithubLogo size={18} />
+            </Link>
+            <Link
+              href="https://x.com/srexrg"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="X / Twitter"
+              className="text-[#9A9DA8] hover:text-brand transition-colors"
+            >
+              <XLogo size={18} />
             </Link>
           </div>
         </div>
       </div>
     </footer>
   );
-};
-
-const SocialLink = ({ icon, href }: { icon: React.ReactNode, href: string }) => (
-  <Link 
-    href={href}
-    className="p-2 bg-zinc-900/40 backdrop-blur-xl border border-zinc-800 text-gray-400 rounded-lg hover:bg-zinc-900/60 hover:text-blue-400 transition-all duration-300"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    {icon}
-  </Link>
-);
-
-const FooterLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
-  <Link 
-    href={href}
-    className="text-gray-400 hover:text-blue-400 transition-colors flex items-center group"
-  >
-    {children}
-  </Link>
-);
-
-export default Footer;
+}

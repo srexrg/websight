@@ -1,30 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
-import { Oswald } from "next/font/google";
+import { Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import Script from "next/script";
 import { DATA } from "@/data/site.config";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const jakarta = Plus_Jakarta_Sans({
+const hanken = Hanken_Grotesk({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-jakarta",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-hanken",
 });
 
-const oswald = Oswald({
-  variable: "--font-oswald",
+const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-jetbrains",
 });
 
 export const metadata: Metadata = {
@@ -106,14 +99,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-      <Script src="https://websight.srexrg.me/tracker.js" data-site="websight.srexrg.me"/>
+      {/* Self-tracking via the v2 tracker, served from our own origin.
+          The script no-ops on localhost, so dev stays clean. */}
+      <Script
+        src="/t.js"
+        data-site={
+          process.env.NEXT_PUBLIC_SELF_SITE ??
+          (process.env.NEXT_PUBLIC_APP_URL
+            ? new URL(process.env.NEXT_PUBLIC_APP_URL).hostname
+            : "websight.srexrg.me")
+        }
+        strategy="afterInteractive"
+      />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${jakarta.variable} antialiased bg-black`}
+        className={`${hanken.variable} ${jetbrains.variable} font-sans antialiased`}
       >
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

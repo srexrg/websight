@@ -4,41 +4,35 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans: var(--font-hanken);
+  --font-mono: var(--font-jetbrains);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-oswald: var(--font-oswald);
-  --font-jakarta: var(--font-jakarta);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-fg);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-surface: var(--surface);
+  --color-page: var(--page);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -46,104 +40,145 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  
-  /* Light mode */
-  --background: oklch(0.98 0 0);
-  --foreground: oklch(0.2 0.02 240);
-  
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.02 240);
-  
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.02 240);
-  
-  --primary: oklch(0.35 0.2 260); /* Deep purple */
-  --primary-foreground: oklch(0.98 0 0);
-  
-  --secondary: oklch(0.92 0.02 240);
-  --secondary-foreground: oklch(0.3 0.05 240);
-  
-  --muted: oklch(0.95 0.01 240);
-  --muted-foreground: oklch(0.5 0.05 240);
-  
-  --accent: oklch(0.95 0.03 260);
-  --accent-foreground: oklch(0.3 0.05 240);
-  
-  --destructive: oklch(0.65 0.2 20);
-  --border: oklch(0.9 0.01 240);
-  --input: oklch(0.9 0.01 240);
-  --ring: oklch(0.4 0.15 260);
-  
-  /* Colorful chart palette */
-  --chart-1: oklch(0.4 0.2 260); /* Purple */
-  --chart-2: oklch(0.5 0.2 200); /* Blue */
-  --chart-3: oklch(0.5 0.15 160); /* Teal */  
-  --chart-4: oklch(0.5 0.15 120); /* Green */
-  --chart-5: oklch(0.5 0.2 40);   /* Orange */
-  
-  /* Sidebar colors */
-  --sidebar: oklch(0.2 0.02 240);
-  --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.35 0.2 260);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.25 0.05 260);
-  --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.3 0.03 240);
-  --sidebar-ring: oklch(0.5 0.1 260);
+  --radius: 0.75rem;
+
+  --page: #F6F7F9;
+  --surface: #FFFFFF;
+  --surface-2: #FBFBFE;
+
+  --background: #F6F7F9;
+  --foreground: #1A1B25;
+
+  --card: #FFFFFF;
+  --card-foreground: #1A1B25;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1B25;
+
+  --brand: #0E9C6E;
+  --brand-fg: #FFFFFF;
+  --primary: #0E9C6E;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #F1F2F5;
+  --secondary-foreground: #1A1B25;
+  --muted: #F6F7F9;
+  --muted-foreground: #6B6E7B;
+  --accent: #E3F5EC;
+  --accent-foreground: #0B7E58;
+
+  --success: #1F9D6B;
+  --danger: #D2554F;
+  --destructive: #D2554F;
+
+  --border: #ECEDF1;
+  --input: #ECEDF1;
+  --ring: #0E9C6E;
 }
 
-/* Dark mode class settings - properly using Tailwind dark mode */
-:root.dark {
-  /* Dark mode - deep space theme */
-  --background: oklch(0.1 0.02 240); /* Deep dark blue-black */
-  --foreground: oklch(0.9 0.02 240);
-  
-  --card: oklch(0.13 0.02 240);
-  --card-foreground: oklch(0.9 0.02 240);
-  
-  --popover: oklch(0.13 0.02 240);
-  --popover-foreground: oklch(0.9 0.02 240);
-  
-  --primary: oklch(0.65 0.25 260); /* Vibrant purple */
-  --primary-foreground: oklch(0.1 0.02 240);
-  
-  --secondary: oklch(0.2 0.04 240);
-  --secondary-foreground: oklch(0.9 0.02 240);
-  
-  --muted: oklch(0.18 0.03 240);
-  --muted-foreground: oklch(0.6 0.05 240);
-  
-  --accent: oklch(0.2 0.04 260);
-  --accent-foreground: oklch(0.9 0.02 240);
-  
-  --destructive: oklch(0.6 0.25 20);
-  --border: oklch(0.2 0.03 240);
-  --input: oklch(0.2 0.03 240);
-  --ring: oklch(0.6 0.15 260);
-  
-  /* Vibrant chart colors for dark mode */
-  --chart-1: oklch(0.65 0.25 260); /* Vivid purple */
-  --chart-2: oklch(0.6 0.25 200); /* Bright blue */
-  --chart-3: oklch(0.6 0.22 160); /* Vibrant teal */
-  --chart-4: oklch(0.6 0.2 120); /* Bright green */
-  --chart-5: oklch(0.65 0.25 40); /* Vivid orange */
-  
-  --sidebar: oklch(0.08 0.02 240);
-  --sidebar-foreground: oklch(0.9 0.02 240);
-  --sidebar-primary: oklch(0.65 0.25 260);
-  --sidebar-primary-foreground: oklch(0.1 0.02 240);
-  --sidebar-accent: oklch(0.18 0.04 260);
-  --sidebar-accent-foreground: oklch(0.9 0.02 240);
-  --sidebar-border: oklch(0.2 0.03 240);
-  --sidebar-ring: oklch(0.6 0.15 260);
+/* Dark theme: #0E1310-family surfaces from the landing StatsBand
+   (design/design-system.md "Dark surfaces"), emerald brand unchanged. */
+.dark {
+  --page: #0B0F0D;
+  --surface: #101512;
+  --surface-2: #151B17;
+
+  --background: #0B0F0D;
+  --foreground: #EAF6EF;
+
+  --card: #101512;
+  --card-foreground: #EAF6EF;
+  --popover: #131916;
+  --popover-foreground: #EAF6EF;
+
+  --brand: #0E9C6E;
+  --brand-fg: #FFFFFF;
+  --primary: #0E9C6E;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #1B221E;
+  --secondary-foreground: #EAF6EF;
+  --muted: #151B17;
+  --muted-foreground: #8FA89B;
+  --accent: #12291F;
+  --accent-foreground: #5FC2A0;
+
+  --success: #34C08B;
+  --danger: #E0736D;
+  --destructive: #E0736D;
+
+  --border: rgba(234, 246, 239, 0.09);
+  --input: rgba(234, 246, 239, 0.12);
+  --ring: #0E9C6E;
+}
+
+/* Light-only brand surfaces (landing, auth). These hardcode light backgrounds
+   and were never designed for dark, so pin the light palette here regardless of
+   the system/next-themes class on <html>. */
+.force-light {
+  color-scheme: light;
+  --page: #F6F7F9;
+  --surface: #FFFFFF;
+  --surface-2: #FBFBFE;
+  --background: #F6F7F9;
+  --foreground: #1A1B25;
+  --card: #FFFFFF;
+  --card-foreground: #1A1B25;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1B25;
+  --secondary: #F1F2F5;
+  --secondary-foreground: #1A1B25;
+  --muted: #F6F7F9;
+  --muted-foreground: #6B6E7B;
+  --accent: #E3F5EC;
+  --accent-foreground: #0B7E58;
+  --success: #1F9D6B;
+  --danger: #D2554F;
+  --destructive: #D2554F;
+  --border: #ECEDF1;
+  --input: #ECEDF1;
+  --ring: #0E9C6E;
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+  * { @apply border-border; }
+  body { @apply bg-page text-foreground; }
 }
+
+@keyframes wsPulse { 0% { transform: scale(.7); opacity: .55 } 70% { transform: scale(2.6); opacity: 0 } 100% { transform: scale(2.6); opacity: 0 } }
+
+/* Live-globe markers (components/dashboard/globe/real-globe.tsx) */
+.ws-globe-marker { position: relative; width: 26px; height: 26px; cursor: pointer; background: none; border: none; padding: 0; }
+.ws-globe-dot { position: absolute; inset: 6px; border-radius: 9999px; background: #0E9C6E; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+.ws-globe-pulse { position: absolute; inset: 2px; border-radius: 9999px; background: rgba(14,156,110,.45); animation: wsPulse 2.2s ease-out infinite; }
+.ws-globe-count { position: absolute; top: -7px; right: -7px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 9999px; background: #0B7E58; color: #fff; font-family: var(--font-jetbrains), monospace; font-size: 10px; font-weight: 700; line-height: 16px; text-align: center; }
+
+/* Starfield behind the data globe (components/dashboard/screens/globe-screen.tsx).
+   MapLibre's canvas is transparent outside the sphere, so these stars show
+   around the globe. Hand-placed for a natural, non-gridded scatter. */
+.ws-starfield {
+  position: absolute; inset: 0; pointer-events: none;
+  background-repeat: no-repeat;
+  background-image:
+    radial-gradient(1.4px 1.4px at 8% 16%, rgba(255,255,255,.9), transparent 60%),
+    radial-gradient(1px 1px at 15% 62%, rgba(214,235,255,.55), transparent 60%),
+    radial-gradient(1.6px 1.6px at 22% 34%, rgba(255,255,255,.75), transparent 60%),
+    radial-gradient(1px 1px at 31% 82%, rgba(255,255,255,.5), transparent 60%),
+    radial-gradient(1.2px 1.2px at 39% 12%, rgba(190,220,255,.7), transparent 60%),
+    radial-gradient(1px 1px at 45% 48%, rgba(255,255,255,.45), transparent 60%),
+    radial-gradient(1.5px 1.5px at 54% 74%, rgba(255,255,255,.8), transparent 60%),
+    radial-gradient(1px 1px at 62% 22%, rgba(210,232,255,.55), transparent 60%),
+    radial-gradient(1.3px 1.3px at 69% 58%, rgba(255,255,255,.7), transparent 60%),
+    radial-gradient(1px 1px at 77% 88%, rgba(255,255,255,.5), transparent 60%),
+    radial-gradient(1.6px 1.6px at 84% 30%, rgba(255,255,255,.85), transparent 60%),
+    radial-gradient(1px 1px at 90% 66%, rgba(200,226,255,.55), transparent 60%),
+    radial-gradient(1.2px 1.2px at 94% 12%, rgba(255,255,255,.65), transparent 60%),
+    radial-gradient(1px 1px at 5% 90%, rgba(255,255,255,.5), transparent 60%),
+    radial-gradient(1.3px 1.3px at 50% 6%, rgba(255,255,255,.7), transparent 60%),
+    radial-gradient(1px 1px at 73% 40%, rgba(190,220,255,.5), transparent 60%);
+  animation: wsTwinkle 6s ease-in-out infinite;
+}
+@keyframes wsTwinkle { 0%, 100% { opacity: .85 } 50% { opacity: .55 } }
+@media (prefers-reduced-motion: reduce) { .ws-starfield { animation: none } }
+@keyframes wsBlink { 0%, 100% { opacity: 1 } 50% { opacity: .3 } }
+@keyframes wsRise { 0% { opacity: 0; transform: translateY(-6px) } 100% { opacity: 1; transform: translateY(0) } }
+@keyframes wsFloat { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }

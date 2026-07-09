@@ -1,119 +1,52 @@
-"use client";
+import { features } from "@/lib/landing/content";
+import { iconMap } from "@/lib/landing/icons";
 
-import {
-  LineChart,
-  BarChart,
-  Users,
-  Activity,
-  Globe,
-  File,
-} from "lucide-react";
-import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-
-const featuresData = [
-  {
-    title: "Real-time Analytics",
-    description:
-      "Track website performance as it happens with live updates and instant insights.",
-    icon: <LineChart className="w-6 h-6" />,
-  },
-  {
-    title: "Visitor Insights",
-    description:
-      "Understand your audience with detailed breakdowns of visitor behavior and demographics.",
-    icon: <Users className="w-6 h-6" />,
-  },
-  {
-    title: "Custom Events",
-    description:
-      "Track specific user interactions and conversions that matter most to your business.",
-    icon: <BarChart className="w-6 h-6" />,
-  },
-  {
-    title: "Performance Monitoring",
-    description:
-      "Identify bottlenecks and optimize your website's speed and responsiveness.",
-    icon: <Activity className="w-6 h-6" />,
-  },
-  {
-    title: "Data Export",
-    description: "Export your data to PDF for offline analysis and sharing.",
-    icon: <File className="w-6 h-6" />,
-  },
-  {
-    title: "Global Tracking",
-    description:
-      "Monitor visitor locations and understand your worldwide audience distribution.",
-    icon: <Globe className="w-6 h-6" />,
-  },
-];
-
-const Features = () => {
+export default function Features() {
   return (
-    <section
-      id="features"
-      className="relative py-32 bg-black overflow-hidden"
-      aria-label="Features Section"
-    >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,#2563eb10,transparent)]" />
-
-      <div className="container relative mx-auto px-4 max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center max-w-3xl mx-auto mb-24"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white font-oswald">
-            Website Analytics Reimagined
+    <section id="features">
+      <div className="max-w-[1180px] mx-auto px-7 pt-[92px] pb-5">
+        {/* Section header */}
+        <div className="text-center max-w-[660px] mx-auto mb-[52px]">
+          <span className="text-[13px] font-bold tracking-[0.6px] text-brand uppercase">
+            EVERYTHING YOU NEED
+          </span>
+          <h2 className="text-[44px] font-extrabold tracking-[-1.4px] leading-[1.08] mt-3 mb-4 text-foreground">
+            Powerful analytics,<br />refreshingly simple
           </h2>
-          <p className="text-xl md:text-2xl text-blue-300/90 mb-6 font-jakarta">
-            Powerful Insights Made Simple
+          <p className="text-[18px] leading-[1.55] text-[#5A5D69] m-0">
+            Every metric that matters, none of the bloat. Set it up in 30 seconds and actually understand your traffic.
           </p>
-          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto font-jakarta">
-            Transform your website data into actionable insights with our
-            comprehensive analytics suite
-          </p>
-        </motion.div>
+        </div>
 
-        <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-6 lg:gap-8">
-          {featuresData.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.5,
-                delay: index * 0.1,
-                ease: "easeOut",
-              }}
-            >
-              <Card className="group h-full bg-zinc-900/40 hover:bg-zinc-900/60 transition-all duration-500 backdrop-blur-xl border border-zinc-800 rounded-lg overflow-hidden cursor-pointer">
-                <CardContent className="p-8">
-                  <div className="mb-6">
-                    <div className="h-12 w-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                      <div className="text-blue-400 group-hover:scale-110 group-hover:text-blue-300 transition-all duration-500">
-                        {feature.icon}
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-medium text-white mb-3 group-hover:text-blue-300 transition-colors duration-500 font-jakarta">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-400 leading-relaxed font-jakarta">
-                      {feature.description}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+        {/* Features grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[18px]">
+          {features.map((feature) => {
+            const Icon = iconMap[feature.icon];
+            return (
+              <div
+                key={feature.title}
+                className="bg-white border border-border rounded-2xl p-6 shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-all duration-200 hover:border-[#CFE9DB] hover:shadow-[0_10px_30px_-12px_rgba(14,156,110,0.22)] hover:-translate-y-0.5"
+              >
+                {/* Icon chip */}
+                <div
+                  className="w-[42px] h-[42px] rounded-xl flex items-center justify-center mb-4"
+                  style={{ backgroundColor: feature.tint }}
+                >
+                  <Icon size={21} style={{ color: feature.fg }} />
+                </div>
+                {/* Title */}
+                <div className="text-[17px] font-bold tracking-[-0.3px] mb-[7px] text-foreground">
+                  {feature.title}
+                </div>
+                {/* Description */}
+                <div className="text-[14.5px] leading-[1.55] text-[#5A5D69]">
+                  {feature.desc}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
   );
-};
-
-export default Features;
+}
