@@ -56,6 +56,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (isHeartbeat(body)) {
+      return handleHeartbeat(req, body);
+    }
     if (isLegacyPayload(body)) {
       return handleLegacy(req, body);
     }
@@ -67,6 +70,38 @@ export async function POST(req: NextRequest) {
       { status: 500, headers: corsHeaders },
     );
   }
+}
+
+// --------------------------------------------------------------- heartbeat --
+
+function isHeartbeat(body: unknown): body is { site?: string; vid?: string } {
+  return (
+    typeof body === "object" &&
+    body !== null &&
+    !Array.isArray(body) &&
+    (body as { h?: unknown }).h === 1
+  );
+}
+
+/** Presence ping: touches the open session's last_event_at, stores nothing. */
+async function handleHeartbeat(req: NextRequest, body: { site?: string; vid?: string }) {
+  const ok = NextResponse.json({ ok: true }, { status: 202, headers: corsHeaders });
+  const userAgent = req.headers.get("user-agent");
+  if (isBot(userAgent) || !body.site) return ok;
+  const admin = createAdminClient();
+  const site = await resolveSite(admin, body.site);
+  if (!site) return ok;
+  const visitorId = resolveVisitorId({
+    privacyMode: site.privacy_mode,
+    vid: body.vid ?? null,
+    salt: await getDailySalt(admin),
+    siteId: site.id,
+    ip: clientIp(req.headers),
+    userAgent: userAgent ?? "",
+  });
+  const { error } = await admin.rpc("ingest_heartbeat", { p_site: site.id, p_visitor: visitorId });
+  if (error) debug("heartbeat failed", error.message);
+  return ok;
 }
 
 // ---------------------------------------------------------------------- v2 --

@@ -216,6 +216,25 @@ interface WsStub {
   });
   addEventListener("pagehide", flush);
 
+  // Heartbeat: keep the visitor "online" while the tab is visible. A ping only
+  // bumps the session's last_event_at server-side (no event stored); it stops
+  // on tab close, so presence drops within the live window instead of lingering.
+  const ping = () => {
+    if (D.visibilityState !== "visible" || excluded()) return;
+    const b = JSON.stringify({ site, vid, uid, h: 1 });
+    try {
+      if (N.sendBeacon && N.sendBeacon(api, b)) return;
+    } catch {
+      /* fall through */
+    }
+    fetch(api, { method: "POST", body: b, keepalive: true, mode: "no-cors" }).catch(() => {});
+  };
+  let hb: ReturnType<typeof setInterval> | 0 = setInterval(ping, 45000);
+  addEventListener("pagehide", () => {
+    if (hb) clearInterval(hb);
+    hb = 0;
+  });
+
   install(
     (n, p) => send(String(n), p),
     (id, traits) => {
