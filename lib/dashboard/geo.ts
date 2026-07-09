@@ -44,3 +44,36 @@ export function countryCoords(code: string | null | undefined): [number, number]
   if (!code) return null;
   return COUNTRY_CENTROIDS[code.toUpperCase()] ?? null;
 }
+
+/** Deterministic 0..1 pair from a seed (stable across renders). */
+function hash2(seed: string): [number, number] {
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  const a = ((h >>> 0) % 1000) / 1000;
+  h = Math.imul(h ^ (h >>> 13), 16777619);
+  const b = ((h >>> 0) % 1000) / 1000;
+  return [a, b];
+}
+
+/**
+ * Deterministic scatter around a point, for placing multiple avatars near a
+ * country centroid when exact coordinates aren't known. `first` keeps the
+ * anchor itself un-jittered so a lone visitor sits on the centroid.
+ */
+export function jitterAround(
+  lat: number,
+  lng: number,
+  seed: string,
+  { spread = 2.6, first = false }: { spread?: number; first?: boolean } = {},
+): [number, number] {
+  if (first) return [lat, lng];
+  const [a, r] = hash2(seed);
+  const angle = a * Math.PI * 2;
+  const radius = (0.35 + r * 0.65) * spread;
+  const dLat = Math.sin(angle) * radius;
+  const dLng = (Math.cos(angle) * radius) / Math.max(Math.cos((lat * Math.PI) / 180), 0.3);
+  return [lat + dLat, lng + dLng];
+}

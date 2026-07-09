@@ -83,6 +83,8 @@ export type SessionRow = {
   deviceType: string | null;
   browser: string | null;
   os: string | null;
+  lat: number | null;
+  lng: number | null;
 };
 
 export type SessionsCursor = { startedAt: string; id: string };
@@ -402,11 +404,57 @@ export async function getSessions(
       deviceType: (r.device_type as string | null) ?? null,
       browser: (r.browser as string | null) ?? null,
       os: (r.os as string | null) ?? null,
+      lat: null,
+      lng: null,
     }));
     const last = rows[rows.length - 1];
     const nextCursor =
       rows.length === limit && last ? { startedAt: last.startedAt, id: last.id } : null;
     return { rows, nextCursor };
+  });
+}
+
+/**
+ * Sessions active in the last N minutes, for the live globe (docs/redesign/06).
+ * Each row becomes one clickable avatar; lat/lng are used for exact placement
+ * when present, else the globe falls back to the country centroid.
+ */
+export async function getLiveSessions(
+  siteId: string,
+  minutes = 5,
+  supabase?: SupabaseClient,
+): Promise<SessionRow[]> {
+  return timed(`live-sessions site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_live_sessions", {
+      p_site: siteId,
+      p_minutes: minutes,
+      p_limit: 80,
+    });
+    if (error) throw new Error(`analytics_live_sessions failed: ${error.message}`);
+    return (data as Record<string, unknown>[]).map((r) => ({
+      id: r.id as string,
+      visitorId: r.visitor_id as string,
+      userId: (r.user_id as string | null) ?? null,
+      startedAt: r.started_at as string,
+      lastEventAt: r.last_event_at as string,
+      durationS: Number(r.duration_s),
+      entryPath: (r.entry_path as string | null) ?? null,
+      exitPath: (r.exit_path as string | null) ?? null,
+      pageviews: Number(r.pageviews),
+      events: Number(r.events),
+      isBounce: Boolean(r.is_bounce),
+      isOpen: Boolean(r.is_open),
+      referrerDomain: (r.referrer_domain as string | null) ?? null,
+      channel: (r.channel as string | null) ?? null,
+      country: (r.country as string | null) ?? null,
+      region: (r.region as string | null) ?? null,
+      city: (r.city as string | null) ?? null,
+      deviceType: (r.device_type as string | null) ?? null,
+      browser: (r.browser as string | null) ?? null,
+      os: (r.os as string | null) ?? null,
+      lat: r.lat == null ? null : Number(r.lat),
+      lng: r.lng == null ? null : Number(r.lng),
+    }));
   });
 }
 
@@ -521,6 +569,8 @@ export async function getProfileSessions(
       deviceType: (r.device_type as string | null) ?? null,
       browser: (r.browser as string | null) ?? null,
       os: (r.os as string | null) ?? null,
+      lat: null,
+      lng: null,
     }));
   });
 }

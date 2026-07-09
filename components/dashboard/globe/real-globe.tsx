@@ -18,12 +18,12 @@ import { avatarDataUri } from "@/lib/dashboard/avatar";
  * scattered around their country; clicking one filters by that country.
  */
 
-export type GlobePoint = {
-  code: string;
+export type GlobeMarker = {
+  id: string; // stable per marker: a session id, or `c:<code>:<i>` for aggregates
+  seed: string; // avatar seed (visitor id, or country slot key)
   label: string;
   lat: number;
   lng: number;
-  count: number;
 };
 
 // Public-domain Natural Earth vectors, served locally from /public/geo.
@@ -97,54 +97,12 @@ const STYLE: maplibregl.StyleSpecification = {
   ],
 };
 
-// Cap markers so a busy globe stays readable, not a wall of faces.
-const PER_COUNTRY = 4;
-const TOTAL = 55;
-const SPREAD = 2.6; // degrees of scatter around the centroid
-
-// Deterministic 0..1 pair from a seed, so a slot keeps its offset across polls.
-function hash2(seed: string): [number, number] {
-  let h = 2166136261;
-  for (let i = 0; i < seed.length; i++) {
-    h ^= seed.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  const a = ((h >>> 0) % 1000) / 1000;
-  h = Math.imul(h ^ (h >>> 13), 16777619);
-  const b = ((h >>> 0) % 1000) / 1000;
-  return [a, b];
-}
-
-type Slot = { code: string; label: string; lat: number; lng: number; seed: string };
-
-function scatter(points: GlobePoint[]): Slot[] {
-  const slots: Slot[] = [];
-  for (const p of [...points].sort((a, b) => b.count - a.count)) {
-    const n = Math.min(p.count, PER_COUNTRY);
-    for (let i = 0; i < n && slots.length < TOTAL; i++) {
-      const seed = `${p.code}-${i}`;
-      // First slot sits on the centroid; the rest fan out deterministically.
-      let dLat = 0;
-      let dLng = 0;
-      if (i > 0) {
-        const [a, r] = hash2(seed);
-        const angle = a * Math.PI * 2;
-        const radius = (0.35 + r * 0.65) * SPREAD;
-        dLat = Math.sin(angle) * radius;
-        dLng = (Math.cos(angle) * radius) / Math.max(Math.cos((p.lat * Math.PI) / 180), 0.3);
-      }
-      slots.push({ code: p.code, label: p.label, lat: p.lat + dLat, lng: p.lng + dLng, seed });
-    }
-  }
-  return slots;
-}
-
 export function RealGlobe({
-  points,
+  markers,
   onSelect,
 }: {
-  points: GlobePoint[];
-  onSelect?: (code: string) => void;
+  markers: GlobeMarker[];
+  onSelect?: (id: string) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -244,7 +202,7 @@ export function RealGlobe({
     const map = mapRef.current;
     if (!map || !ready) return;
     markersRef.current.forEach((m) => m.remove());
-    markersRef.current = scatter(points).map((s, i) => {
+    markersRef.current = markers.map((s, i) => {
       // Styles are set inline so they never depend on a stylesheet class. The
       // wrapper's transform belongs to MapLibre (positioning); the inner face
       // owns its own visual + hover + entrance, so nothing fights MapLibre.
@@ -293,13 +251,13 @@ export function RealGlobe({
       });
       el.addEventListener("click", (e) => {
         e.stopPropagation();
-        onSelectRef.current?.(s.code);
+        onSelectRef.current?.(s.id);
       });
       return new maplibregl.Marker({ element: el, opacityWhenCovered: "0.05" })
         .setLngLat([s.lng, s.lat])
         .addTo(map);
     });
-  }, [points, ready]);
+  }, [markers, ready]);
 
   return <div ref={containerRef} className="h-full w-full" />;
 }
