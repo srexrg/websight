@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import { ArrowRight, Check } from "@phosphor-icons/react";
 
 type Status = { installed: boolean; hasPageview: boolean; hasCustomEvent: boolean; hasGoal: boolean; mature: boolean };
 
@@ -42,16 +43,18 @@ export function GettingStartedCard({ site }: { site: string }) {
       <ul className="mt-3 space-y-1.5">
         {items.map((it) => (
           <li key={it.label}>
-            <Link href={it.href} className="flex items-center gap-2.5 rounded-lg px-1.5 py-1.5 hover:bg-secondary/50">
+            <Link href={it.href} className="group flex items-center gap-2.5 rounded-lg px-1.5 py-1.5 hover:bg-secondary/50">
               <span
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[12px] ${
+                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
                   it.done ? "bg-brand/15 text-brand" : "border border-border text-transparent"
                 }`}
               >
-                ✓
+                <Check size={12} weight="bold" />
               </span>
               <span className={`text-[13px] ${it.done ? "text-muted-foreground line-through" : "text-foreground"}`}>{it.label}</span>
-              {!it.done && <span className="ml-auto text-[12px] text-muted-foreground">→</span>}
+              {!it.done && (
+                <ArrowRight size={13} weight="bold" className="ml-auto text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+              )}
             </Link>
           </li>
         ))}
