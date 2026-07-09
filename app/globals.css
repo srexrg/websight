@@ -111,6 +111,34 @@
   --ring: #0E9C6E;
 }
 
+/* Light-only brand surfaces (landing, auth). These hardcode light backgrounds
+   and were never designed for dark, so pin the light palette here regardless of
+   the system/next-themes class on <html>. */
+.force-light {
+  color-scheme: light;
+  --page: #F6F7F9;
+  --surface: #FFFFFF;
+  --surface-2: #FBFBFE;
+  --background: #F6F7F9;
+  --foreground: #1A1B25;
+  --card: #FFFFFF;
+  --card-foreground: #1A1B25;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1B25;
+  --secondary: #F1F2F5;
+  --secondary-foreground: #1A1B25;
+  --muted: #F6F7F9;
+  --muted-foreground: #6B6E7B;
+  --accent: #E3F5EC;
+  --accent-foreground: #0B7E58;
+  --success: #1F9D6B;
+  --danger: #D2554F;
+  --destructive: #D2554F;
+  --border: #ECEDF1;
+  --input: #ECEDF1;
+  --ring: #0E9C6E;
+}
+
 @layer base {
   * { @apply border-border; }
   body { @apply bg-page text-foreground; }
