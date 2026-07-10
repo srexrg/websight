@@ -91,7 +91,7 @@ Update this table as work proceeds so any future agent knows where things stand.
 | 16, 18-21 | not started | - | 16 (orgs) intentionally skipped in user's slice; 18 billing next major |
 | 24 session-replay | not started (plan written 2026-07-06) | - | phase 4; deps `01`/`02`/`05`/`07` all done - buildable anytime; needs an S3-compatible store (cloud default: Cloudflare R2, chosen for zero-egress playback) + `CRON_SECRET` |
 
-### ⚠️ Security: legacy-table RLS leak (found 2026-07-10, fix written, NOT yet applied to prod)
+### ⚠️ Security: legacy-table RLS leak (found 2026-07-10; fix APPLIED to prod, verified 2026-07-11)
 
 Anon-key probe of the live project found the five legacy tables world-readable via
 the public publishable key with RLS off: `users` (31 rows incl. **emails**),
@@ -100,17 +100,14 @@ cause: baseline migration reproduces the old `grant ... to anon` with no RLS (th
 old app read/wrote these with the anon key). All v2 tables are correctly
 RLS-protected. Fix: `20260710000000_legacy_rls_lockdown.sql` (enable RLS + owner
 policies; ingestion writes via service role so dual-write is unaffected).
-**Apply after the redesign app deploys** (new `/api/track` writes via service role,
-so no ingest gap), or immediately to close the email leak and accept a short
-legacy-write gap. Verify a fresh Google login after applying (auth callback
-inserts into `users` under the new self-insert policy).
+**Verified 2026-07-11**: `supabase migration list --linked` shows `20260710000000`
+applied, and an anon-key probe of all five legacy tables plus every v2 table
+(sites/events/sessions/profiles/goals/funnels/share_tokens/salts/error_groups/
+event_dictionary/segments) returns zero rows. Still to do: verify a fresh Google
+login (auth callback inserts into `users` under the new self-insert policy).
 
 ### Deploy notes for `02` (prod rollout)
 
 **Done on prod 2026-07-05**: project linked, baseline repaired as applied, `0001` pushed (pg_cron enabled, all three `ws-*` jobs active), backfill run (4,576 events / 2,321 sessions / 702 rollup days from 23 sites), parity spot-checked vs `daily_stats` (matches; where they differ the legacy numbers were undercounts from the non-atomic old route), full 40-test suite green against the cloud project. The project uses the **new API key system** (`sb_publishable_...` / `sb_secret_...`); all clients accept the new env names `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` / `SUPABASE_SECRET_KEY` with the legacy names as fallback. Found on prod and folded back into the baseline migration: `public.users.id` references `auth.users(id)` and `users.email` is unique.
 
-**Still to do at app deploy time**:
-
-1. Set `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `SUPABASE_SECRET_KEY` in the Vercel env (the legacy JWT anon key is rejected by the project - if legacy keys were disabled, the currently deployed app cannot reach Supabase until this lands).
-2. Deploy the app promptly after the migration (already applied): the deployed old code references the `events` table, which is now `events_legacy`, so the custom-events API/tab is broken until deploy (feature last used 2025-04, impact negligible).
-3. Manual e2e of the Google login flow after the `@supabase/ssr` 0.12 + publishable-key switch.
+**App deployed to prod (confirmed 2026-07-11)**: Vercel env keys set and the redesign app is live at `websight.srexrg.me` - verified `/t.js` serves the new tracker, `/website/[domain]` redirects, `/api/track` accepts v2 (202). Remaining from the old checklist: confirm one fresh Google login e2e on prod (covers both the `@supabase/ssr` 0.12 + publishable-key switch and the new `users` self-insert RLS policy).

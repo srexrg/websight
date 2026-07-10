@@ -1,5 +1,6 @@
 "use client";
 
+import { MonitorPlay } from "@phosphor-icons/react";
 import type { SessionRow as Session } from "@/lib/analytics/queries";
 import { countryFlag, countryName } from "@/components/dashboard/screens/shared";
 import { formatDuration, formatRelativeTime } from "@/lib/dashboard/format";
@@ -54,7 +55,7 @@ export function SessionRowItem({
       onClick={() => onOpen?.(s)}
       onMouseEnter={() => onHover?.(s)}
       title={`View session timeline · ${s.entryPath ?? "/"}${s.exitPath && s.exitPath !== s.entryPath ? ` → ${s.exitPath}` : ""}`}
-      className="flex w-full items-center gap-3 border-b border-border/60 px-3 py-2 text-left last:border-b-0 hover:bg-secondary/50"
+      className="group flex w-full items-center gap-3 border-b border-border/60 px-3 py-2 text-left last:border-b-0 hover:bg-secondary/50"
     >
       {/* Visitor + when */}
       <span className="flex min-w-0 basis-[168px] flex-col">
@@ -95,6 +96,13 @@ export function SessionRowItem({
 
       {/* Metrics */}
       <span className="ml-auto flex shrink-0 items-center gap-2.5">
+        {s.hasReplay && (
+          <MonitorPlay
+            size={15}
+            className="shrink-0 text-muted-foreground/60 group-hover:text-brand"
+            aria-label="Session replay available"
+          />
+        )}
         {s.isBounce && (
           <span className="rounded-full bg-secondary px-1.5 py-0.5 font-mono text-[10px] font-semibold text-muted-foreground">
             BOUNCE

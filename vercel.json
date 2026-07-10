@@ -1,0 +1,3 @@
+{
+  "crons": [{ "path": "/api/internal/replay-expiry", "schedule": "17 3 * * *" }]
+}

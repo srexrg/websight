@@ -1,0 +1,84 @@
+---
+title: Session replay
+description: Watch real visits as replayed DOM snapshots, sampled and masked.
+---
+
+Session replay records a visual reproduction of a visitor's session and lets you play it back. It is the one WebSight feature that captures how someone actually used your site, rather than only counting what they did, so it is off by default, opt-in per site, sampled, and heavily masked.
+
+<Callout type="warn">
+Replay records real user behavior. The cookieless, no-banner posture that covers WebSight's core analytics does not extend to replay. Read [Privacy and masking](#privacy-and-masking) and [Consent](#does-replay-need-consent) before you turn it on.
+</Callout>
+
+## What it records
+
+Replay stores DOM snapshots, not video. When a sampled visit starts, the recorder takes a full snapshot of the page, then streams the changes as the visitor scrolls, clicks, types, and navigates. Playback reconstructs the page from those snapshots, so you see the real layout and content, styled by your site's own CSS.
+
+It is not a screen recording. There is no camera, no microphone, and nothing outside the browser tab is captured.
+
+## How to enable it
+
+Turning replay on takes two steps, both required:
+
+1. In the site's **Settings**, open the **Session replay** card and turn on the toggle. The first time you enable it, a dialog explains what recording captures and the consent question. Confirm to switch it on.
+2. Add `data-replay` to your tracker snippet so the recorder chunk loads on your site:
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com" data-replay></script>
+```
+
+The recorder ships as a separate lazy chunk that only loads when `data-replay` is present and the site setting is on, so pages without replay never pay for it.
+
+<Callout type="info">
+If you serve the tracker first-party to get past adblockers, your proxy rule must also forward `/api/replay`, the same way it forwards `/api/track`. See [Adblockers and proxying](/docs/tracking/adblockers); the `/stats/*` prefix rule already covers it.
+</Callout>
+
+## Sampling
+
+Set the sample rate in the settings card. It is the share of page loads chosen for recording, from 5% to 100%. The decision is made once per visit and holds across in-app navigations, so a recorded visit stays recorded end to end and an unrecorded one is never partly captured.
+
+Sample down on high-traffic sites. You rarely need every session to spot a pattern, and sampling keeps storage and cost in proportion to what you review.
+
+## Privacy and masking
+
+Masking is on by the strongest default and layered:
+
+- **Input fields are always masked.** Every value typed into a form is replaced before it leaves the browser. This cannot be turned off. Password, email, and payment fields are never recorded.
+- **Mask all text** is a per-site setting in the replay card. Turn it on to replace every text node with blocks, so only structure and layout are recorded, never words.
+- **Per-element control** with attributes: add `data-ws-mask` to any element to hide its contents, or `data-ws-unmask` to allow a specific element through when you have masked broadly.
+- **Cross-origin iframes are not recorded.** Anything from another origin, such as an embedded payment form, is left out.
+- **Canvas and WebGL are not recorded** in this version, so nothing drawn to a canvas is captured.
+
+Masking happens in the browser, before anything is sent. A masked value is never transmitted and never stored.
+
+## Does replay need consent
+
+Stated plainly: recording a session may require visitor consent under the GDPR and the ePrivacy directive, even though WebSight's core analytics does not. WebSight's [cookieless, no-banner design](/docs/resources/privacy) is what lets many teams run the tracker without a consent prompt. Replay is different in kind, because it records behavior, so that reasoning does not carry over.
+
+We are describing a mechanism, not giving legal advice. Whether you need consent, and how you collect it, is a decision for you and your own counsel. WebSight gives you the tools to record as little as you need: keep replay off, sample low, and mask hard.
+
+## Retention and deletion
+
+Each site sets its own retention window in the replay card: 7, 14, 30, 60, or 90 days, defaulting to 30. When a recording reaches the end of that window it is deleted permanently. Both the metadata row and the stored snapshots go, with nothing left to restore from.
+
+Deletion also happens on demand:
+
+- Erasing a visitor from [Profiles](/docs/dashboard/profiles) cascades to their recordings, so a GDPR erasure request removes the replays along with the events and sessions.
+- You can delete any single recording from the player.
+
+## Limits per recording
+
+To keep one runaway tab from filling storage, each recording stops at hard caps: **60 minutes** of duration, **10 MB** of compressed snapshots, or **500 chunks**, whichever comes first. When a cap is hit the recorder stops silently and the visit continues to be tracked as normal. Core analytics is never affected by replay, so a storage error only ever costs you the recording, never the pageview.
+
+## Self-hosting
+
+Replay stores its snapshots in object storage over the S3 protocol, kept separate from your analytics database. Point it at any S3-compatible endpoint with the `REPLAY_S3_*` environment variables:
+
+| Variable | Purpose |
+|---|---|
+| `REPLAY_S3_ENDPOINT` | The S3 endpoint URL. |
+| `REPLAY_S3_BUCKET` | The bucket that holds recordings. |
+| `REPLAY_S3_ACCESS_KEY_ID` | Access key. |
+| `REPLAY_S3_SECRET_ACCESS_KEY` | Secret key. |
+| `REPLAY_S3_REGION` | Region, or `auto` for Cloudflare R2. |
+
+Cloudflare R2, MinIO, AWS S3, and Supabase Storage's S3 endpoint all work. Until these variables are set, the replay feature stays hidden, because there is nowhere to store recordings.

@@ -1,7 +1,10 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { InstallTabs } from "@/components/onboarding/install-tabs";
 import { ShareSettingsCard } from "@/components/share/share-settings-card";
+import { ReplayCard } from "@/components/dashboard/settings/replay-card";
+import { replayStorageConfigured } from "@/lib/replay/storage";
 
 export const metadata = { title: "Site Settings" };
 
@@ -19,10 +22,39 @@ export default async function SiteSettingsPage({ params }: { params: Promise<{ s
   const supabase = await createClient();
   const { data: site } = await supabase
     .from("sites")
-    .select("public_id, name, domains, privacy_mode, timezone, created_at")
+    .select("id, public_id, name, domains, privacy_mode, timezone, created_at, settings")
     .eq("public_id", publicId)
     .maybeSingle();
   if (!site) notFound();
+
+  const settings = (site.settings as Record<string, unknown> | null) ?? {};
+  const sampleRaw = Number(settings.replay_sample_rate);
+  const retentionRaw = Number(settings.replay_retention_days);
+  const replayInitial = {
+    enabled: settings.replay_enabled === true,
+    sampleRate: sampleRaw >= 0 && sampleRaw <= 1 ? sampleRaw : 1,
+    maskText: settings.replay_mask_text === true,
+    retentionDays: Number.isFinite(retentionRaw) && retentionRaw > 0 ? retentionRaw : 30,
+  };
+
+  // Storage usage: count of non-expired recordings and their total bytes.
+  // The table may not exist yet in local dev, so fall back to zeros silently.
+  let replayUsage = { recordings: 0, bytes: 0 };
+  try {
+    const admin = createAdminClient();
+    const { data: rows, count } = await admin
+      .from("replay_recordings")
+      .select("bytes", { count: "exact" })
+      .eq("site_id", site.id)
+      .neq("status", "expired")
+      .limit(10000);
+    if (rows) {
+      const bytes = rows.reduce((sum, r) => sum + (Number((r as { bytes: number }).bytes) || 0), 0);
+      replayUsage = { recordings: count ?? rows.length, bytes };
+    }
+  } catch {
+    replayUsage = { recordings: 0, bytes: 0 };
+  }
 
   return (
     <div className="flex max-w-3xl flex-col gap-4">
@@ -44,6 +76,13 @@ export default async function SiteSettingsPage({ params }: { params: Promise<{ s
         </p>
         <InstallTabs domain={site.domains[0] ?? site.public_id} />
       </section>
+
+      <ReplayCard
+        site={site.public_id}
+        initial={replayInitial}
+        usage={replayUsage}
+        storageConfigured={replayStorageConfigured()}
+      />
 
       <ShareSettingsCard site={site.public_id} />
     </div>

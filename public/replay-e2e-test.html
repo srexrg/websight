@@ -1,0 +1,93 @@
+<!doctype html>
+<!-- Throwaway page for the plan-24 replay end-to-end check. The tracker core
+     disables itself on localhost, so this page boots the recorder chunk
+     directly (window.__wsr) and sends its pageview beacon by hand - the same
+     wire contract a production embed produces. DELETE AFTER VERIFICATION. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Replay e2e test</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; }
+      button { padding: 8px 14px; margin: 4px; cursor: pointer; }
+      #log { color: #0e9c6e; font-family: monospace; font-size: 13px; }
+      .card { border: 1px solid #ddd; border-radius: 10px; padding: 16px; margin: 12px 0; }
+    </style>
+  </head>
+  <body>
+    <h1>WebSight replay e2e</h1>
+    <p>This page exercises the recorder: typing below must appear masked in playback, the secret box must be blocked entirely.</p>
+
+    <div class="card">
+      <label>Type something private: <input id="inp" type="text" placeholder="should be masked" /></label>
+    </div>
+
+    <div class="card" data-ws-mask>
+      SECRET BLOCK: this entire box carries data-ws-mask and must not appear in the replay.
+    </div>
+
+    <div class="card">
+      <button id="grow">Add item</button>
+      <button id="nav">SPA navigate</button>
+      <ul id="list"></ul>
+    </div>
+
+    <p id="log"></p>
+
+    <script>
+      const SITE = "rimc56zb";
+      const log = (m) => (document.getElementById("log").textContent += m + " | ");
+
+      // Log every replay POST's outcome so drops are observable in the console.
+      const realFetch = window.fetch.bind(window);
+      window.fetch = (url, opts) => {
+        const p = realFetch(url, opts);
+        if (String(url).includes("/api/replay") && opts && opts.method === "POST") {
+          const seq = new URL(url, location.origin).searchParams.get("seq");
+          const size = typeof opts.body === "string" ? opts.body.length : (opts.body?.byteLength ?? -1);
+          p.then(
+            async (r) => console.log("[e2e-replay]", "seq=" + seq, "size=" + size, r.status, await r.clone().text()),
+            (e) => console.log("[e2e-replay]", "seq=" + seq, "size=" + size, "FETCH-FAIL", String(e)),
+          );
+        }
+        return p;
+      };
+
+      // Hand-rolled pageview beacon (the core tracker refuses localhost), so an
+      // open session exists for the recording to link to.
+      fetch("/api/track", {
+        method: "POST",
+        body: JSON.stringify({
+          site: SITE,
+          name: "pageview",
+          url: "/replay-e2e-test",
+          title: "Replay e2e test",
+          w: screen.width,
+          h: screen.height,
+          lang: navigator.language,
+          ts: Date.now(),
+          sdk: "js@2.0.0",
+        }),
+      }).then(() => log("pageview sent"));
+
+      // Boot the recorder chunk exactly as the core loader would.
+      window.__wsr = { site: SITE, ep: location.origin + "/api/replay" };
+      const s = document.createElement("script");
+      s.src = "/t-r.js";
+      s.defer = true;
+      s.onload = () => log("t-r.js loaded");
+      document.head.appendChild(s);
+
+      let n = 0;
+      document.getElementById("grow").addEventListener("click", () => {
+        const li = document.createElement("li");
+        li.textContent = "item " + ++n + " added at " + new Date().toLocaleTimeString();
+        document.getElementById("list").appendChild(li);
+      });
+      document.getElementById("nav").addEventListener("click", () => {
+        history.pushState({}, "", "/replay-e2e-test/page-" + ++n);
+        log("pushState -> page-" + n);
+      });
+    </script>
+  </body>
+</html>

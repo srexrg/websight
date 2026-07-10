@@ -24,6 +24,10 @@ import type {
   Overview,
   ProfileEventFreq,
   ProfileRow,
+  ReplayDetail,
+  ReplayRow,
+  ReplaysCursor,
+  ReplaysPage,
   RetentionVisitor,
   SessionEvent,
   SessionRow,
@@ -203,6 +207,49 @@ export function usePrefetchSessionEvents(site: string) {
     },
     [qc, site],
   );
+}
+
+/** Infinite (keyset-paginated) replays list for the Replays screen (docs/redesign/24). */
+export function useReplays(site: string, p: AnalyticsParams, pageSize = 50) {
+  return useInfiniteQuery<
+    ReplaysPage,
+    Error,
+    InfiniteData<ReplaysPage>,
+    unknown[],
+    ReplaysCursor | null
+  >({
+    queryKey: ["analytics", site, "replays", base(p), pageSize],
+    initialPageParam: null,
+    queryFn: ({ pageParam }) =>
+      fetchAnalytics<ReplaysPage>(site, {
+        kind: "replays",
+        limit: String(pageSize),
+        ...(pageParam ? { cur_s: pageParam.startedAt, cur_id: pageParam.id } : {}),
+        ...base(p),
+      }),
+    getNextPageParam: (last) => last.nextCursor,
+    staleTime: STALE_MS,
+  });
+}
+
+/** One recording's metadata plus presigned chunk URLs, for the replay player. */
+export function useReplayDetail(site: string, recordingId: string | null) {
+  return useQuery<ReplayDetail>({
+    queryKey: ["analytics", site, "replay-detail", recordingId],
+    queryFn: () => fetchAnalytics(site, { kind: "replay-detail", recording: recordingId! }),
+    enabled: !!recordingId,
+    staleTime: STALE_MS,
+  });
+}
+
+/** The newest non-expired recording for a session, for the Sessions drawer's play affordance. */
+export function useSessionReplay(site: string, sessionId: string | null, hasReplay: boolean) {
+  return useQuery<ReplayRow | null>({
+    queryKey: ["analytics", site, "session-replay", sessionId],
+    queryFn: () => fetchAnalytics(site, { kind: "session-replay", session: sessionId! }),
+    enabled: !!sessionId && hasReplay,
+    staleTime: STALE_MS,
+  });
 }
 
 /** All active goals with conversion stats for the goals table (docs/redesign/08). */

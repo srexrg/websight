@@ -120,6 +120,11 @@ export function shareAllows(kind: string, exposedScreens: string[], hideEvents: 
   // Custom events / goals are business-sensitive: only if not hidden AND exposed.
   if (kind === "events") return !hideEvents && exposed.has("events");
   if (kind.startsWith("goal")) return !hideEvents && exposed.has("goals");
+  // Session replay (docs/redesign/24) is always-blocked, same as sessions: it
+  // exposes raw DOM/input capture, never a public-dashboard concern. Listed
+  // explicitly (not just caught by the default below) because that privacy
+  // posture must never be relaxed by a future CORE/exposed-screen change.
+  if (kind === "replays" || kind === "replay-detail" || kind === "session-replay") return false;
   // Everything else (sessions, profiles, funnels, journeys, retention, vitals,
   // errors, event-*, ...) is never exposed publicly.
   return false;

@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { MonitorPlay } from "@phosphor-icons/react";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
 import type { SessionRow } from "@/lib/analytics/queries";
-import { useSessionEvents } from "@/lib/dashboard/use-analytics";
+import { useSessionEvents, useSessionReplay } from "@/lib/dashboard/use-analytics";
 import { countryFlag, countryName } from "@/components/dashboard/screens/shared";
 import { formatDuration, formatRelativeTime } from "@/lib/dashboard/format";
 import { visitorColor, visitorLabel } from "./session-row";
@@ -30,6 +31,8 @@ export function SessionDrawer({
   onClose: () => void;
 }) {
   const q = useSessionEvents(site, session?.id ?? null, session?.isOpen ?? false);
+  const replayQ = useSessionReplay(site, session?.id ?? null, session?.hasReplay ?? false);
+  const replay = replayQ.data ?? null;
   const place =
     session &&
     `${session.country ? countryFlag(session.country) + " " : ""}${
@@ -73,12 +76,22 @@ export function SessionDrawer({
                 <Meta label="Entry" value={session.entryPath || "-"} mono />
                 <Meta label="Exit" value={session.exitPath || "-"} mono />
               </dl>
-              <Link
-                href={`/${site}/profiles/${encodeURIComponent(session.userId ?? session.visitorId)}`}
-                className="mt-3 inline-block text-[12px] font-medium text-brand hover:underline"
-              >
-                View profile &rarr;
-              </Link>
+              <div className="mt-3 flex items-center gap-4">
+                <Link
+                  href={`/${site}/profiles/${encodeURIComponent(session.userId ?? session.visitorId)}`}
+                  className="inline-block text-[12px] font-medium text-brand hover:underline"
+                >
+                  View profile &rarr;
+                </Link>
+                {replay && (
+                  <Link
+                    href={`/${site}/replays/${replay.id}`}
+                    className="inline-flex items-center gap-1.5 rounded-md bg-brand px-2.5 py-1 text-[12px] font-medium text-brand-foreground hover:opacity-90"
+                  >
+                    <MonitorPlay size={14} weight="fill" /> Watch replay
+                  </Link>
+                )}
+              </div>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto">
               <EventTimeline events={q.data} isPending={q.isPending} isError={q.isError} />
