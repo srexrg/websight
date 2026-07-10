@@ -8,6 +8,7 @@ import type { JourneyParams, JourneyResult } from "./journeys";
 import { computeJourneys } from "./journeys";
 import type { RetentionParams, RetentionResult, RetentionRow } from "./retention";
 import { computeRetention } from "./retention";
+import { presignReplayGet, replayStorageConfigured } from "@/lib/replay/storage";
 
 /**
  * THE analytics read layer (docs/redesign/02). Every dashboard fetch goes
@@ -85,10 +86,36 @@ export type SessionRow = {
   os: string | null;
   lat: number | null;
   lng: number | null;
+  hasReplay: boolean;
 };
 
 export type SessionsCursor = { startedAt: string; id: string };
 export type SessionsPage = { rows: SessionRow[]; nextCursor: SessionsCursor | null };
+
+/** One row in the Replays list (docs/redesign/24). */
+export type ReplayRow = {
+  id: string;
+  sessionId: string | null;
+  visitorId: string;
+  userId: string | null;
+  startedAt: string;
+  durationS: number;
+  pageCount: number;
+  chunkCount: number;
+  bytes: number;
+  entryPath: string | null;
+  deviceType: string | null;
+  browser: string | null;
+  os: string | null;
+  country: string | null;
+  status: "active" | "complete" | "expired";
+  isOpen: boolean;
+};
+
+export type ReplaysCursor = { startedAt: string; id: string };
+export type ReplaysPage = { rows: ReplayRow[]; nextCursor: ReplaysCursor | null };
+export type ReplayChunkRef = { seq: number; url: string; gz: boolean; bytes: number };
+export type ReplayDetail = { recording: ReplayRow; chunks: ReplayChunkRef[] };
 
 /** Lifetime aggregate for one visitor/user identity (docs/redesign/07 M3). */
 export type ProfileRow = {
@@ -406,6 +433,7 @@ export async function getSessions(
       os: (r.os as string | null) ?? null,
       lat: null,
       lng: null,
+      hasReplay: Boolean(r.has_replay),
     }));
     const last = rows[rows.length - 1];
     const nextCursor =
@@ -454,6 +482,7 @@ export async function getLiveSessions(
       os: (r.os as string | null) ?? null,
       lat: r.lat == null ? null : Number(r.lat),
       lng: r.lng == null ? null : Number(r.lng),
+      hasReplay: Boolean(r.has_replay),
     }));
   });
 }
@@ -479,6 +508,148 @@ export async function getSessionEvents(
       referrerDomain: (r.referrer_domain as string | null) ?? null,
       props: (r.props as Record<string, unknown> | null) ?? null,
     }));
+  });
+}
+
+function mapReplayRow(r: Record<string, unknown>): ReplayRow {
+  return {
+    id: r.id as string,
+    sessionId: (r.session_id as string | null) ?? null,
+    visitorId: r.visitor_id as string,
+    userId: (r.user_id as string | null) ?? null,
+    startedAt: r.started_at as string,
+    durationS: Number(r.duration_s),
+    pageCount: Number(r.page_count),
+    chunkCount: Number(r.chunk_count),
+    bytes: Number(r.bytes),
+    entryPath: (r.entry_path as string | null) ?? null,
+    deviceType: (r.device_type as string | null) ?? null,
+    browser: (r.browser as string | null) ?? null,
+    os: (r.os as string | null) ?? null,
+    country: (r.country as string | null) ?? null,
+    status: r.status as ReplayRow["status"],
+    isOpen: Boolean(r.is_open),
+  };
+}
+
+/**
+ * Replays list (docs/redesign/24). Keyset-paginated newest-first over
+ * `replay_recordings`, filter-aware the same way getSessions is: a recording
+ * matches when its linked session has an event satisfying the filter WHERE.
+ * Replay kinds are never exposed to share scope (lib/analytics/share.ts).
+ */
+export async function getReplays(
+  siteId: string,
+  range: QueryRange,
+  cursor: ReplaysCursor | null = null,
+  limit = 50,
+  supabase?: SupabaseClient,
+  filters: Filter[] = [],
+): Promise<ReplaysPage> {
+  return timed(`replays site=${siteId}`, async () => {
+    const { data, error } = await client(supabase).rpc("analytics_replays_list", {
+      p_site: siteId,
+      p_from: range.from.toISOString(),
+      p_to: range.to.toISOString(),
+      p_cursor_started: cursor?.startedAt ?? null,
+      p_cursor_id: cursor?.id ?? null,
+      p_limit: limit,
+      p_filters: filters,
+    });
+    if (error) throw new Error(`analytics_replays_list failed: ${error.message}`);
+    const rows: ReplayRow[] = (data as Record<string, unknown>[]).map(mapReplayRow);
+    const last = rows[rows.length - 1];
+    const nextCursor =
+      rows.length === limit && last ? { startedAt: last.startedAt, id: last.id } : null;
+    return { rows, nextCursor };
+  });
+}
+
+/**
+ * One recording's metadata plus presigned chunk URLs, for the player
+ * (docs/redesign/24 M3). Two cheap primary-key lookups: the recording row,
+ * then (when it has a linked session) that session's user_id/is_open, since
+ * PostgREST cannot left-join those in a single `select *` on the table.
+ * Null when the recording does not exist for this site.
+ */
+export async function getReplayDetail(
+  siteId: string,
+  recordingId: string,
+): Promise<ReplayDetail | null> {
+  return timed(`replay-detail site=${siteId} id=${recordingId}`, async () => {
+    const supabase = client();
+    const { data: recording, error: recError } = await supabase
+      .from("replay_recordings")
+      .select("*")
+      .eq("id", recordingId)
+      .eq("site_id", siteId)
+      .maybeSingle();
+    if (recError) throw new Error(`replay detail failed: ${recError.message}`);
+    if (!recording) return null;
+    const rec = recording as Record<string, unknown>;
+
+    let userId: string | null = null;
+    let isOpen = false;
+    if (rec.session_id) {
+      const { data: session, error: sessError } = await supabase
+        .from("sessions")
+        .select("user_id, is_open")
+        .eq("id", rec.session_id as string)
+        .maybeSingle();
+      if (sessError) throw new Error(`replay detail failed: ${sessError.message}`);
+      if (session) {
+        userId = (session.user_id as string | null) ?? null;
+        isOpen = Boolean(session.is_open);
+      }
+    }
+
+    const { data: chunkRows, error: chunkError } = await supabase
+      .from("replay_chunks")
+      .select("seq, storage_path, gz, bytes")
+      .eq("recording_id", recordingId)
+      .order("seq", { ascending: true });
+    if (chunkError) throw new Error(`replay detail failed: ${chunkError.message}`);
+
+    const chunks: ReplayChunkRef[] = replayStorageConfigured()
+      ? await Promise.all(
+          (chunkRows as Record<string, unknown>[]).map(async (c) => ({
+            seq: Number(c.seq),
+            url: await presignReplayGet(c.storage_path as string),
+            gz: Boolean(c.gz),
+            bytes: Number(c.bytes),
+          })),
+        )
+      : [];
+
+    return {
+      recording: mapReplayRow({ ...rec, user_id: userId, is_open: isOpen }),
+      chunks,
+    };
+  });
+}
+
+/**
+ * The newest non-expired recording for a session, for the Sessions drawer's
+ * replay-play affordance. The caller already has the session row, so this
+ * intentionally does not resolve user_id/is_open.
+ */
+export async function getReplayBySession(
+  siteId: string,
+  sessionId: string,
+): Promise<ReplayRow | null> {
+  return timed(`session-replay site=${siteId} session=${sessionId}`, async () => {
+    const { data, error } = await client()
+      .from("replay_recordings")
+      .select("*")
+      .eq("site_id", siteId)
+      .eq("session_id", sessionId)
+      .neq("status", "expired")
+      .order("started_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw new Error(`session replay failed: ${error.message}`);
+    if (!data) return null;
+    return mapReplayRow({ ...(data as Record<string, unknown>), user_id: null, is_open: false });
   });
 }
 
@@ -571,6 +742,7 @@ export async function getProfileSessions(
       os: (r.os as string | null) ?? null,
       lat: null,
       lng: null,
+      hasReplay: Boolean(r.has_replay),
     }));
   });
 }

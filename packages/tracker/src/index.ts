@@ -7,7 +7,7 @@
  * Config attributes: data-site (required), data-mode ("persistent"),
  * data-api, data-exclude (comma-separated path globs), data-hash,
  * data-track-outbound="false", data-track-downloads="false",
- * data-respect-dnt, data-vitals, data-errors.
+ * data-respect-dnt, data-vitals, data-errors, data-replay.
  */
 
 type Props = Record<string, unknown> | undefined;
@@ -273,5 +273,20 @@ interface WsStub {
     s.src = new URL("t-x.js", script.src).href;
     s.defer = true;
     D.head.appendChild(s);
+  }
+
+  // Lazy replay recorder chunk (docs/redesign/24). The attribute only pays
+  // the script load; whether recording actually happens is decided by the
+  // server config the chunk fetches, so the dashboard toggle is the switch.
+  if (attr("replay") != null) {
+    (W as typeof W & { __wsr?: unknown }).__wsr = {
+      site,
+      ep: api.replace(/\/track$/, "/replay"),
+      vid,
+    };
+    const r = D.createElement("script");
+    r.src = new URL("t-r.js", script.src).href;
+    r.defer = true;
+    D.head.appendChild(r);
   }
 })();

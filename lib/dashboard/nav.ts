@@ -34,6 +34,7 @@ export const NAV_SECTIONS: NavSection[] = [
     title: "Behavior",
     items: [
       { slug: "sessions", label: "Sessions", icon: "list-bullets", enabled: true }, // plan 07
+      { slug: "replays", label: "Replays", icon: "monitor-play", enabled: true }, // plan 24
       { slug: "profiles", label: "Profiles", icon: "user-circle", enabled: true }, // plan 07
       { slug: "funnels", label: "Funnels", icon: "funnel", enabled: true }, // plan 09
       { slug: "goals", label: "Goals", icon: "flag", enabled: true }, // plan 08
