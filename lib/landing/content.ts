@@ -53,7 +53,6 @@ export type Faq = { q: string; a: string };
 
 export const navLinks: NavLink[] = [
   { label: "Features", href: "#features" },
-  { label: "Globe", href: "#globe" },
   { label: "Pricing", href: "#pricing" },
   { label: "Docs", href: "/docs" },
 ];

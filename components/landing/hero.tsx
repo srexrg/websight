@@ -53,7 +53,7 @@ const topSources = [
 
 const rangeTabs = ["24h", "7d", "30d", "90d"];
 
-const trustTicks = ["No credit card", "10k events free", "Self-host option"];
+const trustTicks = ["No credit card", "Open source", "Self-host option"];
 
 function BreakdownRows({ title, rows }: { title: string; rows: typeof topPages }) {
   return (

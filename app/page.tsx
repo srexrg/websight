@@ -5,10 +5,8 @@ import Features from "@/components/landing/Features";
 import GlobeHighlight from "@/components/landing/GlobeHighlight";
 import RealtimeHighlight from "@/components/landing/RealtimeHighlight";
 import Install from "@/components/landing/Install";
-import StatsBand from "@/components/landing/StatsBand";
 import Comparison from "@/components/landing/Comparison";
 import Pricing from "@/components/landing/Pricing";
-import Testimonial from "@/components/landing/Testimonial";
 import Faq from "@/components/landing/Faq";
 import FinalCta from "@/components/landing/FinalCta";
 import Footer from "@/components/landing/Footer";
@@ -24,10 +22,8 @@ export default function Home() {
         <GlobeHighlight />
         <RealtimeHighlight />
         <Install />
-        <StatsBand />
         <Comparison />
         <Pricing />
-        <Testimonial />
         <Faq />
         <FinalCta />
       </main>
