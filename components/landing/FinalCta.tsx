@@ -27,7 +27,7 @@ export default function FinalCta() {
             in the next 5 minutes
           </h2>
           <p className="text-[18px] text-[#9FB3AA] mb-[30px] mx-auto max-w-[500px] leading-[1.5]">
-            Free for your first 10k events a month. No card, no cookie banner, no nonsense.
+            Free and open source. No card, no cookie banner, no nonsense.
           </p>
           <div className="flex items-center justify-center gap-[13px]">
             {/* Emerald CTA */}

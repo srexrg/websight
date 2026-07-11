@@ -12,8 +12,6 @@ export type Feature = {
   fg: string;
 };
 
-export type Logo = { icon: IconKey; name: string };
-
 export type LiveFeedItem = {
   page: string;
   meta: string;
@@ -24,8 +22,6 @@ export type LiveFeedItem = {
 };
 
 export type InstallStep = { n: string; title: string; desc: string };
-
-export type Stat = { value: string; label: string };
 
 export type Plan = {
   name: string;
@@ -104,17 +100,6 @@ export const features: Feature[] = [
   },
 ];
 
-// ─── Trust bar logos ───────────────────────────────────────────────────────────
-
-export const logos: Logo[] = [
-  { icon: "cube", name: "Hyperflow" },
-  { icon: "stack", name: "Castle" },
-  { icon: "cloud", name: "Nimbus" },
-  { icon: "anchor-simple", name: "Forge" },
-  { icon: "infinity", name: "Loop" },
-  { icon: "leaf", name: "Verdant" },
-];
-
 // ─── Globe section bullet points ──────────────────────────────────────────────
 
 export const globePoints: string[] = [
@@ -174,15 +159,6 @@ export const installSteps: InstallStep[] = [
   { n: "1", title: "Add your site", desc: "Create a project and grab your unique snippet." },
   { n: "2", title: "Paste the script", desc: "Drop one line into your <head> — done." },
   { n: "3", title: "Watch it live", desc: "Open the globe and see visits roll in." },
-];
-
-// ─── Stats band ────────────────────────────────────────────────────────────────
-
-export const stats: Stat[] = [
-  { value: "12.4k+", label: "Sites tracked" },
-  { value: "3.2B", label: "Events / month" },
-  { value: "<1KB", label: "Script size" },
-  { value: "99.9%", label: "Uptime" },
 ];
 
 // ─── Pricing plans ────────────────────────────────────────────────────────────
@@ -261,7 +237,7 @@ export const faqs: Faq[] = [
   },
   {
     q: "Is WebSight really free?",
-    a: "Yes. The code is MIT-licensed and self-hosting is free forever. The hosted Hobby plan is also free for 10k events a month, no credit card required.",
+    a: "Yes. The code is MIT-licensed and self-hosting is free forever. No credit card required.",
   },
   {
     q: "How long does setup take?",
