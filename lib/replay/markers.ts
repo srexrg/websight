@@ -16,12 +16,13 @@
 
 // rrweb wire codes (see rrweb's EventType / IncrementalSource / MouseInteractions).
 const T_INCREMENTAL = 3;
+const SRC_MUTATION = 0;
 const SRC_MOUSE_INTERACTION = 2;
 const MI_CLICK = 2;
 const MI_DBLCLICK = 4;
 const MI_TOUCHSTART = 7;
 
-export type MarkerKind = "start" | "navigation" | "click" | "rageclick" | "custom";
+export type MarkerKind = "start" | "navigation" | "click" | "rageclick" | "deadclick" | "custom";
 
 /** One dot on the scrubber. `offsetMs` is measured from the recording start. */
 export type ReplayMarker = {
@@ -99,26 +100,43 @@ export function activityPeriods(
 /**
  * Click / tap markers from the rrweb mouse-interaction stream. Bursts of >=3
  * clicks inside `rageWindowMs` and `ragePx` collapse into a single rage-click
- * marker (a frustration signal), matching Rybbit's heuristic.
+ * marker (a frustration signal), matching Rybbit's heuristic. An isolated click
+ * that triggers no DOM mutation within `deadWindowMs` is flagged as a dead click
+ * (the user clicked something that did nothing) - a signal neither Rybbit nor
+ * PostHog surface on the scrubber today.
  */
 export function clickMarkers(
   events: readonly RRWebEvent[],
-  { rageWindowMs = 1000, ragePx = 50 }: { rageWindowMs?: number; ragePx?: number } = {},
+  {
+    rageWindowMs = 1000,
+    ragePx = 50,
+    deadWindowMs = 700,
+  }: { rageWindowMs?: number; ragePx?: number; deadWindowMs?: number } = {},
 ): ReplayMarker[] {
   const base = firstTimestamp(events);
   const clicks: { offsetMs: number; x: number; y: number }[] = [];
+  const mutations: number[] = [];
+  let lastOffset = 0;
   for (const e of events) {
-    if (e?.type !== T_INCREMENTAL || !e.data) continue;
+    if (typeof e?.timestamp !== "number") continue;
+    const offsetMs = Math.max(0, e.timestamp - base);
+    if (offsetMs > lastOffset) lastOffset = offsetMs;
+    if (e.type !== T_INCREMENTAL || !e.data) continue;
     const d = e.data as { source?: number; type?: number; x?: number; y?: number };
+    if (d.source === SRC_MUTATION) {
+      mutations.push(offsetMs);
+      continue;
+    }
     if (d.source !== SRC_MOUSE_INTERACTION) continue;
     if (d.type !== MI_CLICK && d.type !== MI_DBLCLICK && d.type !== MI_TOUCHSTART) continue;
     clicks.push({
-      offsetMs: Math.max(0, e.timestamp - base),
+      offsetMs,
       x: typeof d.x === "number" ? d.x : NaN,
       y: typeof d.y === "number" ? d.y : NaN,
     });
   }
   clicks.sort((a, b) => a.offsetMs - b.offsetMs);
+  mutations.sort((a, b) => a - b);
 
   const markers: ReplayMarker[] = [];
   for (let i = 0; i < clicks.length; ) {
@@ -139,12 +157,36 @@ export function clickMarkers(
         label: `Rage click (${count}×)`,
       });
       i = j;
+    } else if (isDeadClick(clicks[i].offsetMs, mutations, deadWindowMs, lastOffset)) {
+      markers.push({ offsetMs: clicks[i].offsetMs, kind: "deadclick", label: "Dead click" });
+      i++;
     } else {
       markers.push({ offsetMs: clicks[i].offsetMs, kind: "click", label: "Click" });
       i++;
     }
   }
   return markers;
+}
+
+/**
+ * A click is "dead" when nothing in the DOM changed in response to it: no
+ * mutation lands in the `deadWindowMs` after it. Clicks in the final window of
+ * the recording are never flagged - the response may simply be past the end of
+ * the capture, so we cannot tell.
+ */
+function isDeadClick(
+  offsetMs: number,
+  mutations: readonly number[],
+  deadWindowMs: number,
+  lastOffset: number,
+): boolean {
+  if (offsetMs + deadWindowMs > lastOffset) return false;
+  for (const m of mutations) {
+    if (m <= offsetMs) continue;
+    if (m <= offsetMs + deadWindowMs) return false; // the click provoked a mutation
+    break; // sorted: nothing else falls in the window
+  }
+  return true;
 }
 
 function near(

@@ -21,6 +21,10 @@ function incr(ts: number, extra: Record<string, unknown> = {}) {
 function click(ts: number, x = 10, y = 10) {
   return { type: 3, timestamp: T0 + ts, data: { source: 2, type: 2, x, y } };
 }
+// A DOM mutation (IncrementalSource.Mutation === 0), the response a live click provokes.
+function mut(ts: number) {
+  return { type: 3, timestamp: T0 + ts, data: { source: 0 } };
+}
 
 describe("firstTimestamp", () => {
   it("returns the earliest timestamp regardless of order", () => {
@@ -58,12 +62,30 @@ describe("activityPeriods", () => {
 });
 
 describe("clickMarkers", () => {
-  it("emits one marker per isolated click, offset from the stream start", () => {
-    // incr(0) anchors the recording start, as a real stream's first snapshot does.
-    const markers = clickMarkers([incr(0), click(100), click(4000)]);
+  it("emits one marker per isolated click that provokes a DOM change", () => {
+    // incr(0) anchors the recording start; each click is followed by a mutation,
+    // so both read as ordinary (live) clicks rather than dead ones.
+    const markers = clickMarkers([incr(0), click(100), mut(150), click(4000), mut(4050)]);
     expect(markers).toHaveLength(2);
     expect(markers.every((m) => m.kind === "click")).toBe(true);
     expect(markers[0].offsetMs).toBe(100);
+  });
+
+  it("flags an isolated click that provokes no mutation as a dead click", () => {
+    // The click at 100 changes nothing; a later event at 2000 shows the
+    // recording kept going, so the click can be judged dead.
+    const markers = clickMarkers([incr(0), click(100), incr(2000)]);
+    expect(markers).toHaveLength(1);
+    expect(markers[0].kind).toBe("deadclick");
+    expect(markers[0].label).toBe("Dead click");
+  });
+
+  it("does not flag a click inside the dead-click window at the recording end", () => {
+    // Nothing follows within 700ms, but the stream ends there too - the response
+    // could be just past the capture, so we do not call it dead.
+    const markers = clickMarkers([click(100), incr(200)]);
+    expect(markers).toHaveLength(1);
+    expect(markers[0].kind).toBe("click");
   });
 
   it("collapses a tight burst into a single rage-click marker", () => {

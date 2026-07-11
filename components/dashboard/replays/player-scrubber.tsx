@@ -17,6 +17,7 @@ const MARKER_COLOR: Record<MarkerKind, string> = {
   navigation: "bg-[#3B82F6]",
   click: "bg-[#8B5CF6]",
   rageclick: "bg-danger",
+  deadclick: "bg-[#94A3B8]",
   custom: "bg-[#F59E0B]",
 };
 
