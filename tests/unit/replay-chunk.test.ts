@@ -153,6 +153,40 @@ describe("chunk shipping", () => {
     expect(typeof events[0].type).toBe("number");
     expect(typeof events[0].timestamp).toBe("number");
   });
+
+  it("ships the full snapshot even when it alone exceeds the flush-byte threshold", async () => {
+    // Regression: a real page's initial full snapshot (rrweb type 2) easily
+    // exceeds FLUSH_BYTES (256KB), so record()'s synchronous emit flushes it
+    // from *inside* record(). If any binding flush() depends on (gzip) is still
+    // in its temporal dead zone at that point, the flush throws, rrweb swallows
+    // the emit error, and seq 0 - the only chunk carrying Meta + FullSnapshot -
+    // is silently dropped, leaving a blank (white) replay. A small DOM never
+    // triggers this, which is why it slipped past the other chunk tests.
+    const heavy =
+      "<main>" +
+      Array.from(
+        { length: 4000 },
+        (_, i) =>
+          `<p class="row row-${i}" data-idx="${i}">Item ${i} - lorem ipsum dolor sit amet consectetur adipiscing elit.</p>`,
+      ).join("") +
+      "</main>";
+
+    const page = bootReplay({ config: { on: true, sample: 1 }, html: heavy });
+    await tick();
+    await tick();
+    await tick();
+
+    const posts = page.posts();
+    expect(posts.length).toBeGreaterThanOrEqual(1);
+
+    // The full snapshot must be shipped, and it must ride the first chunk (seq 0).
+    const withSnapshot = posts.find((p) => {
+      const evs = JSON.parse(String(p.body)) as Array<{ type: number }>;
+      return evs.some((e) => e.type === 2);
+    });
+    expect(withSnapshot, "no chunk carried the rrweb FullSnapshot (type 2)").toBeTruthy();
+    expect(new URL(withSnapshot!.url).searchParams.get("seq")).toBe("0");
+  });
 });
 
 describe("core loader wiring", () => {

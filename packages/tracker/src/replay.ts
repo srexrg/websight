@@ -53,29 +53,6 @@ type WsrBoot = { site: string; ep: string; vid?: string };
     let stopped = false;
     let stopFn: (() => void) | undefined;
 
-    // Recording must never break the host page: a record() failure (exotic
-    // DOM, CSP) silently disables replay while analytics keep working.
-    try {
-      stopFn = record({
-        emit(e) {
-          buf.push(e);
-          bufBytes += JSON.stringify(e).length;
-          if (bufBytes >= FLUSH_BYTES) flush(false);
-        },
-        maskAllInputs: true,
-        blockSelector: "[data-ws-mask]",
-        // "Mask all text" spares [data-ws-unmask] subtrees: rrweb masks text whose
-        // parent element matches this selector, so :not(marked, inside-marked)
-        // masks everything else. Inputs stay masked regardless (maskAllInputs).
-        ...(maskText ? { maskTextSelector: ":not([data-ws-unmask], [data-ws-unmask] *)" } : {}),
-        checkoutEveryNms: 120000,
-        recordCanvas: false,
-        recordCrossOriginIframes: false,
-      });
-    } catch {
-      return;
-    }
-
     const stop = () => {
       if (stopped) return;
       stopped = true;
@@ -149,5 +126,36 @@ type WsrBoot = { site: string; ep: string; vid?: string };
       if (document.visibilityState === "hidden") flush(true);
     });
     addEventListener("pagehide", () => flush(true));
+
+    // record() is started last, once gzip/flush/stop/timer above are all
+    // initialized. rrweb emits the initial full snapshot synchronously from
+    // inside this call, and a real page's snapshot easily exceeds FLUSH_BYTES,
+    // so emit() flushes it immediately - reaching gzip(). If record() ran before
+    // gzip's `const` initializer, that first flush would hit gzip in its
+    // temporal dead zone; rrweb swallows the emit error, so recording would
+    // limp on while silently dropping the one chunk that carries the full
+    // snapshot, leaving a blank (white) replay. Recording must also never break
+    // the host page: a record() failure (exotic DOM, CSP) disables replay while
+    // analytics keep working.
+    try {
+      stopFn = record({
+        emit(e) {
+          buf.push(e);
+          bufBytes += JSON.stringify(e).length;
+          if (bufBytes >= FLUSH_BYTES) flush(false);
+        },
+        maskAllInputs: true,
+        blockSelector: "[data-ws-mask]",
+        // "Mask all text" spares [data-ws-unmask] subtrees: rrweb masks text whose
+        // parent element matches this selector, so :not(marked, inside-marked)
+        // masks everything else. Inputs stay masked regardless (maskAllInputs).
+        ...(maskText ? { maskTextSelector: ":not([data-ws-unmask], [data-ws-unmask] *)" } : {}),
+        checkoutEveryNms: 120000,
+        recordCanvas: false,
+        recordCrossOriginIframes: false,
+      });
+    } catch {
+      clearInterval(timer);
+    }
   }
 })();
