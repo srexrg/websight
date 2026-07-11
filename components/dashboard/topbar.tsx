@@ -4,6 +4,13 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { useQueryState } from "nuqs";
 import type { ReactNode } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { screenTitle } from "@/lib/dashboard/nav";
 import { useLiveCount } from "@/lib/dashboard/use-analytics";
 import {
@@ -35,18 +42,24 @@ export function Topbar({ actions }: { actions?: ReactNode }) {
       </div>
       <div className="flex items-center gap-2">
         {slug !== "settings" && (
-          <select
+          <Select
             value={compare}
-            onChange={(e) => setCompare(e.target.value as (typeof COMPARE_MODES)[number])}
-            aria-label="Comparison mode"
-            className="h-[30px] rounded-lg border border-border bg-card px-2 text-[12px] font-semibold text-muted-foreground shadow-[0_1px_2px_rgba(16,24,40,.04)] outline-none hover:text-foreground"
+            onValueChange={(v) => setCompare(v as (typeof COMPARE_MODES)[number])}
           >
-            {COMPARE_MODES.map((m) => (
-              <option key={m} value={m}>
-                {COMPARE_LABELS[m]}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger
+              aria-label="Comparison mode"
+              className="h-[30px] w-auto px-2.5 text-[12px] font-semibold text-muted-foreground hover:text-foreground"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent align="end">
+              {COMPARE_MODES.map((m) => (
+                <SelectItem key={m} value={m} className="text-[12.5px]">
+                  {COMPARE_LABELS[m]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         )}
         {slug !== "settings" && (
           <div className="flex rounded-lg border border-border bg-card p-0.5 shadow-[0_1px_2px_rgba(16,24,40,.04)]">

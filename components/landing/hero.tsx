@@ -57,17 +57,17 @@ const trustTicks = ["No credit card", "10k events free", "Self-host option"];
 
 function BreakdownRows({ title, rows }: { title: string; rows: typeof topPages }) {
   return (
-    <div className="flex-1 min-w-0 bg-white border border-border rounded-[13px] p-[14px_15px]">
+    <div className="flex-1 min-w-0 bg-card border border-border rounded-[13px] p-[14px_15px]">
       <div className="text-[12.5px] font-semibold mb-[11px] text-foreground">{title}</div>
       <div className="flex flex-col gap-[9px]">
         {rows.map((r) => (
           <div key={r.label} className="relative flex items-center justify-between">
             <span
               aria-hidden="true"
-              className="absolute inset-y-[-3px] left-[-4px] rounded-[5px] bg-accent/70"
+              className="absolute inset-y-[-3px] left-[-4px] rounded-[5px] bg-brand/[0.09]"
               style={{ width: `calc(${r.pct}% + 4px)` }}
             />
-            <span className="relative truncate text-[12px] text-[#4C4F5A] pr-2">{r.label}</span>
+            <span className="relative truncate text-[12px] text-muted-foreground pr-2">{r.label}</span>
             <span className="relative font-mono text-[12px] font-medium text-foreground tabular-nums">{r.value}</span>
           </div>
         ))}
@@ -78,7 +78,7 @@ function BreakdownRows({ title, rows }: { title: string; rows: typeof topPages }
 
 export default function Hero() {
   return (
-    <section className="relative bg-gradient-to-b from-[#F6FBF9] to-white overflow-hidden">
+    <section className="relative bg-gradient-to-b from-brand/[0.05] to-transparent overflow-hidden">
       {/* Radial emerald glow */}
       <div
         aria-hidden="true"
@@ -95,16 +95,16 @@ export default function Hero() {
         {/* OPEN SOURCE pill */}
         <Link
           href="/auth"
-          className="inline-flex items-center gap-[9px] bg-white border border-[#E4EEEA] shadow-[0_1px_3px_rgba(16,24,40,.05)] px-[14px] pl-2 py-[6px] rounded-3xl mb-[26px]"
+          className="inline-flex items-center gap-[9px] bg-card border border-border shadow-[0_1px_3px_rgba(16,24,40,.05)] px-[14px] pl-2 py-[6px] rounded-3xl mb-[26px]"
         >
-          <span className="inline-flex items-center gap-[5px] bg-accent text-[#0B7E58] text-[11.5px] font-bold px-[9px] py-[3px] rounded-[18px]">
+          <span className="inline-flex items-center gap-[5px] bg-accent text-accent-foreground text-[11.5px] font-bold px-[9px] py-[3px] rounded-[18px]">
             <span
               className="w-[6px] h-[6px] rounded-full bg-brand"
               style={{ animation: "wsBlink 1.4s ease-in-out infinite" }}
             />
             OPEN SOURCE
           </span>
-          <span className="text-[13px] text-[#5A5D69]">
+          <span className="text-[13px] text-muted-foreground">
             Privacy-first, no cookies, GDPR-ready
           </span>
         </Link>
@@ -118,7 +118,7 @@ export default function Hero() {
         </h1>
 
         {/* Subhead */}
-        <p className="text-[20px] leading-[1.55] text-[#5A5D69] max-w-[600px] mx-auto mb-8 [text-wrap:pretty]">
+        <p className="text-[20px] leading-[1.55] text-muted-foreground max-w-[600px] mx-auto mb-8 [text-wrap:pretty]">
           A lightweight, beautiful analytics dashboard for indie hackers.
           Realtime data, a live visitor globe, and a script under 1KB —
           without the creepy tracking.
@@ -140,7 +140,7 @@ export default function Hero() {
             <Button
               size="lg"
               variant="outline"
-              className="bg-white border-border text-foreground font-semibold text-[16px] px-[22px] py-[13px] rounded-xl hover:border-brand hover:text-brand gap-2 h-auto"
+              className="bg-card border-border text-foreground font-semibold text-[16px] px-[22px] py-[13px] rounded-xl hover:border-brand hover:text-brand gap-2 h-auto"
             >
               <PlayCircle size={18} />
               Live demo
@@ -149,7 +149,7 @@ export default function Hero() {
         </div>
 
         {/* Trust ticks */}
-        <div className="flex items-center justify-center gap-[18px] text-[13px] text-[#9A9DA8]">
+        <div className="flex items-center justify-center gap-[18px] text-[13px] text-muted-foreground/80">
           {trustTicks.map((tick) => (
             <span key={tick} className="inline-flex items-center gap-[6px]">
               <CheckCircle size={15} weight="fill" className="text-brand" />
@@ -161,15 +161,15 @@ export default function Hero() {
 
       {/* ── Product visual (resembles the real Overview screen) ── */}
       <div className="relative max-w-[1060px] mx-auto mt-[50px] px-7">
-        <div className="bg-white border border-[#E7E9EF] rounded-[18px_18px_0_0] shadow-[0_-1px_0_#fff,0_24px_60px_-20px_rgba(16,24,40,.28)] overflow-hidden">
+        <div className="bg-card border border-border rounded-[18px_18px_0_0] shadow-[0_24px_60px_-20px_rgba(16,24,40,.28)] overflow-hidden">
 
           {/* Browser chrome */}
-          <div className="flex items-center gap-2 px-[18px] py-[13px] border-b border-[#F1F2F5] bg-[#FCFCFD]">
-            <span className="w-[11px] h-[11px] rounded-full bg-[#E5E6EA]" />
-            <span className="w-[11px] h-[11px] rounded-full bg-[#E5E6EA]" />
-            <span className="w-[11px] h-[11px] rounded-full bg-[#E5E6EA]" />
+          <div className="flex items-center gap-2 px-[18px] py-[13px] border-b border-border/60 bg-card">
+            <span className="w-[11px] h-[11px] rounded-full bg-border" />
+            <span className="w-[11px] h-[11px] rounded-full bg-border" />
+            <span className="w-[11px] h-[11px] rounded-full bg-border" />
             <div className="flex-1 flex justify-center">
-              <div className="flex items-center gap-[7px] bg-[#F1F2F5] rounded-[7px] px-[14px] py-[5px] text-[12px] text-[#9A9DA8]">
+              <div className="flex items-center gap-[7px] bg-secondary rounded-[7px] px-[14px] py-[5px] text-[12px] text-muted-foreground/80">
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256" aria-hidden="true">
                   <path fill="currentColor" d="M216 40H40a16 16 0 0 0-16 16v144a16 16 0 0 0 16 16h176a16 16 0 0 0 16-16V56a16 16 0 0 0-16-16Zm-96 144a56 56 0 1 1 56-56 56.06 56.06 0 0 1-56 56Z" opacity=".2"/><path fill="currentColor" d="M216 32H40a24 24 0 0 0-24 24v144a24 24 0 0 0 24 24h176a24 24 0 0 0 24-24V56a24 24 0 0 0-24-24Zm8 168a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V56a8 8 0 0 1 8-8h176a8 8 0 0 1 8 8Z"/>
                 </svg>
@@ -179,10 +179,10 @@ export default function Hero() {
           </div>
 
           {/* App content */}
-          <div className="flex bg-[#F6F7F9]">
+          <div className="flex bg-background">
 
             {/* Sidebar */}
-            <div className="w-[188px] shrink-0 bg-white border-r border-border px-3 py-4 flex flex-col gap-[2px]">
+            <div className="w-[188px] shrink-0 bg-card border-r border-border px-3 py-4 flex flex-col gap-[2px]">
               {/* Site switcher */}
               <div className="flex items-center gap-[9px] px-[9px] py-[7px] mb-2 rounded-lg border border-border">
                 <span className="w-[18px] h-[18px] rounded-[6px] bg-brand shrink-0" />
@@ -198,11 +198,11 @@ export default function Hero() {
                   <item.Icon
                     size={14}
                     weight={item.active ? "fill" : "regular"}
-                    className={item.active ? "text-[#0B7E58]" : "text-muted-foreground"}
+                    className={item.active ? "text-accent-foreground" : "text-muted-foreground"}
                   />
                   <span
                     className={`text-[12px] ${
-                      item.active ? "font-semibold text-[#0B7E58]" : "font-medium text-muted-foreground"
+                      item.active ? "font-semibold text-accent-foreground" : "font-medium text-muted-foreground"
                     }`}
                   >
                     {item.label}
@@ -226,12 +226,12 @@ export default function Hero() {
                     327 online
                   </span>
                 </div>
-                <div className="flex items-center gap-[2px] bg-white border border-border rounded-[9px] p-[2px]">
+                <div className="flex items-center gap-[2px] bg-card border border-border rounded-[9px] p-[2px]">
                   {rangeTabs.map((t) => (
                     <span
                       key={t}
                       className={`font-mono text-[11px] font-semibold px-[9px] py-[3px] rounded-[7px] ${
-                        t === "7d" ? "bg-accent text-[#0B7E58]" : "text-muted-foreground"
+                        t === "7d" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
                       }`}
                     >
                       {t}
@@ -243,7 +243,7 @@ export default function Hero() {
               {/* 6 metric cards */}
               <div className="grid grid-cols-6 gap-[9px]">
                 {metrics.map((m) => (
-                  <div key={m.label} className="bg-white border border-border rounded-[11px] p-[10px_11px]">
+                  <div key={m.label} className="bg-card border border-border rounded-[11px] p-[10px_11px]">
                     <div className="flex items-center justify-between gap-1">
                       <span className="text-[9.5px] text-muted-foreground truncate">{m.label}</span>
                       <span
@@ -262,7 +262,7 @@ export default function Hero() {
               </div>
 
               {/* Visitors chart */}
-              <div className="bg-white border border-border rounded-[13px] p-[15px_16px]">
+              <div className="bg-card border border-border rounded-[13px] p-[15px_16px]">
                 <div className="flex items-baseline gap-[9px] mb-[10px]">
                   <span className="text-[12.5px] font-semibold text-foreground">Unique Visitors</span>
                   <span className="font-mono text-[13px] font-semibold text-foreground">24.8k</span>

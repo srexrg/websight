@@ -39,6 +39,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { createClient } from "@/utils/supabase/client";
+import { LogoMark } from "@/components/brand/Logo";
 import { NAV_SECTIONS, SETTINGS_ITEM } from "@/lib/dashboard/nav";
 
 const ICONS: Record<string, Icon> = {
@@ -143,9 +144,7 @@ export function Sidebar({
       {/* Logo row */}
       <div className={`flex items-center gap-2 px-4 pb-2 pt-4 ${collapsed ? "justify-center px-2" : ""}`}>
         <Link href="/dashboard" className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand to-[#5FD3A6] font-mono text-[13px] font-bold text-white">
-            W
-          </span>
+          <LogoMark size={26} />
           {!collapsed && <span className="text-[15px] font-bold tracking-tight text-foreground">WebSight</span>}
         </Link>
         <button

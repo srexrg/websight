@@ -26,7 +26,7 @@ export default function Install() {
           <h2 className="text-[40px] font-extrabold tracking-[-1.2px] leading-[1.1] mt-3 mb-[14px] text-foreground">
             One line. That&apos;s it.
           </h2>
-          <p className="text-[17px] leading-[1.55] text-[#5A5D69] m-0">
+          <p className="text-[17px] leading-[1.55] text-muted-foreground m-0">
             Drop the snippet in your &lt;head&gt;. No build step, no config, no cookie banner.
           </p>
         </div>
@@ -34,7 +34,7 @@ export default function Install() {
         {/* Code block + steps */}
         <div className="max-w-[760px] mx-auto">
           {/* Dark code block */}
-          <div className="bg-[#0E1310] rounded-[14px] px-[22px] py-5 font-mono text-[14px] leading-[1.7] text-[#C9CBD6] relative shadow-[0_18px_50px_-22px_rgba(14,156,110,0.4)]">
+          <div className="bg-[#0E1310] ring-1 ring-white/[0.07] rounded-[14px] px-[22px] py-5 font-mono text-[14px] leading-[1.7] text-[#C9CBD6] relative shadow-[0_18px_50px_-22px_rgba(14,156,110,0.4)]">
             {/* Syntax-colored snippet */}
             <span className="text-[#6B6E7B]">&lt;</span>
             <span className="text-[#E06C9B]">script</span>
@@ -75,14 +75,14 @@ export default function Install() {
             {installSteps.map((step) => (
               <div key={step.n} className="flex flex-col gap-[7px]">
                 <div className="flex items-center gap-[9px]">
-                  <span className="w-6 h-6 rounded-[7px] bg-[#E7F6EF] text-[#0B7E58] font-mono text-[12px] font-bold flex items-center justify-center flex-shrink-0">
+                  <span className="w-6 h-6 rounded-[7px] bg-accent text-accent-foreground font-mono text-[12px] font-bold flex items-center justify-center flex-shrink-0">
                     {step.n}
                   </span>
                   <span className="text-[14.5px] font-bold text-foreground">
                     {step.title}
                   </span>
                 </div>
-                <span className="text-[13.5px] leading-[1.5] text-[#5A5D69]">
+                <span className="text-[13.5px] leading-[1.5] text-muted-foreground">
                   {step.desc}
                 </span>
               </div>

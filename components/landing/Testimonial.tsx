@@ -2,7 +2,7 @@ import { Star } from "@phosphor-icons/react/dist/ssr";
 
 export default function Testimonial() {
   return (
-    <div className="bg-[#FBFCFD] border-t border-[#F0F1F4] border-b border-b-[#F0F1F4]">
+    <div className="bg-card/50 border-t border-border border-b">
       <div className="max-w-[820px] mx-auto px-7 py-[74px] text-center">
         {/* 5 stars */}
         <div className="flex justify-center gap-[3px] mb-[22px]">
@@ -24,7 +24,7 @@ export default function Testimonial() {
           />
           <div className="text-left">
             <div className="text-[15px] font-bold text-foreground">Maya Lin</div>
-            <div className="text-[13.5px] text-[#9A9DA8]">Founder, Driftpad &middot; indie SaaS</div>
+            <div className="text-[13.5px] text-muted-foreground">Founder, Driftpad &middot; indie SaaS</div>
           </div>
         </div>
       </div>

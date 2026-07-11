@@ -7,10 +7,16 @@ import { RetentionGrid, type CellCoord } from "@/components/dashboard/retention/
 import { CohortTrend } from "@/components/dashboard/retention/cohort-trend";
 import { CellDrilldown } from "@/components/dashboard/retention/cell-drilldown";
 import { EmptyState, ErrorState, Sk } from "@/components/dashboard/states";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatNumber } from "@/lib/dashboard/format";
 
-const SELECT =
-  "rounded-md border border-input bg-transparent px-2 py-1 text-[12.5px] text-foreground outline-none focus:border-ring";
+const SELECT = "h-auto w-auto rounded-md px-2 py-1 text-[12.5px] shadow-none";
 
 const INTERVALS: RetentionInterval[] = ["day", "week", "month"];
 const INTERVAL_LABEL: Record<RetentionInterval, string> = { day: "Daily", week: "Weekly", month: "Monthly" };
@@ -84,33 +90,50 @@ export function RetentionScreen({ site }: { site: string }) {
               </button>
             ))}
           </div>
-          <select className={SELECT} value={periods} onChange={(e) => setPeriods(Number(e.target.value))}>
-            {[8, 12, 26].map((n) => (
-              <option key={n} value={n}>{n} periods</option>
-            ))}
-          </select>
-          <select
-            className={SELECT}
-            value={entryGoal ?? ""}
-            onChange={(e) => { setEntryGoal(e.target.value || null); setSelected(null); }}
-            title="Cohort entry"
+          <Select value={String(periods)} onValueChange={(v) => setPeriods(Number(v))}>
+            <SelectTrigger className={SELECT}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[8, 12, 26].map((n) => (
+                <SelectItem key={n} value={String(n)} className="text-[12.5px]">
+                  {n} periods
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={entryGoal ?? "first-seen"}
+            onValueChange={(v) => { setEntryGoal(v === "first-seen" ? null : v); setSelected(null); }}
           >
-            <option value="">Entry: first seen</option>
-            {goals.map((g) => (
-              <option key={g.id} value={g.id}>Entry: {g.name}</option>
-            ))}
-          </select>
-          <select
-            className={SELECT}
-            value={returnGoal ?? ""}
-            onChange={(e) => { setReturnGoal(e.target.value || null); setSelected(null); }}
-            title="Return criterion"
+            <SelectTrigger className={SELECT} aria-label="Cohort entry">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="first-seen" className="text-[12.5px]">Entry: first seen</SelectItem>
+              {goals.map((g) => (
+                <SelectItem key={g.id} value={g.id} className="text-[12.5px]">
+                  Entry: {g.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={returnGoal ?? "any-visit"}
+            onValueChange={(v) => { setReturnGoal(v === "any-visit" ? null : v); setSelected(null); }}
           >
-            <option value="">Return: any visit</option>
-            {goals.map((g) => (
-              <option key={g.id} value={g.id}>Return: {g.name}</option>
-            ))}
-          </select>
+            <SelectTrigger className={SELECT} aria-label="Return criterion">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="any-visit" className="text-[12.5px]">Return: any visit</SelectItem>
+              {goals.map((g) => (
+                <SelectItem key={g.id} value={g.id} className="text-[12.5px]">
+                  Return: {g.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <div className="flex rounded-md bg-secondary p-0.5">
             {(["cohort", "previous"] as RetentionBasis[]).map((b) => (
               <button

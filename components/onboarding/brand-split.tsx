@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { ChartLineUp, CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { LogoGlyph } from "@/components/brand/Logo";
 
 /**
  * Shared two-pane shell for first-run / gated surfaces (docs/redesign/17). The
@@ -52,7 +53,7 @@ export function BrandSplit({
         {/* Logo */}
         <div className="relative flex items-center gap-2.5">
           <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-white/15 ring-1 ring-white/25 backdrop-blur-sm">
-            <ChartLineUp size={18} weight="bold" />
+            <LogoGlyph size={19} />
           </span>
           <span className="text-[18px] font-bold tracking-[-0.3px]">WebSight</span>
         </div>
@@ -88,7 +89,7 @@ export function BrandSplit({
           style={{ background: "linear-gradient(120deg, #0E9C6E, #0A5E43)" }}
         />
         <span className="relative flex h-7 w-7 items-center justify-center rounded-[8px] bg-white/15 ring-1 ring-white/25">
-          <ChartLineUp size={16} weight="bold" />
+          <LogoGlyph size={17} />
         </span>
         <span className="relative text-[16px] font-bold tracking-[-0.3px]">WebSight</span>
       </div>

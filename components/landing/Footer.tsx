@@ -5,7 +5,7 @@ import { footerCols } from "@/lib/landing/content";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[#F0F1F4]">
+    <footer className="border-t border-border">
       {/* 4-column grid */}
       <div className="max-w-[1180px] mx-auto px-7 pt-[54px] pb-10 grid grid-cols-[1.6fr_1fr_1fr_1fr] gap-8">
         {/* Brand column */}
@@ -13,7 +13,7 @@ export default function Footer() {
           <div className="mb-[13px]">
             <Logo size={28} />
           </div>
-          <p className="text-[13.5px] leading-[1.55] text-[#9A9DA8] max-w-[240px]">
+          <p className="text-[13.5px] leading-[1.55] text-muted-foreground max-w-[240px]">
             Privacy-first web analytics for people who build on the internet.
           </p>
         </div>
@@ -29,7 +29,7 @@ export default function Footer() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-[13.5px] text-[#6B6E7B] hover:text-brand transition-colors"
+                  className="text-[13.5px] text-muted-foreground hover:text-brand transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -40,9 +40,9 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-[#F0F1F4]">
+      <div className="border-t border-border">
         <div className="max-w-[1180px] mx-auto px-7 py-[18px] flex items-center justify-between">
-          <span className="text-[13px] text-[#9A9DA8]">
+          <span className="text-[13px] text-muted-foreground">
             &copy; 2026 WebSight &middot; MIT licensed
           </span>
           <div className="flex gap-4">
@@ -51,7 +51,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub"
-              className="text-[#9A9DA8] hover:text-brand transition-colors"
+              className="text-muted-foreground hover:text-brand transition-colors"
             >
               <GithubLogo size={18} />
             </Link>
@@ -60,7 +60,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="X / Twitter"
-              className="text-[#9A9DA8] hover:text-brand transition-colors"
+              className="text-muted-foreground hover:text-brand transition-colors"
             >
               <XLogo size={18} />
             </Link>

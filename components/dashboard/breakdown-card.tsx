@@ -17,9 +17,10 @@ export type BreakdownItem = {
 export type BreakdownTab = { key: string; label: string };
 
 /**
- * Breakdown card per design-system.md list rows: label + thin progress bar +
- * right-aligned mono value, hairline dividers. Bars scale to the top row.
- * Rows are click-to-filter (docs/redesign/05); tabs switch sub-dimensions.
+ * Breakdown card list rows: label over a soft brand-tint fill bar +
+ * right-aligned mono value. Bars scale to the top row and animate on data
+ * changes. Rows are click-to-filter (docs/redesign/05); tabs switch
+ * sub-dimensions.
  */
 export function BreakdownCard({
   title,
@@ -58,14 +59,15 @@ export function BreakdownCard({
         <div className="flex items-center gap-3">
           <h3 className="text-[14.5px] font-semibold text-foreground">{title}</h3>
           {tabs && tabs.length > 1 && (
-            <div className="flex rounded-md bg-secondary p-0.5">
+            <div className="flex rounded-lg bg-secondary/70 p-[3px]">
               {tabs.map((t) => (
                 <button
                   key={t.key}
                   onClick={() => onTabChange?.(t.key)}
-                  className={`rounded px-1.5 py-0.5 font-mono text-[11px] font-semibold tracking-[.4px] transition-colors ${
+                  aria-pressed={activeTab === t.key}
+                  className={`rounded-md px-2 py-0.5 text-[11.5px] font-semibold transition-colors ${
                     activeTab === t.key
-                      ? "bg-card text-foreground shadow-[0_1px_2px_rgba(16,24,40,.06)]"
+                      ? "bg-accent text-accent-foreground shadow-[0_1px_2px_rgba(16,24,40,.06)]"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -95,30 +97,29 @@ export function BreakdownCard({
               const fv = item.filterValue ?? item.label;
               const active = activeValues?.includes(fv);
               return (
-                <li
-                  key={item.label}
-                  className="relative border-b border-border/60 last:border-b-0"
-                >
+                <li key={item.label} className="group/row relative">
                   <button
                     onClick={onRowClick ? () => onRowClick(fv) : undefined}
                     disabled={!onRowClick}
                     title={onRowClick ? "Click to filter" : undefined}
-                    className={`flex w-full items-center gap-3 py-[7px] text-left ${
+                    className={`flex w-full items-center gap-3 py-[3px] text-left ${
                       onRowClick ? "cursor-pointer" : "cursor-default"
                     }`}
                   >
-                    <span className="relative flex min-w-0 flex-1 items-center">
+                    <span className="relative flex h-[26px] min-w-0 flex-1 items-center">
                       <span
-                        className={`absolute inset-y-0.5 left-0 rounded-[4px] ${
-                          active ? "bg-brand/25" : "bg-accent"
+                        className={`absolute inset-y-0 left-0 rounded-[6px] transition-[width,background-color] duration-500 ease-out ${
+                          active
+                            ? "bg-brand/25"
+                            : "bg-brand/[0.09] group-hover/row:bg-brand/[0.14]"
                         }`}
                         style={{ width: `${Math.max((item.value / max) * 100, 2)}%` }}
                         aria-hidden
                       />
                       <span
-                        className={`relative z-10 flex min-w-0 items-center gap-2 px-1.5 text-[13px] ${
+                        className={`relative z-10 flex min-w-0 items-center gap-2 px-2 text-[13px] ${
                           active ? "font-semibold text-accent-foreground" : "text-foreground"
-                        } ${onRowClick ? "hover:underline" : ""}`}
+                        } ${onRowClick ? "group-hover/row:underline" : ""}`}
                       >
                         {item.icon}
                         <span className="truncate">{item.label}</span>
@@ -129,7 +130,7 @@ export function BreakdownCard({
                         {item.secondary}
                       </span>
                     )}
-                    <span className="w-12 shrink-0 text-right font-mono text-[13px] font-medium text-foreground">
+                    <span className="w-12 shrink-0 text-right font-mono text-[13px] font-medium tabular-nums text-foreground">
                       {formatNumber(item.value)}
                     </span>
                   </button>

@@ -5,7 +5,7 @@ export default function FinalCta() {
   return (
     <div className="max-w-[1180px] mx-auto px-7 py-24">
       <div
-        className="relative bg-[#0E1310] rounded-[24px] px-10 py-[66px] text-center overflow-hidden"
+        className="relative bg-[#0E1310] ring-1 ring-white/[0.08] rounded-[24px] px-10 py-[66px] text-center overflow-hidden"
       >
         {/* Radial emerald glow */}
         <div

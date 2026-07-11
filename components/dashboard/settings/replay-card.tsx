@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CaretDown, Warning } from "@phosphor-icons/react";
+import { Warning } from "@phosphor-icons/react";
 import { CopySnippet } from "@/components/dashboard/copy-snippet";
 import {
   Dialog,
@@ -199,7 +199,6 @@ export function ReplayCard({
             >
               <SelectTrigger className="w-28 font-mono text-[13px]">
                 <SelectValue />
-                <CaretDown size={13} className="opacity-60" />
               </SelectTrigger>
               <SelectContent>
                 {SAMPLE_STEPS.map((s) => (
@@ -242,7 +241,6 @@ export function ReplayCard({
             >
               <SelectTrigger className="w-32 font-mono text-[13px]">
                 <SelectValue />
-                <CaretDown size={13} className="opacity-60" />
               </SelectTrigger>
               <SelectContent>
                 {RETENTION_STEPS.map((d) => (

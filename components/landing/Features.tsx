@@ -13,7 +13,7 @@ export default function Features() {
           <h2 className="text-[44px] font-extrabold tracking-[-1.4px] leading-[1.08] mt-3 mb-4 text-foreground">
             Powerful analytics,<br />refreshingly simple
           </h2>
-          <p className="text-[18px] leading-[1.55] text-[#5A5D69] m-0">
+          <p className="text-[18px] leading-[1.55] text-muted-foreground m-0">
             Every metric that matters, none of the bloat. Set it up in 30 seconds and actually understand your traffic.
           </p>
         </div>
@@ -25,12 +25,12 @@ export default function Features() {
             return (
               <div
                 key={feature.title}
-                className="bg-white border border-border rounded-2xl p-6 shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-all duration-200 hover:border-[#CFE9DB] hover:shadow-[0_10px_30px_-12px_rgba(14,156,110,0.22)] hover:-translate-y-0.5"
+                className="bg-card border border-border rounded-2xl p-6 shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-all duration-200 hover:border-brand/30 hover:shadow-[0_10px_30px_-12px_rgba(14,156,110,0.22)] hover:-translate-y-0.5"
               >
                 {/* Icon chip */}
                 <div
                   className="w-[42px] h-[42px] rounded-xl flex items-center justify-center mb-4"
-                  style={{ backgroundColor: feature.tint }}
+                  style={{ backgroundColor: `${feature.fg}1F` }}
                 >
                   <Icon size={21} style={{ color: feature.fg }} />
                 </div>
@@ -39,7 +39,7 @@ export default function Features() {
                   {feature.title}
                 </div>
                 {/* Description */}
-                <div className="text-[14.5px] leading-[1.55] text-[#5A5D69]">
+                <div className="text-[14.5px] leading-[1.55] text-muted-foreground">
                   {feature.desc}
                 </div>
               </div>

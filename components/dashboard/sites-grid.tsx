@@ -5,6 +5,16 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { DotsThree, Plus, Trash } from "@phosphor-icons/react";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -26,6 +36,10 @@ export function SitesGrid({ sites }: { sites: SiteCard[] }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
+  // Optimistically removed sites: hidden from the grid the instant the user
+  // confirms, restored only if the server action fails.
+  const [removed, setRemoved] = useState<Set<string>>(new Set());
 
   const onCreate = (formData: FormData) => {
     setError(null);
@@ -36,14 +50,25 @@ export function SitesGrid({ sites }: { sites: SiteCard[] }) {
     });
   };
 
-  const onDelete = (publicId: string, name: string) => {
-    if (!confirm(`Delete ${name} and all of its analytics data? This cannot be undone.`)) return;
+  const onDelete = (publicId: string) => {
+    setError(null);
+    setRemoved((prev) => new Set(prev).add(publicId));
     startTransition(async () => {
       const res = await deleteSite(publicId);
-      if (res.error) setError(res.error);
-      else router.refresh();
+      if (res.error) {
+        setRemoved((prev) => {
+          const next = new Set(prev);
+          next.delete(publicId);
+          return next;
+        });
+        setError(res.error);
+      } else {
+        router.refresh();
+      }
     });
   };
+
+  const visible = sites.filter((s) => !removed.has(s.public_id));
 
   return (
     <div className="flex flex-col gap-5">
@@ -63,7 +88,7 @@ export function SitesGrid({ sites }: { sites: SiteCard[] }) {
         {error && <span className="text-[12.5px] font-medium text-danger">{error}</span>}
       </form>
 
-      {sites.length === 0 ? (
+      {visible.length === 0 ? (
         <div className="rounded-2xl border border-border bg-card px-6 py-14 text-center shadow-[0_1px_2px_rgba(16,24,40,.04)]">
           <p className="text-[14.5px] font-semibold text-foreground">Add your first site</p>
           <p className="mx-auto mt-1 max-w-sm text-[12.5px] text-muted-foreground">
@@ -73,7 +98,7 @@ export function SitesGrid({ sites }: { sites: SiteCard[] }) {
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {sites.map((s) => (
+          {visible.map((s) => (
             <div
               key={s.public_id}
               className="group relative rounded-2xl border border-border bg-card p-[18px] shadow-[0_1px_2px_rgba(16,24,40,.04)] transition-shadow hover:shadow-[0_4px_14px_rgba(16,24,40,.08)]"
@@ -101,7 +126,7 @@ export function SitesGrid({ sites }: { sites: SiteCard[] }) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
-                      onClick={() => onDelete(s.public_id, s.name)}
+                      onClick={() => setConfirmDelete({ id: s.public_id, name: s.name })}
                       className="gap-2 text-danger focus:text-danger"
                     >
                       <Trash size={14} /> Delete site
@@ -126,6 +151,33 @@ export function SitesGrid({ sites }: { sites: SiteCard[] }) {
           ))}
         </div>
       )}
+
+      <AlertDialog
+        open={confirmDelete !== null}
+        onOpenChange={(open) => !open && setConfirmDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete {confirmDelete?.name}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes the site and all of its analytics data. This cannot
+              be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-danger text-white hover:bg-danger/90"
+              onClick={() => {
+                if (confirmDelete) onDelete(confirmDelete.id);
+                setConfirmDelete(null);
+              }}
+            >
+              Delete site
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

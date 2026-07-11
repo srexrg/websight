@@ -19,7 +19,7 @@ export default function Pricing() {
           <h2 className="text-[44px] font-extrabold tracking-[-1.4px] leading-[1.08] mt-3 mb-4 text-foreground">
             Fair pricing for makers
           </h2>
-          <p className="text-[18px] leading-[1.55] text-[#5A5D69]">
+          <p className="text-[18px] leading-[1.55] text-muted-foreground">
             Start free, upgrade when you grow. No hidden fees, no surprises.
           </p>
         </div>
@@ -27,8 +27,9 @@ export default function Pricing() {
         {/* Toggle */}
         <div className="flex items-center justify-center gap-3 mb-[52px]">
           <span
-            className="text-[14px] font-semibold transition-colors"
-            style={{ color: annual ? "#9A9DA8" : "#1A1B25" }}
+            className={`text-[14px] font-semibold transition-colors ${
+              annual ? "text-muted-foreground" : "text-foreground"
+            }`}
           >
             Monthly
           </span>
@@ -47,8 +48,9 @@ export default function Pricing() {
             />
           </button>
           <span
-            className="text-[14px] font-semibold transition-colors"
-            style={{ color: annual ? "#1A1B25" : "#9A9DA8" }}
+            className={`text-[14px] font-semibold transition-colors ${
+              annual ? "text-foreground" : "text-muted-foreground"
+            }`}
           >
             Annual{" "}
             <span className="text-brand text-[12.5px]">-20%</span>
@@ -71,8 +73,8 @@ export default function Pricing() {
                 className={[
                   "relative rounded-2xl p-[30px] flex flex-col transition-all duration-200",
                   isPopular
-                    ? "bg-[#0E1310] shadow-[0_24px_60px_-24px_rgba(14,156,110,0.5)]"
-                    : "bg-white border border-border shadow-[0_1px_2px_rgba(16,24,40,0.04)] hover:border-[#CFE9DB] hover:shadow-[0_10px_30px_-12px_rgba(14,156,110,0.22)] hover:-translate-y-0.5",
+                    ? "bg-[#0E1310] ring-1 ring-white/[0.08] shadow-[0_24px_60px_-24px_rgba(14,156,110,0.5)]"
+                    : "bg-card border border-border shadow-[0_1px_2px_rgba(16,24,40,0.04)] hover:border-brand/30 hover:shadow-[0_10px_30px_-12px_rgba(14,156,110,0.22)] hover:-translate-y-0.5",
                 ].join(" ")}
               >
                 {/* Popular pill */}
@@ -98,8 +100,8 @@ export default function Pricing() {
 
                 {/* Tagline */}
                 <p
-                  className="text-[14.5px] leading-[1.5] mb-5"
-                  style={{ color: isPopular ? "#8FA89B" : "#9A9DA8" }}
+                  className={`text-[14.5px] leading-[1.5] mb-5 ${isPopular ? "" : "text-muted-foreground"}`}
+                  style={isPopular ? { color: "#8FA89B" } : undefined}
                 >
                   {plan.tagline}
                 </p>
@@ -107,14 +109,16 @@ export default function Pricing() {
                 {/* Price */}
                 <div className="flex items-baseline gap-1 mb-6">
                   <span
-                    className="font-mono text-[44px] font-bold tracking-[-1px] leading-none"
-                    style={{ color: isPopular ? "#fff" : "#1A1B25" }}
+                    className={`font-mono text-[44px] font-bold tracking-[-1px] leading-none ${
+                      isPopular ? "" : "text-foreground"
+                    }`}
+                    style={isPopular ? { color: "#fff" } : undefined}
                   >
                     {price}
                   </span>
                   <span
-                    className="text-[14px]"
-                    style={{ color: isPopular ? "#8FA89B" : "#9A9DA8" }}
+                    className={`text-[14px] ${isPopular ? "" : "text-muted-foreground"}`}
+                    style={isPopular ? { color: "#8FA89B" } : undefined}
                   >
                     {period}
                   </span>
@@ -132,8 +136,8 @@ export default function Pricing() {
                         }
                       />
                       <span
-                        className="text-[14px]"
-                        style={{ color: isPopular ? "#C9D6CF" : "#33353F" }}
+                        className={`text-[14px] ${isPopular ? "" : "text-foreground/80"}`}
+                        style={isPopular ? { color: "#C9D6CF" } : undefined}
                       >
                         {feat}
                       </span>
@@ -148,7 +152,7 @@ export default function Pricing() {
                     "mt-auto block w-full text-center text-[14.5px] font-semibold rounded-xl py-[13px] px-5 transition-all duration-150",
                     isPopular
                       ? "bg-brand text-white hover:opacity-90"
-                      : "bg-white text-[#1A1B25] border border-[#E2E4EA] hover:border-[#CFE9DB] hover:shadow-sm",
+                      : "bg-card text-foreground border border-border hover:border-brand/30 hover:shadow-sm",
                   ].join(" ")}
                 >
                   {plan.cta}

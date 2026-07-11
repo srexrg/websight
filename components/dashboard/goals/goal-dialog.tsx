@@ -9,6 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { GoalWithStats } from "@/lib/analytics/queries";
 import type { GoalInput, GoalKind, PathOp } from "@/lib/analytics/goals";
 import type { FilterOp } from "@/lib/analytics/filters";
@@ -159,11 +166,16 @@ function GoalForm({
 
         {kind === "page" ? (
           <div className="flex gap-2">
-            <select className={`${INPUT} w-32`} value={pathOp} onChange={(e) => setPathOp(e.target.value as PathOp)}>
-              <option value="exact">is exactly</option>
-              <option value="contains">contains</option>
-              <option value="wildcard">matches</option>
-            </select>
+            <Select value={pathOp} onValueChange={(v) => setPathOp(v as PathOp)}>
+              <SelectTrigger className="h-auto w-32 shrink-0 py-1.5 text-[13px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="exact">is exactly</SelectItem>
+                <SelectItem value="contains">contains</SelectItem>
+                <SelectItem value="wildcard">matches</SelectItem>
+              </SelectContent>
+            </Select>
             <input
               className={INPUT}
               value={pathPattern}
@@ -187,15 +199,21 @@ function GoalForm({
                   onChange={(e) => setProps((r) => r.map((x, j) => (j === i ? { ...x, key: e.target.value } : x)))}
                   placeholder="prop key (plan)"
                 />
-                <select
-                  className={`${INPUT} w-28`}
+                <Select
                   value={p.op}
-                  onChange={(e) => setProps((r) => r.map((x, j) => (j === i ? { ...x, op: e.target.value as FilterOp } : x)))}
+                  onValueChange={(v) =>
+                    setProps((r) => r.map((x, j) => (j === i ? { ...x, op: v as FilterOp } : x)))
+                  }
                 >
-                  <option value="is">is</option>
-                  <option value="is_not">is not</option>
-                  <option value="contains">contains</option>
-                </select>
+                  <SelectTrigger className="h-auto w-28 shrink-0 py-1.5 text-[13px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="is">is</SelectItem>
+                    <SelectItem value="is_not">is not</SelectItem>
+                    <SelectItem value="contains">contains</SelectItem>
+                  </SelectContent>
+                </Select>
                 <input
                   className={`${INPUT} flex-1`}
                   value={p.value}

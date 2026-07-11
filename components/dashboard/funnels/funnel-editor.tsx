@@ -7,10 +7,18 @@ import type { Funnel, FunnelStep } from "@/lib/analytics/funnels";
 import { FUNNEL_WINDOWS } from "@/lib/analytics/funnels";
 import type { FunnelStepResult } from "@/lib/analytics/queries";
 import type { PathOp } from "@/lib/analytics/goals";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatNumber } from "@/lib/dashboard/format";
 
 const INPUT =
   "rounded-md border border-input bg-transparent px-2.5 py-1.5 text-[13px] text-foreground outline-none focus:border-ring";
+const TRIGGER = "h-auto rounded-md px-2.5 py-1.5 text-[13px] shadow-none";
 const WINDOW_LABELS: Record<number, string> = { 30: "30 minutes", 1440: "1 day", 10080: "7 days", 43200: "30 days" };
 
 type GoalLite = { id: string; name: string };
@@ -125,11 +133,18 @@ export function FunnelEditor({
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Conversion window</span>
-            <select className={INPUT} value={effWindow} onChange={(e) => setWindowMinutes(Number(e.target.value))}>
-              {allowedWindows.map((w) => (
-                <option key={w} value={w}>{WINDOW_LABELS[w]}</option>
-              ))}
-            </select>
+            <Select value={String(effWindow)} onValueChange={(v) => setWindowMinutes(Number(v))}>
+              <SelectTrigger className={TRIGGER}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {allowedWindows.map((w) => (
+                  <SelectItem key={w} value={String(w)} className="text-[13px]">
+                    {WINDOW_LABELS[w]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {stateless && (
               <span className="text-[10.5px] text-muted-foreground">
                 Capped at 1 day - visitor ids reset daily in stateless mode.
@@ -144,26 +159,35 @@ export function FunnelEditor({
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand/15 font-mono text-[11px] font-semibold text-brand">
                 {i + 1}
               </span>
-              <select
-                className={`${INPUT} w-28`}
+              <Select
                 value={s.kind}
-                onChange={(e) => {
-                  const k = e.target.value as FunnelStep["kind"];
+                onValueChange={(v) => {
+                  const k = v as FunnelStep["kind"];
                   setStep(i, k === "page" ? { kind: "page", pathOp: "exact", pathPattern: "" } : k === "event" ? { kind: "event", eventName: "" } : { kind: "goal", goalId: "" });
                 }}
               >
-                <option value="page">Page</option>
-                <option value="event">Event</option>
-                <option value="goal">Goal</option>
-              </select>
+                <SelectTrigger className={`${TRIGGER} w-28 shrink-0`}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="page" className="text-[13px]">Page</SelectItem>
+                  <SelectItem value="event" className="text-[13px]">Event</SelectItem>
+                  <SelectItem value="goal" className="text-[13px]">Goal</SelectItem>
+                </SelectContent>
+              </Select>
 
               {s.kind === "page" && (
                 <>
-                  <select className={`${INPUT} w-28`} value={s.pathOp} onChange={(e) => setStep(i, { ...s, pathOp: e.target.value as PathOp })}>
-                    <option value="exact">is exactly</option>
-                    <option value="contains">contains</option>
-                    <option value="wildcard">matches</option>
-                  </select>
+                  <Select value={s.pathOp} onValueChange={(v) => setStep(i, { ...s, pathOp: v as PathOp })}>
+                    <SelectTrigger className={`${TRIGGER} w-28 shrink-0`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="exact" className="text-[13px]">is exactly</SelectItem>
+                      <SelectItem value="contains" className="text-[13px]">contains</SelectItem>
+                      <SelectItem value="wildcard" className="text-[13px]">matches</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <input className={`${INPUT} min-w-0 flex-1`} value={s.pathPattern} onChange={(e) => setStep(i, { ...s, pathPattern: e.target.value })} placeholder="/pricing" />
                 </>
               )}
@@ -171,12 +195,18 @@ export function FunnelEditor({
                 <input className={`${INPUT} min-w-0 flex-1`} value={s.eventName} onChange={(e) => setStep(i, { ...s, eventName: e.target.value })} placeholder="signup_click" />
               )}
               {s.kind === "goal" && (
-                <select className={`${INPUT} min-w-0 flex-1`} value={s.goalId} onChange={(e) => setStep(i, { ...s, goalId: e.target.value })}>
-                  <option value="">Select a goal…</option>
-                  {(goalsQ.data ?? []).map((g) => (
-                    <option key={g.id} value={g.id}>{g.name}</option>
-                  ))}
-                </select>
+                <Select value={s.goalId || undefined} onValueChange={(v) => setStep(i, { ...s, goalId: v })}>
+                  <SelectTrigger className={`${TRIGGER} min-w-0 flex-1`}>
+                    <SelectValue placeholder="Select a goal…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(goalsQ.data ?? []).map((g) => (
+                      <SelectItem key={g.id} value={g.id} className="text-[13px]">
+                        {g.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
 
               <div className="flex shrink-0 items-center gap-0.5">

@@ -15,7 +15,7 @@ export default function GlobeHighlight() {
             <h2 className="text-[38px] font-extrabold tracking-[-1.2px] leading-[1.1] mt-[18px] mb-4 text-foreground">
               See the world<br />visit your site
             </h2>
-            <p className="text-[17px] leading-[1.6] text-[#5A5D69] m-0 mb-[22px]">
+            <p className="text-[17px] leading-[1.6] text-muted-foreground m-0 mb-[22px]">
               Watch visitors light up across a real, spinning globe the moment they land. Drag to rotate, pause anytime, and tap a marker to see who&apos;s reading right now.
             </p>
             <div className="flex flex-col gap-[13px]">
@@ -26,7 +26,7 @@ export default function GlobeHighlight() {
                     size={19}
                     className="text-brand flex-shrink-0 mt-[1px]"
                   />
-                  <span className="text-[15px] text-[#33353F] leading-[1.5]">{point}</span>
+                  <span className="text-[15px] text-foreground/80 leading-[1.5]">{point}</span>
                 </div>
               ))}
             </div>

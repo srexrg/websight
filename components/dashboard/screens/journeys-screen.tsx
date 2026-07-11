@@ -7,10 +7,16 @@ import { encodeFilters } from "@/lib/analytics/filters";
 import { useDashboardParams, useFilters, useJourneys } from "@/lib/dashboard/use-analytics";
 import { JourneySankey, type SankeyNodeClick } from "@/components/dashboard/journeys/sankey";
 import { EmptyState, ErrorState, Sk } from "@/components/dashboard/states";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatNumber } from "@/lib/dashboard/format";
 
-const SELECT =
-  "rounded-md border border-input bg-transparent px-2 py-1 text-[12.5px] text-foreground outline-none focus:border-ring";
+const SELECT = "h-auto w-auto rounded-md px-2 py-1 text-[12.5px] shadow-none";
 
 /** Resolve CSS custom properties to concrete colors so the exported PNG keeps them. */
 function inlineColors(svg: SVGSVGElement): string {
@@ -98,16 +104,30 @@ export function JourneysScreen({ site }: { site: string }) {
               </button>
             ))}
           </div>
-          <select className={SELECT} value={steps} onChange={(e) => setSteps(Number(e.target.value))}>
-            {[2, 3, 4, 5, 6].map((s) => (
-              <option key={s} value={s}>{s} steps</option>
-            ))}
-          </select>
-          <select className={SELECT} value={topN} onChange={(e) => setTopN(Number(e.target.value))}>
-            {[5, 8, 12].map((n) => (
-              <option key={n} value={n}>top {n}</option>
-            ))}
-          </select>
+          <Select value={String(steps)} onValueChange={(v) => setSteps(Number(v))}>
+            <SelectTrigger className={SELECT}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[2, 3, 4, 5, 6].map((s) => (
+                <SelectItem key={s} value={String(s)} className="text-[12.5px]">
+                  {s} steps
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={String(topN)} onValueChange={(v) => setTopN(Number(v))}>
+            <SelectTrigger className={SELECT}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[5, 8, 12].map((n) => (
+                <SelectItem key={n} value={String(n)} className="text-[12.5px]">
+                  top {n}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <button
             onClick={exportPng}
             className="rounded-md border border-border px-2.5 py-1 text-[11.5px] font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"

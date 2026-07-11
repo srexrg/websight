@@ -10,6 +10,13 @@ import {
   filterSummary,
   type FilterOp,
 } from "@/lib/analytics/filters";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatNumber } from "@/lib/dashboard/format";
 import { useDimensionValues, useFilters } from "@/lib/dashboard/use-analytics";
 import { rangeParser } from "@/lib/dashboard/range";
@@ -105,6 +112,10 @@ function FilterEditor({
 
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      // Radix Select portals its dropdown to <body>; clicks inside it are not
+      // "outside" even though they miss the panel element.
+      if (target?.closest("[data-radix-popper-content-wrapper]")) return;
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) onClose();
     };
     document.addEventListener("mousedown", onDown);
@@ -125,28 +136,30 @@ function FilterEditor({
       className="absolute left-6 top-full z-30 mt-1 w-[380px] rounded-xl border border-border bg-popover p-3 shadow-[0_4px_14px_rgba(16,24,40,.12)]"
     >
       <div className="flex gap-2">
-        <select
-          value={dim}
-          onChange={(e) => setDim(e.target.value)}
-          className="h-8 flex-1 rounded-lg border border-input bg-card px-2 text-[12.5px] text-foreground outline-none"
-        >
-          {FILTER_DIMENSIONS.map((d) => (
-            <option key={d.dim} value={d.dim}>
-              {d.label}
-            </option>
-          ))}
-        </select>
-        <select
-          value={op}
-          onChange={(e) => setOp(e.target.value as FilterOp)}
-          className="h-8 w-32 rounded-lg border border-input bg-card px-2 text-[12.5px] text-foreground outline-none"
-        >
-          {FILTER_OPS.map((o) => (
-            <option key={o} value={o}>
-              {OP_LABELS[o]}
-            </option>
-          ))}
-        </select>
+        <Select value={dim} onValueChange={setDim}>
+          <SelectTrigger className="h-8 flex-1 px-2 text-[12.5px] shadow-none">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {FILTER_DIMENSIONS.map((d) => (
+              <SelectItem key={d.dim} value={d.dim} className="text-[12.5px]">
+                {d.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={op} onValueChange={(v) => setOp(v as FilterOp)}>
+          <SelectTrigger className="h-8 w-32 shrink-0 px-2 text-[12.5px] shadow-none">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {FILTER_OPS.map((o) => (
+              <SelectItem key={o} value={o} className="text-[12.5px]">
+                {OP_LABELS[o]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       <input
         autoFocus
