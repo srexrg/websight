@@ -150,6 +150,34 @@ type WsrBoot = { site: string; ep: string; vid?: string };
         // parent element matches this selector, so :not(marked, inside-marked)
         // masks everything else. Inputs stay masked regardless (maskAllInputs).
         ...(maskText ? { maskTextSelector: ":not([data-ws-unmask], [data-ws-unmask] *)" } : {}),
+        // Throttle the high-frequency, low-signal sources so we stop paying to
+        // store, upload and re-download data we never use in playback. Scroll
+        // and media events are sampled; inputs record only their final value
+        // (also a privacy win - keystroke-by-keystroke is never captured, on top
+        // of maskAllInputs). Mouse moves and interactions stay at full rate:
+        // they keep playback smooth and feed the click / rage / dead-click
+        // markers (and any future heatmap).
+        sampling: {
+          scroll: 500,
+          media: 800,
+          input: "last",
+        },
+        // Strip nodes that never affect the replay: <script> (neutered on
+        // playback anyway), comments, favicons, head whitespace, and the meta
+        // soup. Shrinks every full snapshot - by far the largest chunk - cutting
+        // storage, egress and playback parse time.
+        slimDOMOptions: {
+          script: true,
+          comment: true,
+          headFavicon: true,
+          headWhitespace: true,
+          headMetaDescKeywords: true,
+          headMetaSocial: true,
+          headMetaRobots: true,
+          headMetaHttpEquiv: true,
+          headMetaAuthorship: true,
+          headMetaVerification: true,
+        },
         checkoutEveryNms: 120000,
         recordCanvas: false,
         recordCrossOriginIframes: false,
