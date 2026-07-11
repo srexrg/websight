@@ -118,10 +118,10 @@ export default function Hero() {
         </h1>
 
         {/* Subhead */}
-        <p className="text-[20px] leading-[1.55] text-muted-foreground max-w-[600px] mx-auto mb-8 [text-wrap:pretty]">
-          A lightweight, beautiful analytics dashboard for indie hackers.
-          Realtime data, a live visitor globe, and a script under 1KB —
-          without the creepy tracking.
+        <p className="text-[20px] leading-[1.55] text-muted-foreground max-w-[620px] mx-auto mb-8 [text-wrap:pretty]">
+          The open-source Google Analytics alternative. Realtime data, a live
+          visitor globe, session replays, and a script under 1KB — without the
+          creepy tracking.
         </p>
 
         {/* CTAs */}
@@ -136,14 +136,14 @@ export default function Hero() {
             </Button>
           </Link>
 
-          <Link href="/auth">
+          <Link href="#globe">
             <Button
               size="lg"
               variant="outline"
               className="bg-card border-border text-foreground font-semibold text-[16px] px-[22px] py-[13px] rounded-xl hover:border-brand hover:text-brand gap-2 h-auto"
             >
               <PlayCircle size={18} />
-              Live demo
+              See it live
             </Button>
           </Link>
         </div>

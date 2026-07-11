@@ -5,6 +5,13 @@ import { Topbar } from "@/components/dashboard/topbar";
 import { FilterBar } from "@/components/dashboard/filters/filter-bar";
 
 /**
+ * Site public_ids are 8 chars of ws_public_id()'s alphabet (lowercase
+ * alphanumeric minus l/o/0/1). Random top-level paths like /pricing-old
+ * can never be a site, so they 404 before the auth redirect.
+ */
+const PUBLIC_ID_RE = /^[a-km-np-z2-9]{8}$/;
+
+/**
  * Per-site shell: resolves the site by public_id AS THE SIGNED-IN USER
  * (RLS on `sites` means foreign or unknown ids simply return nothing ->
  * 404, not an error boundary), then renders sidebar + topbar + screen.
@@ -17,6 +24,8 @@ export default async function SiteLayout({
   params: Promise<{ site: string }>;
 }) {
   const { site: publicId } = await params;
+  if (!PUBLIC_ID_RE.test(publicId)) notFound();
+
   const supabase = await createClient();
   const {
     data: { user },

@@ -1,14 +1,11 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
 import { DashboardProviders } from "@/components/dashboard/providers";
 
-/** Authed app group (docs/redesign/03): session gate + client providers. */
-export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/auth");
-
+/**
+ * Authed app group (docs/redesign/03): client providers only. The session
+ * gate lives in each child segment ([site]/layout, dashboard, onboarding,
+ * settings) rather than here, so an unknown top-level path can 404 before
+ * any auth redirect. New segments under this group must gate themselves.
+ */
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return <DashboardProviders>{children}</DashboardProviders>;
 }

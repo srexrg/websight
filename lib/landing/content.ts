@@ -39,6 +39,16 @@ export type Plan = {
 
 export type FooterCol = { title: string; links: NavLink[] };
 
+/** One comparison row: true/false renders a check/cross, a string renders as text. */
+export type CompareRow = {
+  label: string;
+  websight: boolean | string;
+  ga: boolean | string;
+  plausible: boolean | string;
+};
+
+export type Faq = { q: string; a: string };
+
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
 export const navLinks: NavLink[] = [
@@ -227,6 +237,48 @@ export const plans: Plan[] = [
       "Priority support",
       "Self-host license",
     ],
+  },
+];
+
+// ─── Comparison (vs the tools people actually switch from) ────────────────────
+
+export const compareRows: CompareRow[] = [
+  { label: "Price", websight: "Free & open source", ga: "Free (you're the product)", plausible: "From $9/mo" },
+  { label: "Cookie consent banner", websight: "Not needed", ga: "Required", plausible: "Not needed" },
+  { label: "Script size", websight: "<1 KB", ga: "~50 KB+", plausible: "<1 KB" },
+  { label: "Realtime dashboard", websight: true, ga: "Delayed", plausible: "Limited" },
+  { label: "Live visitor globe", websight: true, ga: false, plausible: false },
+  { label: "Session replay", websight: true, ga: false, plausible: false },
+  { label: "Funnels, goals & retention", websight: true, ga: true, plausible: "Paid add-on" },
+  { label: "Self-hostable", websight: true, ga: false, plausible: true },
+];
+
+// ─── FAQ ───────────────────────────────────────────────────────────────────────
+
+export const faqs: Faq[] = [
+  {
+    q: "Do I need a cookie consent banner?",
+    a: "No. WebSight is cookieless by default: visitors are counted with a daily-rotating anonymous hash, so there is nothing to consent to. GDPR, CCPA and PECR compliant out of the box.",
+  },
+  {
+    q: "Is WebSight really free?",
+    a: "Yes. The code is MIT-licensed and self-hosting is free forever. The hosted Hobby plan is also free for 10k events a month, no credit card required.",
+  },
+  {
+    q: "How long does setup take?",
+    a: "About 30 seconds. Add your domain, paste one script tag into your <head>, and visits start streaming into the realtime dashboard immediately.",
+  },
+  {
+    q: "Will it slow my site down?",
+    a: "No. The tracker is under 1 KB, loads deferred, and never blocks rendering. Your Core Web Vitals will not notice it exists.",
+  },
+  {
+    q: "Can I self-host it?",
+    a: "Yes. WebSight is a Next.js app backed by Supabase; the docs include a step-by-step self-hosting guide. Your data stays on your infrastructure.",
+  },
+  {
+    q: "Can I share my analytics publicly?",
+    a: "Yes. Every site can generate a public share link, optionally password-protected, so you can show your numbers to teammates, clients, or the whole internet.",
   },
 ];
 
