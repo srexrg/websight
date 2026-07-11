@@ -1,0 +1,60 @@
+---
+title: Custom events
+description: Track signups, purchases, and clicks with websight.track or data-ws-event.
+---
+
+Custom events record the actions that matter to you: signups, purchases, upgrades, anything the automatic events miss. Send them from JavaScript or straight from your markup.
+
+## Track an event
+
+Call `websight.track` with an event name and an optional properties object:
+
+```js
+websight.track("signup", { plan: "pro" });
+```
+
+There is also a command form, which is handy when you are not sure the API object exists yet:
+
+```js
+websight("track", "signup", { plan: "pro" });
+```
+
+Both do the same thing. The name is any string that is not [reserved](#reserved-names).
+
+## From HTML
+
+To fire an event on click without writing JavaScript, add `data-ws-event` to any element. The value is the event name:
+
+```html
+<button data-ws-event="signup_click">Create account</button>
+```
+
+A click anywhere inside that element sends a `signup_click` event.
+
+## Before the script loads
+
+The `websight` function is always installed and never throws, even before `t.js` has loaded or when tracking is disabled. Calls made early are queued and replayed once the tracker is ready, so you can call it unconditionally from anywhere in your app without guarding it:
+
+```js
+websight("track", "signup", { plan: "pro" });
+```
+
+## Properties
+
+Properties are a flat object of keys and values. Keep them simple: strings, numbers, and booleans. Two limits apply on the server:
+
+- The event name is capped at 120 characters.
+- If the properties serialize to more than 4096 bytes of JSON, the props are dropped but the event itself is still recorded.
+
+## Reserved names
+
+These names are used by the tracker itself and are not available for custom events:
+
+- `pageview`
+- `web_vital`
+- `error`
+- `identify`
+
+## See them in the dashboard
+
+Custom events show up on the [Events](/docs/dashboard/events) screen. An event dictionary entry is created automatically the first time a given name is seen for your site, and as the owner you can annotate each event with a description and its expected properties.

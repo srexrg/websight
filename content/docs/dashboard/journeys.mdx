@@ -1,0 +1,26 @@
+---
+title: Journeys
+description: The paths visitors take through your site.
+---
+
+Journeys is a Sankey diagram of the pageview paths visitors take within a session, so you can see the routes people actually follow rather than the ones you designed. On mobile it falls back to a top-paths list.
+
+## What you see
+
+Each column is a step in the journey and each node is a page, sized by how many sessions passed through it. The flows between nodes show where visitors went next. Loops stay distinct: a page revisited later in the session appears as a separate node in its own column, so a cycle never collapses into itself.
+
+## Controls
+
+- **Direction**: build paths forward from where sessions **start**, or backward from where they **end**.
+- **Steps**: how many columns to show, 2 to 6 (default 4).
+- **Top N per column**: how many nodes to keep in each column, 5, 8, or 12. The rest are grouped away.
+
+Right-click a node to set it as the start or end anchor, filter the whole dashboard to that page, or view the sessions that passed through it.
+
+## Collapse rules
+
+To keep noisy URL spaces readable, add wildcard patterns like `/blog/*` (up to 20). Every path that matches a pattern merges into a single node, so hundreds of article URLs become one "blog" step instead of crowding the diagram.
+
+## Sampling and export
+
+Above 200,000 sessions the diagram is computed from a sample and flagged **sampled**, so read proportions rather than exact counts at that scale. You can export the current diagram as a PNG.

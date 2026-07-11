@@ -1,0 +1,50 @@
+---
+title: Public dashboards
+description: Share a read-only dashboard, protect it with a password, and embed a live badge.
+---
+
+Give anyone a live view of your stats without a login. Sharing is off until you turn it on, and you decide exactly which screens are visible.
+
+## Share your dashboard
+
+Open your [site settings](/docs/sharing/site-settings) and turn on the public sharing toggle. WebSight generates a 24-character token and a link in the form `https://websight.srexrg.me/share/{token}`.
+
+- There is one share link per site.
+- **Rotate link** issues a new token and immediately invalidates the old URL.
+- **Stop sharing** deletes the link. The old URL stops working right away.
+
+## What visitors can see
+
+The Overview is always part of a public dashboard. Everything else is opt-in per checkbox:
+
+| Screen | Public? |
+|---|---|
+| Overview | Always shown |
+| Realtime, Globe, Pages, Sources, Audience | Optional (per checkbox) |
+| Custom events and goals | Hidden by default; a checkbox unhides them |
+| Sessions, Profiles, Funnels, Journeys, Retention, Web Vitals, Errors | Never public |
+
+Public dashboards are read-only. Per-session details are never exposed, so a visitor can browse aggregates but cannot open an individual session or profile.
+
+## Visibility and password
+
+Choose how discoverable the link is:
+
+- **Unlisted**: the page asks search engines not to index it. This is the default.
+- **Public**: the page may be indexed and appear in search results.
+
+You can also set an optional password. Viewers enter it once and stay unlocked for 7 days before they are asked again.
+
+## Embed a live badge
+
+Drop a small badge on your own site that shows current activity. Add the embed script anywhere in your page and pass your share token:
+
+```html
+<script src="https://websight.srexrg.me/embed.js" data-share="TOKEN"></script>
+```
+
+The badge shows live visitors and pageviews and refreshes every 15 seconds. Its live count reflects a rolling 5-minute window.
+
+<Callout type="info">
+The badge needs sharing to be on and uses the same token as your share link. Rotating the link changes the token, so update the `data-share` value if you rotate.
+</Callout>

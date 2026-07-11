@@ -1,0 +1,41 @@
+---
+title: Automatic events
+description: Outbound clicks, file downloads, and form submits tracked out of the box.
+---
+
+The snippet tracks more than pageviews with no extra code. As soon as `t.js` loads it watches for navigations, outbound clicks, downloads, and form submits, and it keeps a lightweight presence heartbeat running.
+
+| Event | Trigger | Props |
+|---|---|---|
+| `pageview` | Initial load and every SPA navigation | - |
+| `outbound_click` | Click on a link to a different host | `url` |
+| `download` | Click on a link to a downloadable file | `url` |
+| `form_submit` | A `<form>` submits | `form` (when the form has an id or name) |
+
+## Pageviews
+
+A `pageview` fires on the initial load and again on every client-side navigation. The tracker patches `history.pushState` and `history.replaceState` and listens for `popstate`, so History-based routers (Next.js, React Router, and similar) are counted without any configuration. Hash-router navigations are only counted when you add [`data-hash`](/docs/tracking/script#data-hash).
+
+Identical consecutive URLs are deduplicated, so a `replaceState` loop or a redundant navigation does not inflate your counts. Prerendered pages wait until they are activated before sending their first pageview, and a page restored from the back/forward cache re-fires its pageview so returning visits are not lost.
+
+## Outbound clicks
+
+A click on an anchor whose host differs from your site's, over `http` or `https`, sends an `outbound_click` event with the destination in the `url` prop. This lets you see which external links visitors follow.
+
+Turn it off with `data-track-outbound="false"`.
+
+## File downloads
+
+A click on an anchor whose path ends in a known file extension sends a `download` event with the file in the `url` prop. The tracked extensions are:
+
+`pdf`, `zip`, `dmg`, `pkg`, `exe`, `msi`, `apk`, `csv`, `xls`, `xlsx`, `doc`, `docx`, `ppt`, `pptx`, `txt`, `rar`, `7z`, `gz`, `tar`, `mp3`, `mp4`, `mov`, `avi`, `wav`, `iso`.
+
+Turn it off with `data-track-downloads="false"`.
+
+## Form submits
+
+When any `<form>` on the page submits, the tracker sends a `form_submit` event. If the form has an `id` (or failing that a `name`), it is included as the `form` prop so you can tell your forms apart. Forms without either still send the event, just without the prop.
+
+## Presence heartbeat
+
+While the tab is visible the tracker sends a ping every 45 seconds. The ping only bumps the session's last-activity time on the server; it stores no event and never appears in your event counts. It is what keeps a visitor showing as online in [Realtime](/docs/dashboard/realtime). The heartbeat stops when the tab is hidden or closed, so presence drops off within the live window instead of lingering.

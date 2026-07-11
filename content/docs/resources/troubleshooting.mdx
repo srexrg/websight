@@ -1,0 +1,47 @@
+---
+title: Troubleshooting
+description: Fix missing data, blocked requests, and installation problems.
+---
+
+Most issues come down to the snippet not loading, traffic being filtered, or a feature that needs a second opt-in. Work top to bottom.
+
+## No data after installing
+
+Open your deployed site and check the browser's Network tab:
+
+1. The `<script>` tag is present and `t.js` loads with status 200.
+2. `data-site` matches your domain exactly.
+3. You are on the deployed site, not localhost (local traffic is excluded).
+4. `POST /api/track` returns 202.
+
+The very first event flushes immediately, so a single pageview should appear without waiting. If `t.js` is 200 but there is no `POST`, check that `data-site` is set.
+
+## An adblocker is blocking the tracker
+
+Symptom: the console shows `t.js` failed to load, or the request never appears. Adblockers like uBlock Origin and Brave Shields block third-party analytics domains.
+
+Fix: serve the tracker from your own domain with a [first-party proxy](/docs/tracking/adblockers). Same-origin requests cannot be filtered this way.
+
+## Realtime shows nobody but Overview has data
+
+Realtime windows are short and only count visitors active in the last 5 minutes. Presence is kept alive by a heartbeat that fires only while the tab is visible, so a background or closed tab drops out quickly. Overview counts the whole selected range, so it will show traffic that Realtime no longer does. See [Realtime](/docs/dashboard/realtime).
+
+## No countries or cities
+
+Geo is derived from CDN request headers. Local development traffic has no location, and a self-host that does not sit behind a CDN that sets location headers will show no country or city. See [self-hosting](/docs/resources/self-hosting) for the CDN requirement.
+
+## Web Vitals empty
+
+Web Vitals needs two opt-ins: `data-vitals` on the snippet and enablement from the dashboard card. Beyond that, the p75 for a metric stays hidden until it has 30 samples, and Safari does not report INP or LCP. See [Web Vitals](/docs/dashboard/web-vitals).
+
+## Errors page empty
+
+Error capture needs `data-errors` on the snippet. Only uncaught errors and unhandled promise rejections from real visitors are recorded, so a page that simply has no errors stays empty. See [Errors](/docs/dashboard/errors).
+
+## Retention or Profiles say they are locked
+
+Both need a durable identity, which stateless mode does not provide. Switch the site to persistent mode or call [`identify()`](/docs/tracking/identify) to unlock them. See [Privacy and data](/docs/resources/privacy) for the mode difference.
+
+## My own visits are counted
+
+Set the `websight_ignore` flag in the browser you use to visit your own site. See [Exclude traffic](/docs/tracking/exclude-traffic).

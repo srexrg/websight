@@ -21,11 +21,15 @@ import {
   getRetention,
   getRetentionVisitors,
   getLiveSessions,
+  getReplayBySession,
+  getReplayDetail,
+  getReplays,
   getSessionEvents,
   getSessions,
   getTimeseries,
   type BreakdownDimension,
   type Granularity,
+  type ReplaysCursor,
   type SessionsCursor,
 } from "@/lib/analytics/queries";
 import {
@@ -65,8 +69,10 @@ import { RANGE_PRESETS, rangeToDates, type RangePreset } from "@/lib/dashboard/r
  *
  * Query params:
  *   kind=overview|timeseries|breakdown|events|sessions|session-events|dimension-values
- *   cur_s=<ISO>&cur_id=<uuid>                   (sessions keyset cursor)
- *   session=<uuid>                              (session-events)
+ *        |replays|replay-detail|session-replay
+ *   cur_s=<ISO>&cur_id=<uuid>                   (sessions/replays keyset cursor)
+ *   session=<uuid>                              (session-events, session-replay)
+ *   recording=<uuid>                            (replay-detail)
  *   range=24h|7d|30d|90d                        (default 7d)
  *   from=<ISO>&to=<ISO>                         (override range, e.g. comparison)
  *   f=<encoded filters>                         (docs/redesign/05 codec)
@@ -172,13 +178,41 @@ export async function GET(
         );
       }
       case "live-sessions":
-        return NextResponse.json(await getLiveSessions(site.id));
+        return NextResponse.json(await getLiveSessions(site.id, 2));
       case "session-events": {
         const sessionId = q.get("session") ?? "";
         if (!/^[0-9a-f-]{36}$/i.test(sessionId)) {
           return NextResponse.json({ error: "Invalid session" }, { status: 400 });
         }
         return NextResponse.json(await getSessionEvents(site.id, sessionId));
+      }
+      case "replays": {
+        const curS = q.get("cur_s");
+        const curId = q.get("cur_id");
+        if ((curS && !curId) || (!curS && curId)) {
+          return NextResponse.json({ error: "Invalid cursor" }, { status: 400 });
+        }
+        const cursor: ReplaysCursor | null = curS && curId ? { startedAt: curS, id: curId } : null;
+        const pageSize = Math.min(Math.max(Number(q.get("limit")) || 50, 1), 100);
+        return NextResponse.json(
+          await getReplays(site.id, range, cursor, pageSize, undefined, filters),
+        );
+      }
+      case "replay-detail": {
+        const recording = q.get("recording") ?? "";
+        if (!/^[0-9a-f-]{36}$/i.test(recording)) {
+          return NextResponse.json({ error: "Invalid recording" }, { status: 400 });
+        }
+        const detail = await getReplayDetail(site.id, recording);
+        if (!detail) return NextResponse.json({ error: "Not found" }, { status: 404 });
+        return NextResponse.json(detail);
+      }
+      case "session-replay": {
+        const sessionId = q.get("session") ?? "";
+        if (!/^[0-9a-f-]{36}$/i.test(sessionId)) {
+          return NextResponse.json({ error: "Invalid session" }, { status: 400 });
+        }
+        return NextResponse.json(await getReplayBySession(site.id, sessionId));
       }
       case "profiles": {
         const offset = Math.max(Number(q.get("offset")) || 0, 0);

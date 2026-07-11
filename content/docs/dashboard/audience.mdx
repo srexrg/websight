@@ -1,0 +1,23 @@
+---
+title: Audience
+description: Countries, devices, browsers, operating systems, and languages.
+---
+
+Audience breaks your visitors down by where they are and what they use to browse. It respects the shared [date range and filters](/docs/dashboard/filters).
+
+## What you see
+
+Five ranked cards:
+
+- **Countries** - top 20, with flags.
+- **Devices** - top 10.
+- **Browsers** - top 10.
+- **Operating systems** - top 10.
+- **Languages** - top 10.
+
+## What you can do
+
+- Click any row to filter the whole dashboard to that country, device, browser, OS, or language (see [click to filter](/docs/dashboard/filters#click-to-filter)).
+- Stack filters to answer questions like "mobile Safari visitors from Germany" and watch every other screen narrow with it.
+
+Device, browser, and OS are parsed from the user agent at ingest, and the raw user agent is never stored. Country comes from your CDN's request headers, so it is available at country level but not for local or dev traffic. See [privacy](/docs/resources/privacy) for what is and is not retained.

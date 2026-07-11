@@ -1,0 +1,113 @@
+---
+title: Install on your platform
+description: Snippets for Next.js, React, Vue, WordPress, Shopify, Webflow, Framer, and Google Tag Manager.
+---
+
+Pick your platform below. Each snippet is the same tracker, reframed for where that platform expects custom code. Replace `yourdomain.com` with your site's domain.
+
+<Tabs items={['HTML', 'Next.js', 'React', 'Vue', 'WordPress', 'Shopify', 'Webflow', 'Framer', 'GTM']}>
+
+<Tab value="HTML">
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"></script>
+```
+
+Paste inside your `<head>`, before the closing tag.
+
+</Tab>
+
+<Tab value="Next.js">
+
+```tsx
+import Script from "next/script";
+
+// in app/layout.tsx <head> or root layout
+<Script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com" />
+```
+
+Use `next/script` with the defer strategy in your root layout.
+
+</Tab>
+
+<Tab value="React">
+
+```html
+<!-- public/index.html, inside <head> -->
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"></script>
+```
+
+Add to `index.html` so it loads once, outside the React tree.
+
+</Tab>
+
+<Tab value="Vue">
+
+```html
+<!-- index.html, inside <head> -->
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"></script>
+```
+
+Add to `index.html` in your project root.
+
+</Tab>
+
+<Tab value="WordPress">
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"></script>
+```
+
+Paste into your theme's `header.php` before `</head>`, or use a "header scripts" plugin (e.g. WPCode). No plugin required.
+
+</Tab>
+
+<Tab value="Shopify">
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"></script>
+```
+
+Online Store → Themes → Edit code → `layout/theme.liquid`, before `</head>`.
+
+</Tab>
+
+<Tab value="Webflow">
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"></script>
+```
+
+Project Settings → Custom Code → Head Code. Publish to apply.
+
+</Tab>
+
+<Tab value="Framer">
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"></script>
+```
+
+Site Settings → General → Custom Code → End of `<head>` tag.
+
+</Tab>
+
+<Tab value="GTM">
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com"></script>
+```
+
+New Tag → Custom HTML, paste the snippet, trigger on All Pages. Prefer direct install if possible (GTM adds latency).
+
+</Tab>
+
+</Tabs>
+
+## Single-page apps
+
+Route changes are tracked automatically. The tracker patches the History API (`pushState` and `replaceState`) and listens for `popstate`, so client-side navigations count as pageviews with no extra setup. If your app uses a hash router, add `data-hash` to the snippet so `hashchange` navigations are tracked too. See the [script reference](/docs/tracking/script) for every attribute.
+
+## Behind an adblocker?
+
+Adblockers can block third-party analytics domains. Serve the tracker from your own domain to make requests same-origin and unblockable. See [Adblockers](/docs/tracking/adblockers) for the one-rule proxy setup.

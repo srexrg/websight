@@ -1,0 +1,30 @@
+---
+title: Funnels
+description: See where visitors drop off in multi-step flows.
+---
+
+A funnel is an ordered sequence of steps that a single visitor completes in order, so you can see exactly where people fall out of a flow.
+
+## Build a funnel
+
+Add between 2 and 8 steps. Each step is one of:
+
+- **Page**, matched exactly, by contains, or by wildcard (`*`).
+- **Event**, an [event name](/docs/dashboard/events) with optional property filters.
+- **Goal**, a reference to a saved [goal](/docs/dashboard/goals).
+
+Reorder or remove steps as you build. Set a **conversion window**, the maximum time a visitor has to get from the first step to the last: 30 minutes, 1 day, 7 days, or 30 days. The default is 1 day. A live preview over the last 7 days shows how many visitors entered, how many completed, and the overall rate.
+
+<Callout type="warn">
+Stateless sites cap the conversion window at 1 day, because visitor ids reset daily and cannot be matched across days. Switch the site to persistent mode or call [identify()](/docs/tracking/identify) to unlock the 7-day and 30-day windows.
+</Callout>
+
+## Reading a funnel
+
+Matching is sequential and per visitor: a visitor counts at a step only if they reached every step before it, in order, within the window. For each step you see:
+
+- Unique visitors who reached it, drawn as a bar relative to the first step.
+- Drop-off count and percentage from the previous step.
+- Median time from the previous step.
+
+Click any step to split its visitors into converted and dropped lists. For the visitors who finished the whole funnel, a time-to-convert histogram shows how long completion took. Funnels are comparison-aware, so they respect the comparison mode set on the dashboard.

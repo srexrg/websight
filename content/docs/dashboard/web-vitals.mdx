@@ -1,0 +1,42 @@
+---
+title: Web Vitals
+description: Core Web Vitals from the field at the 75th percentile.
+---
+
+Web Vitals reports Google's Core Web Vitals measured on your real visitors' devices, so you see field performance rather than a lab score.
+
+## Enable it
+
+Turning this on takes two switches:
+
+1. Add `data-vitals` to the snippet. Its presence loads the lazy tracker chunk that measures vitals.
+2. Confirm it in the dashboard: a "Turn on Web Vitals" card appears with an **I've added it** button.
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="yourdomain.com" data-vitals></script>
+```
+
+On a high-traffic site you can sample by giving `data-vitals` a rate between 0 and 1, for example `data-vitals="0.1"` to measure 10% of page loads. See [The script](/docs/tracking/script) for the full attribute reference.
+
+## The metrics
+
+All values are reported at the 75th percentile (p75), and ratings are computed server-side from the raw values.
+
+| Metric | Good | Poor |
+|---|---|---|
+| LCP (Largest Contentful Paint) | 2500 ms | 4000 ms |
+| INP (Interaction to Next Paint) | 200 ms | 500 ms |
+| CLS (Cumulative Layout Shift) | 0.1 | 0.25 |
+| FCP (First Contentful Paint) | 1800 ms | 3000 ms |
+| TTFB (Time to First Byte) | 800 ms | 1800 ms |
+
+## Reading the screen
+
+- p75 tiles, one per metric. Each stays hidden until it has at least 30 samples, so an early number never misleads you.
+- A device toggle for All, Desktop, or Mobile.
+- A trend chart, plus breakdowns by device, browser, and country.
+- A per-page table with the attributed element: the DOM element responsible for that page's score.
+
+<Callout type="info">
+Safari does not report INP or LCP, so those metrics reflect other browsers only. The web-vitals library measures hard page loads, so SPA soft navigations are excluded from these numbers.
+</Callout>

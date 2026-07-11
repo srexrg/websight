@@ -1,0 +1,1 @@
+{ "title": "Dashboard", "pages": ["filters", "overview", "realtime", "globe", "sessions", "replays", "pages", "sources", "audience", "events", "goals", "funnels", "journeys", "retention", "profiles", "errors", "web-vitals"] }

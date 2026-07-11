@@ -1,0 +1,41 @@
+---
+title: Server-side API
+description: Send events from your backend with an API key.
+---
+
+There is a small server-side endpoint for recording an event from your backend with an API key. It is a legacy, limited interface. For almost everything, the [script tag](/docs/tracking/script) and [`websight.track`](/docs/tracking/custom-events) are the right tools.
+
+## Get your key
+
+Your account has a single API key on the Settings screen. Use the card there to generate one, copy it, and regenerate it if it leaks. Regenerating invalidates the old key immediately.
+
+## Send an event
+
+Make a `POST` to `/api/events` with your key as a Bearer token:
+
+```bash
+curl -X POST https://websight.srexrg.me/api/events \
+  -H "Authorization: Bearer <your-api-key>" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "purchase", "domain": "yourdomain.com", "description": "42 EUR"}'
+```
+
+The body has three fields:
+
+| Field | Required | Notes |
+|---|---|---|
+| `name` | Yes | Event name. Lowercased on the server. |
+| `domain` | Yes | Your site's domain. A leading protocol and `www.` are stripped. |
+| `description` | No | Free text, stored with the event. |
+
+A missing or unknown key returns `401`. Missing `name` or `domain` returns an error. On success the endpoint returns a JSON success message.
+
+## What it does and does not do
+
+Server events are not sessionized. They are recorded against a synthetic `api:<your-account>` visitor and never create a session, so they do not affect visitor counts, sessions, or any of the session-based reports. They record that a named event happened, and little more.
+
+<Callout type="info">
+This is a legacy interface kept for backward compatibility. It takes a single `name`, `domain`, and `description`, not arbitrary event properties. For real custom events with properties, use [`websight.track`](/docs/tracking/custom-events) from the browser, which is sessionized and counts toward your reports.
+</Callout>
+
+The endpoint and its shape may change. For status and the latest, see the repository at [github.com/srexrg/websight](https://github.com/srexrg/websight).

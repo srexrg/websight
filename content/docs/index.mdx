@@ -1,0 +1,40 @@
+---
+title: Introduction
+description: What WebSight is and what it can do for your site.
+---
+
+WebSight is open-source, privacy-first web analytics. You get a realtime dashboard next to product analytics like goals, funnels, and retention, all in one place. It is cookieless by default, so stateless mode needs no consent banner, and the tracker is under 3 KB gzipped.
+
+## Get started
+
+<Cards>
+  <Card title="Quickstart" href="/docs/getting-started/quickstart" description="Add your site and see your first pageview in a few minutes." />
+  <Card title="Install on your platform" href="/docs/getting-started/install" description="Snippets for HTML, Next.js, React, Vue, WordPress, and more." />
+  <Card title="How WebSight counts" href="/docs/getting-started/how-counting-works" description="How visitors, sessions, bounce rate, and duration are measured." />
+</Cards>
+
+## Explore the dashboard
+
+<Cards>
+  <Card title="Overview" href="/docs/dashboard/overview" description="Visitors, sessions, and top pages and sources at a glance." />
+  <Card title="Realtime" href="/docs/dashboard/realtime" description="Who is on your site right now, updating live." />
+  <Card title="Globe" href="/docs/dashboard/globe" description="A 3D globe of active visitors around the world." />
+  <Card title="Sessions" href="/docs/dashboard/sessions" description="Every session with its path, device, and duration." />
+  <Card title="Goals" href="/docs/dashboard/goals" description="Track conversions from pageviews or custom events." />
+  <Card title="Funnels" href="/docs/dashboard/funnels" description="Multi-step conversion paths with drop-off at each step." />
+  <Card title="Errors" href="/docs/dashboard/errors" description="Grouped JavaScript errors from real visitors." />
+  <Card title="Web Vitals" href="/docs/dashboard/web-vitals" description="LCP, INP, CLS, FCP, and TTFB at the 75th percentile." />
+</Cards>
+
+## How it works
+
+You add one script tag to your site. The tracker sends pageviews and events to WebSight's ingest endpoint, where each visitor is counted with a daily-rotating salted hash in stateless mode, or a localStorage id in persistent mode. Everything lands in a single realtime dashboard. No cookies are ever set, and no raw IP or user agent is stored. See [Privacy](/docs/resources/privacy) for the full picture.
+
+## Two privacy modes
+
+You choose a privacy mode when you create a site. It cannot be changed later in settings.
+
+| Mode | How visitors are counted | Trade-off |
+|---|---|---|
+| Stateless (default) | No cookies, no stored ids. Visitors are counted with a salted hash that resets daily. | No consent banner needed. Visitor ids reset each day. |
+| Persistent | A random id in localStorage gives visitors a durable identity across days. Still no cookies. | Unlocks [Profiles](/docs/dashboard/profiles) and [Retention](/docs/dashboard/retention), which need a stable identity. |

@@ -1,0 +1,40 @@
+---
+title: How WebSight counts
+description: How visitors, sessions, bounce rate, and duration are measured.
+---
+
+Every metric in the dashboard comes from the same event stream. This page explains how those events become visitors, sessions, and the rates you see. Bots are never counted in any of them.
+
+## Visitors
+
+A unique visitor is a distinct visitor id over your events. How that id is formed depends on your [privacy mode](/docs/resources/privacy):
+
+- **Stateless** (default): the server derives the id from a salted daily hash. The salt rotates every day, so visitor ids reset each day. A visitor returning tomorrow is counted as new.
+- **Persistent**: a durable id stored in localStorage gives visitors a stable identity across days.
+
+Neither mode uses cookies, and no raw IP or user agent is ever stored.
+
+## Sessions
+
+A session groups a visitor's activity using a 30-minute inactivity window. An event more than 30 minutes after the previous one starts a new session. Each visitor has at most one open session per site at a time, and stale sessions are closed by a background job.
+
+## Bounce rate
+
+A session is a bounce when it has at most one pageview. Bounce rate is bounces divided by total sessions.
+
+## Duration
+
+Session duration is the time from the first event to the last event in that session. A session with a single hit has a duration of 0. Average duration is the mean across sessions.
+
+## Pageviews and views per session
+
+Pageviews are the count of `pageview` events. Views per session is pageviews divided by sessions.
+
+## What gets filtered
+
+Some traffic and data never make it into your reports:
+
+- **Bots.** The server drops known bots by user agent, covering crawlers and spiders, headless browsers, AI crawlers, and uptime monitors. A request with a missing or empty user agent is treated as a bot.
+- **Query parameters.** The tracker keeps only `utm_*`, `ref`, and `source` from the URL query string. Everything else is stripped for privacy before anything is stored.
+
+For how this shapes the numbers, see [Privacy](/docs/resources/privacy). To slice the traffic that is kept, see [Filters](/docs/dashboard/filters).

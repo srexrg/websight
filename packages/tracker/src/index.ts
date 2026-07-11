@@ -7,7 +7,7 @@
  * Config attributes: data-site (required), data-mode ("persistent"),
  * data-api, data-exclude (comma-separated path globs), data-hash,
  * data-track-outbound="false", data-track-downloads="false",
- * data-respect-dnt, data-vitals, data-errors.
+ * data-respect-dnt, data-vitals, data-errors, data-replay.
  */
 
 type Props = Record<string, unknown> | undefined;
@@ -216,6 +216,25 @@ interface WsStub {
   });
   addEventListener("pagehide", flush);
 
+  // Heartbeat: keep the visitor "online" while the tab is visible. A ping only
+  // bumps the session's last_event_at server-side (no event stored); it stops
+  // on tab close, so presence drops within the live window instead of lingering.
+  const ping = () => {
+    if (D.visibilityState !== "visible" || excluded()) return;
+    const b = JSON.stringify({ site, vid, uid, h: 1 });
+    try {
+      if (N.sendBeacon && N.sendBeacon(api, b)) return;
+    } catch {
+      /* fall through */
+    }
+    fetch(api, { method: "POST", body: b, keepalive: true, mode: "no-cors" }).catch(() => {});
+  };
+  let hb: ReturnType<typeof setInterval> | 0 = setInterval(ping, 45000);
+  addEventListener("pagehide", () => {
+    if (hb) clearInterval(hb);
+    hb = 0;
+  });
+
   install(
     (n, p) => send(String(n), p),
     (id, traits) => {
@@ -254,5 +273,20 @@ interface WsStub {
     s.src = new URL("t-x.js", script.src).href;
     s.defer = true;
     D.head.appendChild(s);
+  }
+
+  // Lazy replay recorder chunk (docs/redesign/24). The attribute only pays
+  // the script load; whether recording actually happens is decided by the
+  // server config the chunk fetches, so the dashboard toggle is the switch.
+  if (attr("replay") != null) {
+    (W as typeof W & { __wsr?: unknown }).__wsr = {
+      site,
+      ep: api.replace(/\/track$/, "/replay"),
+      vid,
+    };
+    const r = D.createElement("script");
+    r.src = new URL("t-r.js", script.src).href;
+    r.defer = true;
+    D.head.appendChild(r);
   }
 })();

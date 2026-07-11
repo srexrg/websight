@@ -1,0 +1,22 @@
+---
+title: Realtime
+description: Who is on your site right now and what they are doing.
+---
+
+Realtime shows activity as it happens: how many people are on the site, what they are viewing, and a live feed of events. It is the screen to watch after a launch or a post going out.
+
+## What you see
+
+- **Visitors online now** - a count of visitors active in the last 5 minutes. Presence is kept alive by the tracker heartbeat, which pings every 45 seconds while the tab is visible, so someone reading a page still counts as online.
+- **Pageviews per minute** - a bar chart of the last 30 minutes, refreshing every 30 seconds.
+- **Live lists** - Active pages, Referrers, and Countries over a rolling 5-minute window, refreshing every 10 seconds.
+- **Activity feed** - a reverse-chronological stream of the last 30 minutes, up to 50 events, refreshing every 5 seconds.
+
+## What you can do
+
+- Click any row in a live list to jump to [Overview](/docs/dashboard/overview) pre-filtered to that page, referrer, or country.
+- Hover the activity feed to freeze it, so a fast-moving stream holds still while you read.
+
+The activity feed never exposes visitor ids; it shows what happened, not who. For a durable, per-visit record rather than a live stream, use [Sessions](/docs/dashboard/sessions).
+
+<Callout type="info">The heartbeat stops when a tab is closed or hidden, so someone who leaves drops out of the online count within a few minutes rather than lingering.</Callout>
