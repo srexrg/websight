@@ -1,105 +1,127 @@
-# Websight - Modern Web Analytics Dashboard
+# WebSight
 
-WebSight is a simple, open-source alternative to Vercel Analytics, built for developers who want full control over their website metrics. It tracks essential stats, respects user privacy, and lets you own your data—without the bloat.
+Open-source, privacy-first web analytics. Realtime, cookieless, and yours to host.
 
+[![npm version](https://img.shields.io/npm/v/websight.svg)](https://www.npmjs.com/package/websight)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-
-
-
+<!-- demo video: drag a new .mp4 into the README editor on github.com to replace -->
 https://github.com/user-attachments/assets/39aab69c-f23e-43e9-b608-7f37b913a847
 
+## Why WebSight
 
-
+Google Analytics turns your visitors into someone else's product and hands you a cookie banner for the trouble. WebSight is the opposite: no cookies, no cross-site tracking, no personal data. You get the numbers you actually need, in realtime, and you own every row. Run the hosted app or self-host the whole thing on your own infrastructure.
 
 ## Features
 
-- **Real-time Analytics**: Track website performance metrics in real-time
-- **Data Visualization**: Beautiful, interactive charts powered by Recharts
-- **Geographic Insights**: Track user behavior across different regions with interactive maps
-- **PDF Reports**: Generate comprehensive reports with a single click
-- **Modern UI**: Clean, responsive interface built with Radix UI and Tailwind CSS
-- **Cross-platform**: Works seamlessly across all devices and screen sizes
+**See traffic as it happens**
+- Realtime dashboard with live visitor presence, updated the second events land, no five-minute delay.
+- A real, spinning 3D globe that lights up wherever your readers are right now.
+- Session replay powered by rrweb, privacy-masked, toggled per site from the dashboard.
 
-## Tech Stack
+**Understand behavior**
+- Custom events, conversion funnels, goals, and retention cohorts.
+- Filters and segments: slice by source, country, device, or campaign in one click.
+- Core Web Vitals and JavaScript error capture, loaded on demand.
 
-- **Framework**: Next.js 15
-- **Language**: TypeScript
-- **UI Components**: ShadCn
-- **Styling**: Tailwind CSS
-- **Database**: Supabase
-- **Charts**: Recharts
-- **Maps**: React Simple Maps
-- **PDF Generation**: jsPDF
-- **Animations**: Framer Motion
+**Privacy by default**
+- Cookieless, stateless tracking. GDPR, CCPA, and PECR friendly with nothing to consent to.
+- Under 1KB core script, async and deferred, so your site never slows down.
+- Public share links for any site, optionally password-protected.
+- MIT licensed and fully self-hostable: Next.js app plus a Supabase database.
 
-## Getting Started
+## Quick start (hosted)
 
-### Prerequisites
+Use the hosted app at [websight.srexrg.me](https://websight.srexrg.me). Setup takes about 30 seconds.
 
-- Node.js 18.0 or later
-- npm or yarn package manager
+1. Sign in.
+2. Add your site.
+3. Drop one script tag into your `<head>`:
 
-### Installation
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="example.com"></script>
+```
 
-1. Clone the repository:
+Open the dashboard and watch visits stream in. That's it.
+
+The `data-*` attributes map one-to-one to the package options, for example `data-mode="persistent"`, `data-vitals="0.1"`, `data-exclude="/admin/*,/health"`. See the [script tag docs](https://websight.srexrg.me/docs/tracking/script) for the full list.
+
+## npm package
+
+Prefer to wire it into your build? Install the `websight` package:
+
+```bash
+npm install websight
+```
+
+Initialize once with typed `init`, then send custom events with `track` (and `identify` in persistent mode):
+
+```js
+import { init, track } from "websight";
+
+init({ site: "example.com" });
+
+track("signup", { plan: "pro" });
+```
+
+`track()` and `identify()` are safe to call before `init()`; they queue and replay once the tracker boots.
+
+### React
+
+Mount `<Analytics />` from `websight/react` in your root layout:
+
+```tsx
+// app/layout.tsx
+import { Analytics } from "websight/react";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Analytics site="example.com" />
+      </body>
+    </html>
+  );
+}
+```
+
+For the full options table (`mode`, `vitals`, `errors`, `replay`, `exclude`, and more), see [packages/tracker/README.md](./packages/tracker/README.md) or the [tracking API docs](https://websight.srexrg.me/docs/tracking/api).
+
+## Self-hosting
+
+WebSight is a single Next.js app backed by a Supabase Postgres database. The tracker is built into the app's `public/` directory, so there is no separate service to run: host one Next.js app, point it at one Supabase project.
+
+<details>
+<summary>The short version</summary>
+
 ```bash
 git clone https://github.com/srexrg/websight.git
 cd websight
-```
-
-2. Install dependencies:
-```bash
+cp .env.example .env.local   # fill in your Supabase keys and app URL
 npm install
-# or
-yarn install
+npm run build
+npm start
 ```
 
-3. Set up environment variables:
-```bash
-cp .env.example .env.local
-```
-Fill in your environment variables in `.env.local`
+Create a Supabase project, apply the migrations from `supabase/migrations` with the Supabase CLI, then deploy to Vercel or any Node host.
 
-4. Run the development server:
-```bash
-npm run dev
-# or
-yarn dev
-```
+</details>
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+Full walkthrough, including the environment variables and the geo/CDN caveat, is in the [self-hosting guide](https://websight.srexrg.me/docs/resources/self-hosting).
 
-## Usage
+## Tech stack
 
-1. Sign up for an account or log in
-2. Add your website to track
-3. Install the tracking script
-4. Start monitoring your analytics
+Next.js 16, React 19, TypeScript, Tailwind CSS v4, Supabase (Postgres), Recharts, three-globe for the 3D globe, and rrweb for session replay. Zero-dependency tracker built with tsup.
 
 ## Contributing
 
-We welcome contributions! Here's how you can help:
+Issues and pull requests are welcome. Open an [issue](https://github.com/srexrg/websight/issues) to report a bug or suggest a feature, or send a PR. Full docs live at [websight.srexrg.me/docs](https://websight.srexrg.me/docs).
 
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/improvement`)
-3. Make your changes
-4. Commit your changes (`git commit -am 'Add new feature'`)
-5. Push to the branch (`git push origin feature/improvement`)
-6. Create a Pull Request
+## License
 
-
-
-
-## Support
-
-- 🐦 [Twitter](https://twitter.com/srexrg)
-
-## Acknowledgments
-
-- Thanks to all our contributors
-- Inspired by various open-source analytics tools
-- Built with ❤️ by [srexrg](https://srexrg.me)
+[MIT](./LICENSE). Free to use, free to self-host, forever.
 
 ---
 
-If you find Websight useful, please consider giving it a star ⭐️!
+If WebSight is useful to you, please consider giving it a star.
