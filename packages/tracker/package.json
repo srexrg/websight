@@ -12,6 +12,14 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "default": "./dist/react.js"
+    },
+    "./next": {
+      "types": "./dist/react.d.ts",
+      "default": "./dist/react.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -20,6 +28,14 @@
   "scripts": {
     "build": "tsup --config tsup.npm.config.ts",
     "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
   },
   "repository": {
     "type": "git",
@@ -38,6 +54,8 @@
     "session-replay",
     "web-vitals",
     "tracker",
-    "open-source"
+    "open-source",
+    "react",
+    "nextjs"
   ]
 }

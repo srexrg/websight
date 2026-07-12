@@ -25,42 +25,27 @@ track("signup", { plan: "pro" });
 
 ### Next.js (App Router)
 
-Create a small client analytics module and call `init` once:
-
-```tsx
-// app/analytics.tsx
-"use client";
-
-import { useEffect } from "react";
-import { init } from "websight";
-
-export function Analytics() {
-  useEffect(() => {
-    init({ site: "example.com" });
-  }, []);
-  return null;
-}
-```
-
-Mount it from the root layout:
+Drop the `<Analytics />` component into your root layout - one line, no client module to hand-roll:
 
 ```tsx
 // app/layout.tsx
-import { Analytics } from "./analytics";
+import { Analytics } from "websight/react";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
         {children}
-        <Analytics />
+        <Analytics site="example.com" />
       </body>
     </html>
   );
 }
 ```
 
-`init()` is a no-op on the server, so importing and calling it from a component that also renders during SSR is safe.
+The component is already client-marked and boots the tracker on mount; its props are exactly the `WebsightOptions` documented below (`site`, `mode`, `vitals`, and the rest). SPA route changes are counted automatically, so there is nothing to wire up to the router. Import from `websight/next` instead if you prefer - it is the same component under a different name.
+
+Everything is SSR-safe: the component renders `null` and `init()` is a no-op on the server, so it never touches the server render.
 
 ### Script tag alternative
 
