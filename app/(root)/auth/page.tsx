@@ -3,7 +3,7 @@ import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import { BrandSplit } from "@/components/onboarding/brand-split";
 import LoginButton from "@/components/auth/login-button";
 
-export const metadata = { title: "Sign in" };
+export const metadata = { title: "Sign in", robots: { index: false, follow: false } };
 
 export default function AuthPage() {
   return (

@@ -38,8 +38,8 @@ export type Faq = { q: string; a: string };
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
 export const navLinks: NavLink[] = [
-  { label: "Features", href: "#features" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "Features", href: "/#features" },
+  { label: "Pricing", href: "/#pricing" },
   { label: "Docs", href: "/docs" },
 ];
 
@@ -199,10 +199,11 @@ export const footerCols: FooterCol[] = [
   {
     title: "Product",
     links: [
-      { label: "Features", href: "#features" },
-      { label: "Pricing", href: "#pricing" },
-      { label: "Compare", href: "#compare" },
-      { label: "FAQ", href: "#faq" },
+      { label: "Features", href: "/#features" },
+      { label: "Pricing", href: "/#pricing" },
+      { label: "vs Google Analytics", href: "/compare/google-analytics" },
+      { label: "vs Plausible", href: "/compare/plausible" },
+      { label: "vs Umami", href: "/compare/umami" },
     ],
   },
   {

@@ -4,5 +4,5 @@ export const DATA = {
   url: "https://websight.srexrg.me",
   prevImage: "/prev.png",
   description:
-    "Privacy-first web analytics for people who build on the internet.",
+    "Open-source, privacy-first web analytics. Cookieless, realtime and self-hostable - the Google Analytics alternative built for people who ship on the web.",
 } as const;

@@ -22,28 +22,22 @@ const jetbrains = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(DATA.url),
+  applicationName: DATA.name,
+  category: "technology",
   title: {
-    default: DATA.name,
+    default: `${DATA.name} - Open-Source, Privacy-First Web Analytics`,
     template: `%s - ${DATA.name}`,
   },
   description: DATA.description,
   keywords: [
-    "WebSight Analytics",
-    "Open Source Analytics",
-    "Web Analytics Platform",
-    "Vercel Analytics Alternative",
-    "Privacy-focused Analytics",
-    "Website Traffic Tracking",
-    "Free Analytics",
-    "Real-time Web Analytics",
-    "Website Performance Monitoring",
-    "User Behavior Analytics",
-    "Web Traffic Statistics",
-    "Analytics Dashboard",
-    "Website Metrics",
-    "Open Source Monitoring",
-    "Website Analytics Tool",
     "Google Analytics Alternative",
+    "Open Source Analytics",
+    "Privacy-focused Analytics",
+    "Cookieless Analytics",
+    "Realtime Web Analytics",
+    "Self-hosted Analytics",
+    "Web Analytics Platform",
+    "Session Replay",
   ],
   authors: [
     {

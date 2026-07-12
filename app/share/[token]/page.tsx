@@ -26,11 +26,11 @@ async function load(token: string): Promise<Loaded | null> {
 export async function generateMetadata({ params }: { params: Promise<{ token: string }> }): Promise<Metadata> {
   const { token } = await params;
   const loaded = await load(token);
-  if (!loaded) return { title: "Not found" };
+  if (!loaded) return { title: "Not found", robots: { index: false, follow: false } };
   return {
     title: `${loaded.site.name} — Analytics`,
-    // Secret links stay out of search indexes; public links may be indexed.
-    robots: loaded.share.visibility === "public" ? undefined : { index: false, follow: false },
+    // Share links are user data, not site content; keep them out of search indexes.
+    robots: { index: false, follow: false },
   };
 }
 
