@@ -1,6 +1,6 @@
 {
   "name": "websight",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Official JavaScript tracker for WebSight, the open-source, privacy-first web analytics platform. Under 1KB core, realtime, no cookies.",
   "license": "MIT",
   "type": "module",
@@ -23,7 +23,8 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/**/*.map"
   ],
   "scripts": {
     "build": "tsup --config tsup.npm.config.ts",
