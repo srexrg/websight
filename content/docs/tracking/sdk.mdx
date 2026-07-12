@@ -1,0 +1,120 @@
+---
+title: JavaScript SDK
+description: Type-safe init, track, and identify plus a React Analytics component from the websight npm package.
+---
+
+If you have a build step, install the tracker as a package instead of the script tag. You get typed `init`, `track`, and `identify`, and a React `<Analytics />` component that mounts the tracker for you. Same core engine as `t.js`, same events, just imported.
+
+## Install
+
+```bash
+npm install websight
+```
+
+## Quick start
+
+Call `init` once, anywhere in your app before the first navigation you want to count. Then `track` custom events whenever you like:
+
+```js
+import { init, track, identify } from "websight";
+
+init({ site: "example.com" });
+
+track("signup", { plan: "pro" });
+```
+
+`init` takes a `WebsightOptions` object. The only required field is `site`, your site's domain as registered in WebSight.
+
+## Options
+
+Every field of `WebsightOptions`:
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `site` | `string` | required | Site domain registered in WebSight, e.g. `"example.com"`. |
+| `host` | `string` | `"https://websight.srexrg.me"` | Origin of the WebSight deployment events are sent to. |
+| `api` | `string` | derived from `host` | Full track endpoint URL. Overrides `host`. |
+| `mode` | `"stateless" \| "persistent"` | `"stateless"` | `"persistent"` stores an anonymous visitor id in localStorage and enables `identify()`. `"stateless"` stores nothing, ever. |
+| `hashRouting` | `boolean` | `false` | Track hash-based routing (`#/page`) as pageviews. |
+| `exclude` | `string[]` | `[]` | Path globs to exclude, e.g. `["/admin/*", "/health"]`. |
+| `trackOutbound` | `boolean` | `true` | Auto-track clicks on links to other origins. |
+| `trackDownloads` | `boolean` | `true` | Auto-track clicks on file download links. |
+| `respectDnt` | `boolean` | `false` | Disable tracking for visitors with Do Not Track enabled. |
+| `allowLocalhost` | `boolean` | `false` | Track on localhost, useful in development. |
+| `vitals` | `boolean \| number` | `false` | Collect Core Web Vitals. `true` = all page loads, a number `0..1` = sample rate. |
+| `errors` | `boolean` | `false` | Capture JS errors and unhandled rejections. |
+| `replay` | `boolean` | `false` | Load the session replay recorder. Recording itself is toggled from the dashboard. |
+
+Vitals, errors, and replay each load a separate chunk on demand. Enable one and only then does the extra code reach the browser. Leave them off and your bundle carries the core only.
+
+## track
+
+Send a custom event with an optional flat properties object:
+
+```js
+track("purchase", { value: 49, currency: "USD" });
+track("newsletter_signup");
+```
+
+Downloads, outbound link clicks, and form submissions are captured automatically. You can also mark any element declaratively with `data-ws-event`:
+
+```html
+<button data-ws-event="cta_click">Get started</button>
+```
+
+See [Custom events](/docs/tracking/custom-events) for property limits and reserved names.
+
+## identify
+
+Attach a stable user id, and optional traits, in `persistent` mode:
+
+```js
+init({ site: "example.com", mode: "persistent" });
+
+identify("user-42", { plan: "pro" });
+identify(null); // clear on logout
+```
+
+In the default stateless mode `identify()` is a no-op: nothing is stored and no id is attached. See [Identify users](/docs/tracking/identify).
+
+## React and Next.js
+
+Drop the `<Analytics />` component into your root layout. It boots the tracker on mount, so there is no client module to hand-roll:
+
+```tsx
+// app/layout.tsx
+import { Analytics } from "websight/react";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Analytics site="example.com" />
+      </body>
+    </html>
+  );
+}
+```
+
+The component is already client-marked and its props are exactly the `WebsightOptions` above (`site`, `mode`, `vitals`, and the rest). SPA route changes are counted automatically, so there is nothing to wire up to the router.
+
+Prefer a Next.js name? Import from `websight/next` instead. It is the same component under a different alias.
+
+## SSR safety
+
+Everything is safe to render on the server. `<Analytics />` renders `null` and `init()` is a no-op on the server, so the tracker never touches the server render and only boots in the browser.
+
+## Calling before init
+
+`track()` and `identify()` are safe to call before `init()` has run. Early calls queue and replay in order once the tracker boots, so you never have to guard a call or wait for readiness.
+
+## Script tag instead?
+
+No build step, or you would rather not add a dependency? Drop the tracker in as a single script tag and you are done:
+
+```html
+<script defer src="https://websight.srexrg.me/t.js" data-site="example.com"></script>
+```
+
+The `data-*` attributes map one-to-one to the options above. See the [Script reference](/docs/tracking/script) for the full attribute list.

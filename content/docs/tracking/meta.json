@@ -1,1 +1,1 @@
-{ "title": "Tracking", "pages": ["script", "automatic-events", "custom-events", "identify", "exclude-traffic", "adblockers", "api"] }
+{ "title": "Tracking", "pages": ["script", "sdk", "automatic-events", "custom-events", "identify", "exclude-traffic", "adblockers", "api"] }
