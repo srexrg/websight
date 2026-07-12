@@ -1,16 +1,18 @@
 {
-  "name": "websight",
+  "name": "websight-app",
   "version": "0.1.0",
   "private": true,
+  "workspaces": ["packages/*"],
   "scripts": {
     "dev": "next dev",
     "prebuild": "npm run build:tracker",
     "build": "next build",
     "build:tracker": "tsup --config packages/tracker/tsup.config.ts",
+    "build:pkg": "npm run build --workspace=websight",
     "start": "next start",
     "postinstall": "fumadocs-mdx",
     "lint": "eslint .",
-    "pretest": "npm run build:tracker",
+    "pretest": "npm run build:tracker && npm run build:pkg",
     "test": "vitest run",
     "test:watch": "vitest",
     "backfill": "tsx scripts/backfill.ts"

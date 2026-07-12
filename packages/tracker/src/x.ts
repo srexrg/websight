@@ -1,8 +1,8 @@
 /**
  * WebSight lazy extension chunk (docs/redesign/01 milestone 4): Web Vitals
- * (12) and error capture (13). Built to public/t-x.js; loaded by the core
- * only when the embed sets data-vitals / data-errors, so its weight (the
- * web-vitals library) never touches the core budget.
+ * (12) and error capture (13). Shared by the t-x.js script-tag chunk and the
+ * npm package's dynamic import; loaded only when vitals/errors are enabled, so
+ * its weight (the web-vitals library) never touches the core budget.
  */
 import { onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals/attribution";
 import type { Metric } from "web-vitals";
@@ -10,8 +10,15 @@ import type { Metric } from "web-vitals";
 type Send = (name: string, props?: Record<string, unknown>) => void;
 type Attrib = { target?: string; largestShiftTarget?: string; interactionTarget?: string; loadState?: string };
 
-(() => {
-  const ws = (window as unknown as { __ws?: { send: Send; vitals?: boolean; vitalsSample?: number; errors?: boolean } }).__ws;
+export interface ExtensionCtx {
+  send: Send;
+  vitals?: boolean;
+  vitalsSample?: number;
+  errors?: boolean;
+}
+
+export function startExtension(ctx: ExtensionCtx | undefined): void {
+  const ws = ctx;
   if (!ws) return;
 
   // Sample whole-page vitals together (one coin flip per load), so a sampled
@@ -78,4 +85,4 @@ type Attrib = { target?: string; largestShiftTarget?: string; interactionTarget?
       });
     });
   }
-})();
+}

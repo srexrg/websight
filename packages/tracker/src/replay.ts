@@ -1,19 +1,20 @@
 /**
- * WebSight session replay recorder chunk (docs/redesign/24). Built to
- * public/t-r.js; loaded by the core only when the embed sets data-replay.
- * Recording config (enabled / sample rate / text masking) comes from
- * GET /api/replay, so the dashboard toggle governs recording without a
- * snippet change. Privacy defaults are non-negotiable here: all inputs
- * masked, [data-ws-mask] elements blocked, canvas and cross-origin iframes
- * never recorded.
+ * WebSight session replay recorder chunk (docs/redesign/24). Shared by the
+ * t-r.js script-tag chunk and the npm package's dynamic import; loaded only
+ * when replay is enabled. Recording config (enabled / sample rate / text
+ * masking) comes from GET /api/replay, so the dashboard toggle governs
+ * recording without a snippet change. Privacy defaults are non-negotiable
+ * here: all inputs masked, [data-ws-mask] elements blocked, canvas and
+ * cross-origin iframes never recorded.
  */
 import { record } from "@rrweb/record";
 
-type WsrBoot = { site: string; ep: string; vid?: string };
+export type ReplayBoot = { site: string; ep: string; vid?: string };
 
-(() => {
-  const W = window as typeof window & { __wsr?: WsrBoot; __wsr_active?: 1 };
-  const boot = W.__wsr;
+export function startReplay(boot: ReplayBoot | undefined): void {
+  const W = window as typeof window & { __wsr?: ReplayBoot; __wsr_active?: 1 };
+  // Re-entry guard protects against double loading in both worlds (a duplicate
+  // script tag or a second init()).
   if (!boot || W.__wsr_active) return;
   W.__wsr_active = 1;
   const { site, ep, vid } = boot;
@@ -186,4 +187,4 @@ type WsrBoot = { site: string; ep: string; vid?: string };
       clearInterval(timer);
     }
   }
-})();
+}

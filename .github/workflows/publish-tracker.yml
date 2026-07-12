@@ -1,0 +1,42 @@
+name: Publish websight to npm
+
+on:
+  push:
+    tags:
+      - "tracker-v*"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Check tag matches package version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#tracker-v}"
+          PKG_VERSION="$(node -p "require('./packages/tracker/package.json').version")"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package version $PKG_VERSION" >&2
+            exit 1
+          fi
+
+      - run: npm ci
+
+      - run: npm run build:tracker
+
+      - run: npm run build:pkg
+
+      - run: npx vitest run tests/unit/tracker.test.ts tests/unit/npm-entry.test.ts
+
+      - run: npm publish --workspace=websight --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

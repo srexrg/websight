@@ -1,0 +1,43 @@
+{
+  "name": "websight",
+  "version": "0.1.0",
+  "description": "Official JavaScript tracker for WebSight, the open-source, privacy-first web analytics platform. Under 1KB core, realtime, no cookies.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup --config tsup.npm.config.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srexrg/websight.git",
+    "directory": "packages/tracker"
+  },
+  "homepage": "https://websight.srexrg.me",
+  "bugs": "https://github.com/srexrg/websight/issues",
+  "author": "srexrg",
+  "keywords": [
+    "analytics",
+    "web-analytics",
+    "privacy",
+    "google-analytics-alternative",
+    "plausible-alternative",
+    "session-replay",
+    "web-vitals",
+    "tracker",
+    "open-source"
+  ]
+}
