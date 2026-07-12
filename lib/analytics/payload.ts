@@ -5,7 +5,7 @@ import type { LegacyTrackPayload, TrackPayload } from "./types";
  *
  * Two shapes are accepted during the transition:
  *   - v2 (docs/redesign/01): { site, name, url, ... }, single or array
- *   - legacy (public/tracker.js): { domain, event, url, ... }, single only
+ *   - legacy (removed tracker.js): { domain, event, url, ... }, single only
  */
 
 export const MAX_BATCH_SIZE = 50;

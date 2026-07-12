@@ -27,7 +27,7 @@ export type TrackPayload = {
   sdk?: string;
 };
 
-/** Legacy payload from public/tracker.js (kept during the dual-write window). */
+/** Legacy payload from the removed tracker.js (endpoint still accepts it during the dual-write window). */
 export type LegacyTrackPayload = {
   domain: string;
   url: string;

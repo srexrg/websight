@@ -18,7 +18,7 @@ import type { IngestEventRow, LegacyTrackPayload } from "@/lib/analytics/types";
  *
  * Accepts:
  *   - v2 payloads (docs/redesign/01), single object or array batch -> 202
- *   - legacy public/tracker.js payloads -> old tables (unchanged behavior)
+ *   - legacy tracker.js payloads (script removed; old embeds still POST here) -> old tables (unchanged behavior)
  *     PLUS dual-write of pageviews into the new pipeline, so the new
  *     dashboard has history from day one.
  *
