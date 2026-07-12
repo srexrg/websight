@@ -23,16 +23,6 @@ export type LiveFeedItem = {
 
 export type InstallStep = { n: string; title: string; desc: string };
 
-export type Plan = {
-  name: string;
-  tagline: string;
-  monthly: number;
-  annual: number;
-  popular: boolean;
-  cta: string;
-  features: string[];
-};
-
 export type FooterCol = { title: string; links: NavLink[] };
 
 /** One comparison row: true/false renders a check/cross, a string renders as text. */
@@ -161,60 +151,6 @@ export const installSteps: InstallStep[] = [
   { n: "3", title: "Watch it live", desc: "Open the globe and see visits roll in." },
 ];
 
-// ─── Pricing plans ────────────────────────────────────────────────────────────
-// monthly: price in USD/month billed monthly
-// annual:  price in USD/month billed annually (approx -20%)
-
-export const plans: Plan[] = [
-  {
-    name: "Hobby",
-    tagline: "Everything to get started on a side project.",
-    monthly: 0,
-    annual: 0,
-    popular: false,
-    cta: "Start free",
-    features: [
-      "1 site",
-      "10k events / month",
-      "Realtime dashboard",
-      "Live visitor globe",
-      "6-month retention",
-    ],
-  },
-  {
-    name: "Pro",
-    tagline: "For makers shipping products people use.",
-    monthly: 9,
-    annual: 7,
-    popular: true,
-    cta: "Start Pro trial",
-    features: [
-      "10 sites",
-      "1M events / month",
-      "Events & funnels",
-      "Custom dashboards",
-      "3-year retention",
-      "Email reports",
-    ],
-  },
-  {
-    name: "Business",
-    tagline: "For teams and agencies running many sites.",
-    monthly: 29,
-    annual: 24,
-    popular: false,
-    cta: "Start Business",
-    features: [
-      "Unlimited sites",
-      "10M events / month",
-      "Team seats & roles",
-      "API access",
-      "Priority support",
-      "Self-host license",
-    ],
-  },
-];
-
 // ─── Comparison (vs the tools people actually switch from) ────────────────────
 
 export const compareRows: CompareRow[] = [
@@ -263,11 +199,10 @@ export const footerCols: FooterCol[] = [
   {
     title: "Product",
     links: [
-      { label: "Features", href: "#" },
-      { label: "Live globe", href: "#" },
-      { label: "Pricing", href: "#" },
-      { label: "Changelog", href: "#" },
-      { label: "Roadmap", href: "#" },
+      { label: "Features", href: "#features" },
+      { label: "Pricing", href: "#pricing" },
+      { label: "Compare", href: "#compare" },
+      { label: "FAQ", href: "#faq" },
     ],
   },
   {
@@ -280,12 +215,11 @@ export const footerCols: FooterCol[] = [
     ],
   },
   {
-    title: "Company",
+    title: "Open source",
     links: [
-      { label: "About", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Open source", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "GitHub", href: "https://github.com/srexrg/websight" },
+      { label: "Issues", href: "https://github.com/srexrg/websight/issues" },
+      { label: "Privacy", href: "/docs/resources/privacy" },
     ],
   },
 ];

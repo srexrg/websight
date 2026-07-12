@@ -26,11 +26,10 @@ export default function AuthPage() {
 
           <p className="mt-5 text-[11.5px] leading-relaxed text-muted-foreground">
             By continuing you agree to our{" "}
-            <Link href="/docs" className="font-medium text-foreground underline-offset-2 hover:underline">
-              Terms
-            </Link>{" "}
-            and{" "}
-            <Link href="/docs" className="font-medium text-foreground underline-offset-2 hover:underline">
+            <Link
+              href="/docs/resources/privacy"
+              className="font-medium text-foreground underline-offset-2 hover:underline"
+            >
               Privacy Policy
             </Link>
             .

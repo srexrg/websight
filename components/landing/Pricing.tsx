@@ -1,166 +1,96 @@
-"use client"
-
-import { useState } from "react";
-import { Check } from "@phosphor-icons/react/dist/ssr/Check";
 import Link from "next/link";
-import { plans } from "@/lib/landing/content";
+import { ArrowRight, Check } from "@phosphor-icons/react/dist/ssr";
+
+const included: string[] = [
+  "Realtime dashboard",
+  "Live visitor globe",
+  "Session replay",
+  "Events, goals & funnels",
+  "Core Web Vitals",
+  "Filters & segments",
+  "Public share links",
+  "Self-host, MIT licensed",
+];
 
 export default function Pricing() {
-  const [annual, setAnnual] = useState(false);
-
   return (
     <section id="pricing">
       <div className="max-w-[1180px] mx-auto px-7 pt-[92px] pb-[92px]">
         {/* Section header */}
-        <div className="text-center max-w-[660px] mx-auto mb-[52px]">
+        <div className="text-center max-w-[660px] mx-auto mb-[44px]">
           <span className="text-[13px] font-bold tracking-[0.6px] text-brand uppercase">
             PRICING
           </span>
           <h2 className="text-[44px] font-extrabold tracking-[-1.4px] leading-[1.08] mt-3 mb-4 text-foreground">
-            Fair pricing for makers
+            Free, and open source
           </h2>
-          <p className="text-[18px] leading-[1.55] text-muted-foreground">
-            Start free, upgrade when you grow. No hidden fees, no surprises.
+          <p className="text-[18px] leading-[1.55] text-muted-foreground m-0">
+            Use it free on the hosted app, or self-host the whole thing. Every
+            feature is included, the code is MIT licensed, and there is no credit
+            card to reach for.
           </p>
         </div>
 
-        {/* Toggle */}
-        <div className="flex items-center justify-center gap-3 mb-[52px]">
-          <span
-            className={`text-[14px] font-semibold transition-colors ${
-              annual ? "text-muted-foreground" : "text-foreground"
-            }`}
-          >
-            Monthly
-          </span>
-          <button
-            type="button"
-            onClick={() => setAnnual((a) => !a)}
-            aria-pressed={annual}
-            aria-label="Toggle annual billing"
-            className="relative w-12 h-[27px] rounded-full bg-brand cursor-pointer flex items-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
-          >
-            <span
-              className="absolute w-[21px] h-[21px] rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.2)] transition-all duration-200"
-              style={{
-                left: annual ? "calc(100% - 24px)" : "3px",
-              }}
-            />
-          </button>
-          <span
-            className={`text-[14px] font-semibold transition-colors ${
-              annual ? "text-foreground" : "text-muted-foreground"
-            }`}
-          >
-            Annual{" "}
-            <span className="text-brand text-[12.5px]">-20%</span>
-          </span>
-        </div>
+        {/* Single honest panel */}
+        <div className="max-w-[760px] mx-auto rounded-[24px] border border-border bg-card shadow-[0_1px_2px_rgba(16,24,40,0.04)] overflow-hidden">
+          <div className="flex flex-col md:flex-row md:items-stretch">
+            {/* Left: the promise */}
+            <div className="md:w-[46%] p-8 md:p-10 md:border-r border-b md:border-b-0 border-border">
+              <span className="inline-flex items-center rounded-full bg-brand/10 px-3 py-1 text-[12px] font-bold tracking-[0.4px] text-brand uppercase">
+                Everything, for everyone
+              </span>
+              <div className="mt-6 flex items-baseline gap-1.5">
+                <span className="font-mono text-[52px] font-bold tracking-[-1.5px] leading-none text-foreground">
+                  $0
+                </span>
+                <span className="text-[15px] text-muted-foreground">/ forever</span>
+              </div>
+              <p className="mt-4 text-[14.5px] leading-[1.55] text-muted-foreground">
+                No plan tiers to compare, no feature held back. Bring as many
+                sites as you reasonably need.
+              </p>
 
-        {/* Plan cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-[18px] items-stretch">
-          {plans.map((plan) => {
-            const isPopular = plan.popular;
-            const price =
-              plan.monthly === 0
-                ? "$0"
-                : `$${annual ? plan.annual : plan.monthly}`;
-            const period = plan.monthly === 0 ? "/forever" : "/mo";
-
-            return (
-              <div
-                key={plan.name}
-                className={[
-                  "relative rounded-2xl p-[30px] flex flex-col transition-all duration-200",
-                  isPopular
-                    ? "bg-[#0E1310] ring-1 ring-white/[0.08] shadow-[0_24px_60px_-24px_rgba(14,156,110,0.5)]"
-                    : "bg-card border border-border shadow-[0_1px_2px_rgba(16,24,40,0.04)] hover:border-brand/30 hover:shadow-[0_10px_30px_-12px_rgba(14,156,110,0.22)] hover:-translate-y-0.5",
-                ].join(" ")}
-              >
-                {/* Popular pill */}
-                {isPopular && (
-                  <div className="absolute -top-[12px] left-1/2 -translate-x-1/2">
-                    <span className="bg-brand text-white text-[11.5px] font-bold tracking-[0.4px] px-[13px] py-[5px] rounded-full">
-                      MOST POPULAR
-                    </span>
-                  </div>
-                )}
-
-                {/* Plan name */}
-                <div
-                  className="text-[13px] font-bold tracking-[0.5px] uppercase mb-[10px]"
-                  style={{ color: isPopular ? "#5FD3A6" : undefined }}
-                >
-                  {isPopular ? (
-                    <span style={{ color: "#5FD3A6" }}>{plan.name}</span>
-                  ) : (
-                    <span className="text-brand">{plan.name}</span>
-                  )}
-                </div>
-
-                {/* Tagline */}
-                <p
-                  className={`text-[14.5px] leading-[1.5] mb-5 ${isPopular ? "" : "text-muted-foreground"}`}
-                  style={isPopular ? { color: "#8FA89B" } : undefined}
-                >
-                  {plan.tagline}
-                </p>
-
-                {/* Price */}
-                <div className="flex items-baseline gap-1 mb-6">
-                  <span
-                    className={`font-mono text-[44px] font-bold tracking-[-1px] leading-none ${
-                      isPopular ? "" : "text-foreground"
-                    }`}
-                    style={isPopular ? { color: "#fff" } : undefined}
-                  >
-                    {price}
-                  </span>
-                  <span
-                    className={`text-[14px] ${isPopular ? "" : "text-muted-foreground"}`}
-                    style={isPopular ? { color: "#8FA89B" } : undefined}
-                  >
-                    {period}
-                  </span>
-                </div>
-
-                {/* Feature list */}
-                <ul className="space-y-[10px] mb-8 flex-1">
-                  {plan.features.map((feat) => (
-                    <li key={feat} className="flex items-center gap-[10px]">
-                      <Check
-                        size={16}
-                        weight="bold"
-                        className={
-                          isPopular ? "text-[#5FD3A6] shrink-0" : "text-brand shrink-0"
-                        }
-                      />
-                      <span
-                        className={`text-[14px] ${isPopular ? "" : "text-foreground/80"}`}
-                        style={isPopular ? { color: "#C9D6CF" } : undefined}
-                      >
-                        {feat}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* CTA */}
+              <div className="mt-8 flex flex-col gap-3">
                 <Link
                   href="/auth"
-                  className={[
-                    "mt-auto block w-full text-center text-[14.5px] font-semibold rounded-xl py-[13px] px-5 transition-all duration-150",
-                    isPopular
-                      ? "bg-brand text-white hover:opacity-90"
-                      : "bg-card text-foreground border border-border hover:border-brand/30 hover:shadow-sm",
-                  ].join(" ")}
+                  className="flex items-center justify-center gap-2 bg-brand text-white text-[15px] font-semibold rounded-[12px] py-[13px] px-5 shadow-[0_6px_20px_rgba(14,156,110,0.28)] hover:bg-brand/90 transition-colors"
                 >
-                  {plan.cta}
+                  Start free
+                  <ArrowRight size={16} weight="bold" />
+                </Link>
+                <Link
+                  href="/docs/resources/self-hosting"
+                  className="flex items-center justify-center gap-2 bg-card text-foreground border border-border text-[15px] font-semibold rounded-[12px] py-[13px] px-5 hover:border-brand/40 hover:shadow-sm transition-all"
+                >
+                  Self-host guide
                 </Link>
               </div>
-            );
-          })}
+            </div>
+
+            {/* Right: what you actually get */}
+            <div className="md:w-[54%] p-8 md:p-10">
+              <p className="text-[13px] font-bold tracking-[0.5px] text-muted-foreground uppercase mb-5">
+                What&apos;s included
+              </p>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-[13px]">
+                {included.map((item) => (
+                  <li key={item} className="flex items-center gap-[10px]">
+                    <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-brand/10">
+                      <Check size={12} weight="bold" className="text-brand" />
+                    </span>
+                    <span className="text-[14px] text-foreground/85">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
+
+        {/* Future note, framed as future, not buyable */}
+        <p className="mt-7 text-center text-[13.5px] text-muted-foreground">
+          Hosted paid plans may arrive as the project grows. Self-hosting stays
+          free, forever.
+        </p>
       </div>
     </section>
   );
