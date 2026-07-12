@@ -5,8 +5,9 @@ Open-source, privacy-first web analytics. Realtime, cookieless, and yours to hos
 [![npm version](https://img.shields.io/npm/v/websight.svg)](https://www.npmjs.com/package/websight)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-<!-- demo video: drag a new .mp4 into the README editor on github.com to replace -->
-https://github.com/user-attachments/assets/39aab69c-f23e-43e9-b608-7f37b913a847
+https://github.com/user-attachments/assets/e35e3077-7d13-4f31-965d-10b0cfc3b54c
+
+
 
 ## Why WebSight
 
