@@ -21,8 +21,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sparkline } from "@/components/dashboard/metric-card";
+import { AddSiteDialog } from "@/components/dashboard/add-site-dialog";
 import { formatNumber } from "@/lib/dashboard/format";
-import { createSite, deleteSite } from "@/app/(app)/dashboard/actions";
+import { deleteSite } from "@/app/(app)/dashboard/actions";
 
 export type SiteCard = {
   public_id: string;
@@ -35,20 +36,12 @@ export type SiteCard = {
 export function SitesGrid({ sites }: { sites: SiteCard[] }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
   // Optimistically removed sites: hidden from the grid the instant the user
   // confirms, restored only if the server action fails.
   const [removed, setRemoved] = useState<Set<string>>(new Set());
-
-  const onCreate = (formData: FormData) => {
-    setError(null);
-    startTransition(async () => {
-      const res = await createSite(formData);
-      if (res.error) setError(res.error);
-      else router.refresh();
-    });
-  };
 
   const onDelete = (publicId: string) => {
     setError(null);
@@ -72,27 +65,22 @@ export function SitesGrid({ sites }: { sites: SiteCard[] }) {
 
   return (
     <div className="flex flex-col gap-5">
-      <form action={onCreate} className="flex flex-wrap items-center gap-2">
-        <input
-          name="domain"
-          placeholder="example.com"
-          className="h-9 w-64 rounded-lg border border-input bg-card px-3 font-mono text-[13px] text-foreground outline-none placeholder:text-muted-foreground/60 focus:ring-2 focus:ring-ring/40"
-        />
+      <div className="flex flex-wrap items-center gap-2">
         <button
-          type="submit"
-          disabled={pending}
-          className="flex h-9 items-center gap-1.5 rounded-lg bg-brand px-3.5 text-[13px] font-semibold text-white hover:bg-[#0B7E58] disabled:opacity-60"
+          type="button"
+          onClick={() => setAddOpen(true)}
+          className="flex h-9 items-center gap-1.5 rounded-lg bg-brand px-3.5 text-[13px] font-semibold text-white hover:bg-[#0B7E58]"
         >
           <Plus size={14} weight="bold" /> Add site
         </button>
         {error && <span className="text-[12.5px] font-medium text-danger">{error}</span>}
-      </form>
+      </div>
 
       {visible.length === 0 ? (
         <div className="rounded-2xl border border-border bg-card px-6 py-14 text-center shadow-[0_1px_2px_rgba(16,24,40,.04)]">
           <p className="text-[14.5px] font-semibold text-foreground">Add your first site</p>
           <p className="mx-auto mt-1 max-w-sm text-[12.5px] text-muted-foreground">
-            Register a domain above, paste the one-line snippet, and data starts flowing in
+            Click the Add site button, paste the one-line snippet, and data starts flowing in
             seconds.
           </p>
         </div>
@@ -151,6 +139,8 @@ export function SitesGrid({ sites }: { sites: SiteCard[] }) {
           ))}
         </div>
       )}
+
+      <AddSiteDialog open={addOpen} onOpenChange={setAddOpen} onCreated={() => router.refresh()} />
 
       <AlertDialog
         open={confirmDelete !== null}
