@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { corsHeaders } from "@/utils/cors";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { ingestEvents } from "@/lib/analytics/ingest";
-import { resolveSite } from "@/lib/analytics/sites";
+import { normalizeSiteKey, resolveSite } from "@/lib/analytics/sites";
 
 /**
  * POST /api/events - legacy custom-event API (Bearer = users.api).
@@ -54,6 +54,31 @@ export async function POST(req: NextRequest) {
     const cleanDomain = domain.replace(/^(https?:\/\/)?(www\.)?/i, "");
     const eventName = name.toLowerCase();
 
+    // Ownership: the authenticated user must own cleanDomain, either via the
+    // sites registry (user_id) or, if no site has been created for it yet,
+    // via the legacy domains table. A site with no user_id (never claimed) is
+    // not treated as owned by someone else, so it stays writable.
+    const site = await resolveSite(admin, cleanDomain);
+    let owned: boolean;
+    if (site) {
+      owned = !site.user_id || site.user_id === users[0].id;
+    } else {
+      const domainKey = normalizeSiteKey(cleanDomain) ?? cleanDomain;
+      const { data: domainRow } = await admin
+        .from("domains")
+        .select("user_id")
+        .eq("domain", domainKey)
+        .maybeSingle();
+      owned = domainRow?.user_id === users[0].id;
+    }
+
+    if (!owned) {
+      return NextResponse.json(
+        { error: "Forbidden - domain not owned by this API key" },
+        { status: 403, headers: corsHeaders },
+      );
+    }
+
     const { error: eventError } = await admin.from("events_legacy").insert([
       {
         event_name: eventName,
@@ -71,7 +96,6 @@ export async function POST(req: NextRequest) {
 
     // Dual-write into the new events table (best effort).
     try {
-      const site = await resolveSite(admin, cleanDomain);
       if (site) {
         await ingestEvents(admin, [
           {
