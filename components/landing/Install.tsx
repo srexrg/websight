@@ -3,13 +3,23 @@
 import { useState } from "react";
 import { installSteps } from "@/lib/landing/content";
 
-const SNIPPET = `<script defer src="https://websight.srexrg.me/tracker.js" data-site="yoursite.com"></script>`;
+type InstallTab = "script" | "npm";
+
+const SCRIPT_SNIPPET = `<script defer src="https://websight.srexrg.me/t.js" data-site="yoursite.com"></script>`;
+const NPM_SNIPPET = `npm install websight`;
+
+const TABS: { key: InstallTab; label: string }[] = [
+  { key: "script", label: "Script" },
+  { key: "npm", label: "npm" },
+];
 
 export default function Install() {
+  const [tab, setTab] = useState<InstallTab>("script");
   const [copied, setCopied] = useState(false);
 
   function handleCopy() {
-    navigator.clipboard.writeText(SNIPPET).then(() => {
+    const snippet = tab === "script" ? SCRIPT_SNIPPET : NPM_SNIPPET;
+    navigator.clipboard.writeText(snippet).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     }).catch(() => {});
@@ -27,30 +37,83 @@ export default function Install() {
             One line. That&apos;s it.
           </h2>
           <p className="text-[17px] leading-[1.55] text-muted-foreground m-0">
-            Drop the snippet in your &lt;head&gt;. No build step, no config, no cookie banner.
+            Drop the snippet in your &lt;head&gt;, or install the package. No build step, no config, no cookie banner.
           </p>
         </div>
 
         {/* Code block + steps */}
         <div className="max-w-[760px] mx-auto">
+          {/* Tab switcher */}
+          <div className="mb-4 flex justify-center">
+            <div className="inline-flex rounded-lg bg-secondary/70 p-[3px]">
+              {TABS.map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => {
+                    setTab(t.key);
+                    setCopied(false);
+                  }}
+                  aria-pressed={tab === t.key}
+                  className={`rounded-md px-3.5 py-1 text-[13px] font-semibold transition-colors ${
+                    tab === t.key
+                      ? "bg-accent text-accent-foreground shadow-[0_1px_2px_rgba(16,24,40,.06)]"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Dark code block */}
           <div className="bg-[#0E1310] ring-1 ring-white/[0.07] rounded-[14px] px-[22px] py-5 font-mono text-[14px] leading-[1.7] text-[#C9CBD6] relative shadow-[0_18px_50px_-22px_rgba(14,156,110,0.4)]">
-            {/* Syntax-colored snippet */}
-            <span className="text-[#6B6E7B]">&lt;</span>
-            <span className="text-[#E06C9B]">script</span>
-            <span> </span>
-            <span className="text-[#5FD3A6]">defer</span>
-            <span> </span>
-            <span className="text-[#5FD3A6]">src</span>
-            <span className="text-[#6B6E7B]">=</span>
-            <span className="text-[#5BE5A8]">&quot;https://websight.srexrg.me/tracker.js&quot;</span>
-            <span> </span>
-            <span className="text-[#5FD3A6]">data-site</span>
-            <span className="text-[#6B6E7B]">=</span>
-            <span className="text-[#5BE5A8]">&quot;yoursite.com&quot;</span>
-            <span className="text-[#6B6E7B]">&gt;&lt;/</span>
-            <span className="text-[#E06C9B]">script</span>
-            <span className="text-[#6B6E7B]">&gt;</span>
+            {tab === "script" ? (
+              /* Syntax-colored script snippet */
+              <div className="pr-[70px]">
+                <span className="text-[#6B6E7B]">&lt;</span>
+                <span className="text-[#E06C9B]">script</span>
+                <span> </span>
+                <span className="text-[#5FD3A6]">defer</span>
+                <span> </span>
+                <span className="text-[#5FD3A6]">src</span>
+                <span className="text-[#6B6E7B]">=</span>
+                <span className="text-[#5BE5A8]">&quot;https://websight.srexrg.me/t.js&quot;</span>
+                <span> </span>
+                <span className="text-[#5FD3A6]">data-site</span>
+                <span className="text-[#6B6E7B]">=</span>
+                <span className="text-[#5BE5A8]">&quot;yoursite.com&quot;</span>
+                <span className="text-[#6B6E7B]">&gt;&lt;/</span>
+                <span className="text-[#E06C9B]">script</span>
+                <span className="text-[#6B6E7B]">&gt;</span>
+              </div>
+            ) : (
+              /* Syntax-colored npm snippet */
+              <div className="pr-[70px]">
+                <div>
+                  <span className="text-[#6B6E7B]">$ </span>
+                  <span className="text-[#E06C9B]">npm</span>
+                  <span> install </span>
+                  <span className="text-[#5BE5A8]">websight</span>
+                </div>
+                <div className="mt-3">
+                  <span className="text-[#E06C9B]">import</span>
+                  <span>{" { init } "}</span>
+                  <span className="text-[#E06C9B]">from</span>
+                  <span> </span>
+                  <span className="text-[#5BE5A8]">&quot;websight&quot;</span>
+                </div>
+                <div>
+                  <span className="text-[#5FD3A6]">init</span>
+                  <span>{"({ site: "}</span>
+                  <span className="text-[#5BE5A8]">&quot;yoursite.com&quot;</span>
+                  <span>{" })"}</span>
+                </div>
+                <div className="mt-3 text-[#6B6E7B]">
+                  {"// React? Mount <Analytics /> from websight/react"}
+                </div>
+              </div>
+            )}
 
             {/* Copy button */}
             <button
