@@ -49,3 +49,8 @@ scratchpad/
 
 # npm package build output
 packages/*/dist/
+
+# local-only: internal plans, design mockups, and the demo video project
+/docs/
+/design/
+/video/
