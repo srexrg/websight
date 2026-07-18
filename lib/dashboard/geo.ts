@@ -45,6 +45,35 @@ export function countryCoords(code: string | null | undefined): [number, number]
   return COUNTRY_CENTROIDS[code.toUpperCase()] ?? null;
 }
 
+/**
+ * Where to drop a live visitor's globe pin. Exact CDN coords win; else scatter
+ * around the country centroid; else - geo entirely unknown (no CDN headers) -
+ * a deterministic fallback so the pin still shows and "N online" always equals
+ * N pointers (issue #11). Never returns null: every live session gets a pin.
+ */
+export function markerCoords(s: {
+  id: string;
+  lat: number | null;
+  lng: number | null;
+  country: string | null;
+}): [number, number] {
+  if (s.lat != null && s.lng != null) return [s.lat, s.lng];
+  const c = countryCoords(s.country);
+  if (c) return jitterAround(c[0], c[1], s.id, { spread: 3 });
+  return fallbackCoords(s.id);
+}
+
+/**
+ * Deterministic globe position for a visitor whose location is unknown, seeded
+ * by id so it's stable across polls. Spread over mid-latitudes to stay on the
+ * visible sphere. ponytail: placement is arbitrary (we truly don't know where
+ * they are); the UI labels these pins "Unknown location".
+ */
+export function fallbackCoords(seed: string): [number, number] {
+  const [a, b] = hash2(seed);
+  return [a * 120 - 60, b * 340 - 170]; // lat -60..60, lng -170..170
+}
+
 /** Deterministic 0..1 pair from a seed (stable across renders). */
 function hash2(seed: string): [number, number] {
   let h = 2166136261;

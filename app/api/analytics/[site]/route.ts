@@ -178,7 +178,9 @@ export async function GET(
         );
       }
       case "live-sessions":
-        return NextResponse.json(await getLiveSessions(site.id, 2));
+        // Match live-count / live-breakdown (5 min) so every "online" visitor
+        // has a globe pin (issue #11).
+        return NextResponse.json(await getLiveSessions(site.id, 5));
       case "session-events": {
         const sessionId = q.get("session") ?? "";
         if (!/^[0-9a-f-]{36}$/i.test(sessionId)) {
