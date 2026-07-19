@@ -18,6 +18,11 @@
 const T_INCREMENTAL = 3;
 const SRC_MUTATION = 0;
 const SRC_MOUSE_INTERACTION = 2;
+// Sources that mean a person did something: MouseMove, MouseInteraction,
+// Scroll, ViewportResize, Input, TouchMove, MediaInteraction, Drag. Mutation
+// (0) is excluded - a page redrawing itself (timers, polling, re-renders in a
+// background tab) is not interaction, and counting it shaded dead air as active.
+const ACTIVE_SOURCES = new Set([1, 2, 3, 4, 5, 6, 7, 12]);
 const MI_CLICK = 2;
 const MI_DBLCLICK = 4;
 const MI_TOUCHSTART = 7;
@@ -54,10 +59,10 @@ export function firstTimestamp(events: readonly RRWebEvent[]): number {
 }
 
 /**
- * Contiguous stretches of interaction. Consecutive incremental snapshots less
- * than `gapMs` apart are treated as one active period; a larger gap closes the
- * period, and the space until the next event reads as inactive. Mirrors Rybbit's
- * 5s inactivity threshold. Offsets are clamped to [0, durationMs].
+ * Contiguous stretches of interaction. Consecutive *user* events (ACTIVE_SOURCES
+ * - DOM mutations don't count) less than `gapMs` apart are treated as one active
+ * period; a larger gap closes the period, and the space until the next event
+ * reads as inactive. 5s inactivity threshold. Offsets clamped to [0, durationMs].
  */
 export function activityPeriods(
   events: readonly RRWebEvent[],
@@ -68,7 +73,11 @@ export function activityPeriods(
   const base = firstTimestamp(events);
   const stamps: number[] = [];
   for (const e of events) {
-    if (e?.type === T_INCREMENTAL && typeof e.timestamp === "number") {
+    if (
+      e?.type === T_INCREMENTAL &&
+      typeof e.timestamp === "number" &&
+      ACTIVE_SOURCES.has(e.data?.source as number)
+    ) {
       stamps.push(e.timestamp - base);
     }
   }

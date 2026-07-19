@@ -59,6 +59,16 @@ describe("activityPeriods", () => {
     expect(activityPeriods([incr(0)], 0)).toEqual([]);
     expect(activityPeriods([], 10_000)).toEqual([]);
   });
+
+  // A backgrounded tab still mutates its DOM; that must not shade as activity.
+  it("ignores DOM mutations", () => {
+    expect(activityPeriods([mut(0), mut(30_000)], 60_000)).toEqual([]);
+    // Real interaction up front, then 30s of background mutation: only the
+    // interaction is active, and the mutation opens no period of its own.
+    expect(activityPeriods([incr(0), incr(1000), mut(30_000)], 60_000)).toEqual([
+      { startMs: 0, endMs: 1000 },
+    ]);
+  });
 });
 
 describe("clickMarkers", () => {

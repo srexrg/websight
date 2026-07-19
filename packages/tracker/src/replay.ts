@@ -8,6 +8,7 @@
  * cross-origin iframes never recorded.
  */
 import { record } from "@rrweb/record";
+import { makeIdleGate } from "./idle";
 
 export type ReplayBoot = { site: string; ep: string; vid?: string };
 
@@ -53,6 +54,7 @@ export function startReplay(boot: ReplayBoot | undefined): void {
     let bufBytes = 0;
     let stopped = false;
     let stopFn: (() => void) | undefined;
+    const idleGate = makeIdleGate();
 
     const stop = () => {
       if (stopped) return;
@@ -123,8 +125,13 @@ export function startReplay(boot: ReplayBoot | undefined): void {
     H.replaceState = wrap(H.replaceState);
     addEventListener("popstate", bump);
 
+    // A hidden tab is definitively away: bank no further time against the
+    // recording, and ship what we have. The next interaction wakes it back up.
     addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "hidden") flush(true);
+      if (document.visibilityState === "hidden") {
+        idleGate.forceIdle();
+        flush(true);
+      }
     });
     addEventListener("pagehide", () => flush(true));
 
@@ -141,6 +148,24 @@ export function startReplay(boot: ReplayBoot | undefined): void {
     try {
       stopFn = record({
         emit(e) {
+          // Idle time is dropped rather than recorded (see ./idle). Entering
+          // idle ships the tail so the pre-idle stretch isn't held hostage to
+          // whenever the visitor returns.
+          const wasIdle = idleGate.idle;
+          if (!idleGate.accept(e)) {
+            if (!wasIdle) flush(false);
+            return;
+          }
+          // Waking up: mutations were dropped while idle, so the player's DOM is
+          // stale. Re-snapshot before this event - rrweb emits it synchronously,
+          // re-entering emit(), which lands it ahead of `e` in the buffer.
+          if (wasIdle) {
+            try {
+              record.takeFullSnapshot();
+            } catch {
+              /* a failed resync must not kill recording */
+            }
+          }
           buf.push(e);
           bufBytes += JSON.stringify(e).length;
           if (bufBytes >= FLUSH_BYTES) flush(false);
