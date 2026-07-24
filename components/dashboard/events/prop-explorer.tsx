@@ -25,11 +25,14 @@ export function PropExplorer({
 }) {
   const keysQ = useEventPropKeys(site, params, name);
   const [key, setKey] = useState<string | null>(null);
-  const valuesQ = useEventPropValues(site, params, name, key);
   const { add } = useFilters();
 
   const keys = keysQ.data ?? [];
+  // The first key is pre-selected in the UI, so the values query has to follow
+  // that same fallback - querying on `key` alone leaves it disabled (and so
+  // stuck rendering its skeleton) until the visitor clicks a key.
   const activeKey = key ?? keys[0]?.key ?? null;
+  const valuesQ = useEventPropValues(site, params, name, activeKey);
   const values = valuesQ.data ?? [];
   const total = values.reduce((s, v) => s + v.count, 0) || 1;
   const distinct = values[0]?.totalDistinct ?? 0;

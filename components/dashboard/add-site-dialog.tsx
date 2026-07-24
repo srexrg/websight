@@ -95,7 +95,8 @@ export function AddSiteDialog({
     });
   }
 
-  const snippet = `<script defer src="https://websight.srexrg.me/t.js" data-site="${createdDomain}"></script>`;
+  const modeAttr = privacy === "persistent" ? ` data-mode="persistent"` : "";
+  const snippet = `<script defer src="https://websight.srexrg.me/t.js" data-site="${createdDomain}"${modeAttr}></script>`;
 
   function handleCopy() {
     navigator.clipboard
@@ -233,6 +234,14 @@ export function AddSiteDialog({
                 <span className="text-[#5FD3A6]">data-site</span>
                 <span className="text-[#6B6E7B]">=</span>
                 <span className="text-[#5BE5A8]">&quot;{createdDomain}&quot;</span>
+                {privacy === "persistent" && (
+                  <>
+                    <span> </span>
+                    <span className="text-[#5FD3A6]">data-mode</span>
+                    <span className="text-[#6B6E7B]">=</span>
+                    <span className="text-[#5BE5A8]">&quot;persistent&quot;</span>
+                  </>
+                )}
                 <span className="text-[#6B6E7B]">&gt;&lt;/</span>
                 <span className="text-[#E06C9B]">script</span>
                 <span className="text-[#6B6E7B]">&gt;</span>

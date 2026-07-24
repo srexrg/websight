@@ -8,6 +8,10 @@ import { resolveOwnedSite } from "@/lib/dashboard/site-owner";
  * vitals_sample_rate (0..1), errors_enabled (bool), replay_enabled (bool),
  * replay_mask_text (bool), replay_sample_rate (0..1), replay_retention_days
  * (1..365, docs/redesign/24). Unknown keys are ignored.
+ *
+ * privacy_mode ("stateless" | "persistent") is a column rather than a settings
+ * key, but it belongs to the same settings surface, so it is accepted here and
+ * written alongside the jsonb merge.
  */
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ site: string }> }) {
   const { site } = await ctx.params;
@@ -45,7 +49,18 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ site: str
     }
     patch.replay_retention_days = d;
   }
-  if (Object.keys(patch).length === 0) {
+  let privacyMode: "stateless" | "persistent" | null = null;
+  if ("privacy_mode" in body) {
+    if (body.privacy_mode !== "stateless" && body.privacy_mode !== "persistent") {
+      return NextResponse.json(
+        { error: "privacy_mode must be stateless or persistent" },
+        { status: 400 },
+      );
+    }
+    privacyMode = body.privacy_mode;
+  }
+
+  if (Object.keys(patch).length === 0 && !privacyMode) {
     return NextResponse.json({ error: "No known settings keys" }, { status: 400 });
   }
 
@@ -58,7 +73,9 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ site: str
   if (readErr) return NextResponse.json({ error: "Read failed" }, { status: 500 });
 
   const merged = { ...(current?.settings as Record<string, unknown> | null ?? {}), ...patch };
-  const { error } = await admin.from("sites").update({ settings: merged }).eq("id", owned.siteId);
+  const update: Record<string, unknown> = { settings: merged };
+  if (privacyMode) update.privacy_mode = privacyMode;
+  const { error } = await admin.from("sites").update(update).eq("id", owned.siteId);
   if (error) return NextResponse.json({ error: "Update failed" }, { status: 500 });
-  return NextResponse.json({ settings: merged });
+  return NextResponse.json({ settings: merged, privacyMode });
 }
