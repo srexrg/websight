@@ -21,14 +21,22 @@ const PLATFORMS = [
 ] as const;
 type Platform = (typeof PLATFORMS)[number];
 
-function snippet(platform: Platform, origin: string, domain: string): { code: string; note?: string } {
-  const tag = `<script defer src="${origin}/t.js" data-site="${domain}"></script>`;
+function snippet(
+  platform: Platform,
+  origin: string,
+  domain: string,
+  mode: "stateless" | "persistent",
+): { code: string; note?: string } {
+  // Persistent identity is opt-in on the tag: without data-mode the tracker
+  // stores nothing and the site's privacy_mode has no client half.
+  const attrs = `data-site="${domain}"${mode === "persistent" ? ` data-mode="persistent"` : ""}`;
+  const tag = `<script defer src="${origin}/t.js" ${attrs}></script>`;
   switch (platform) {
     case "HTML":
       return { code: tag, note: "Paste inside your <head>, before the closing tag." };
     case "Next.js":
       return {
-        code: `import Script from "next/script";\n\n// in app/layout.tsx <head> or root layout\n<Script defer src="${origin}/t.js" data-site="${domain}" />`,
+        code: `import Script from "next/script";\n\n// in app/layout.tsx <head> or root layout\n<Script defer src="${origin}/t.js" ${attrs} />`,
         note: "Use next/script with the defer strategy in your root layout.",
       };
     case "React":
@@ -120,10 +128,16 @@ function CodeBlock({ code, label }: { code: string; label: string }) {
   );
 }
 
-export function InstallTabs({ domain }: { domain: string }) {
+export function InstallTabs({
+  domain,
+  mode = "stateless",
+}: {
+  domain: string;
+  mode?: "stateless" | "persistent";
+}) {
   const [platform, setPlatform] = useState<Platform>("HTML");
   const [origin] = useState(() => (typeof window !== "undefined" ? window.location.origin : "https://websight.srexrg.me"));
-  const { code, note } = snippet(platform, origin, domain);
+  const { code, note } = snippet(platform, origin, domain, mode);
 
   return (
     <div>

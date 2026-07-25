@@ -43,6 +43,7 @@ export function PlayerTimeline({
   startMs,
   currentMs,
   onSeek,
+  emptyHint = "This session has no recorded events.",
 }: {
   events?: SessionEvent[];
   isPending: boolean;
@@ -50,6 +51,7 @@ export function PlayerTimeline({
   startMs: number;
   currentMs: number;
   onSeek: (offsetMs: number) => void;
+  emptyHint?: string;
 }) {
   if (isPending) {
     return (
@@ -62,7 +64,7 @@ export function PlayerTimeline({
   }
   if (isError) return <ErrorState message="Could not load this session's events." />;
   if (!events || events.length === 0) {
-    return <EmptyState title="No events" hint="This session has no recorded events." />;
+    return <EmptyState title="No events" hint={emptyHint} />;
   }
 
   const active = activeIndex(events, startMs + currentMs);

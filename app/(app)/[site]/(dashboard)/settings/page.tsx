@@ -4,6 +4,7 @@ import { createAdminClient } from "@/utils/supabase/admin";
 import { InstallTabs } from "@/components/onboarding/install-tabs";
 import { ShareSettingsCard } from "@/components/share/share-settings-card";
 import { ReplayCard } from "@/components/dashboard/settings/replay-card";
+import { PrivacyCard } from "@/components/dashboard/settings/privacy-card";
 import { replayStorageConfigured } from "@/lib/replay/storage";
 
 export const metadata = { title: "Site Settings" };
@@ -27,6 +28,7 @@ export default async function SiteSettingsPage({ params }: { params: Promise<{ s
     .maybeSingle();
   if (!site) notFound();
 
+  const privacyMode = site.privacy_mode === "persistent" ? "persistent" : "stateless";
   const settings = (site.settings as Record<string, unknown> | null) ?? {};
   const sampleRaw = Number(settings.replay_sample_rate);
   const retentionRaw = Number(settings.replay_retention_days);
@@ -63,7 +65,6 @@ export default async function SiteSettingsPage({ params }: { params: Promise<{ s
         <Field label="Name">{site.name}</Field>
         <Field label="Domains">{site.domains.join(", ")}</Field>
         <Field label="Site ID">{site.public_id}</Field>
-        <Field label="Privacy mode">{site.privacy_mode}</Field>
         <Field label="Timezone">{site.timezone}</Field>
       </section>
 
@@ -74,8 +75,10 @@ export default async function SiteSettingsPage({ params }: { params: Promise<{ s
           events: <code className="font-mono">websight.track(&quot;signup&quot;)</code> or{" "}
           <code className="font-mono">data-ws-event</code> attributes.
         </p>
-        <InstallTabs domain={site.domains[0] ?? site.public_id} />
+        <InstallTabs domain={site.domains[0] ?? site.public_id} mode={privacyMode} />
       </section>
+
+      <PrivacyCard site={site.public_id} initial={privacyMode} />
 
       <ReplayCard
         site={site.public_id}

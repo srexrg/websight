@@ -449,11 +449,16 @@ export function ReplayPlayerScreen({ site, recordingId }: { site: string; record
             <div className="max-h-[560px] overflow-y-auto">
               <PlayerTimeline
                 events={eventsQ.data}
-                isPending={eventsQ.isPending}
+                isPending={eventsQ.isLoading}
                 isError={eventsQ.isError}
                 startMs={startMs}
                 currentMs={currentMs}
                 onSeek={seek}
+                emptyHint={
+                  recording?.sessionId
+                    ? "This session has no recorded events."
+                    : "This recording was never linked to a session, so it has no event timeline."
+                }
               />
             </div>
           </aside>

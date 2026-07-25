@@ -213,7 +213,7 @@ export function OnboardingFlow({ firstSite }: { firstSite: boolean }) {
 
         {step === "install" && publicId && (
           <motion.div key="install" {...anim}>
-            <InstallTabs domain={domain} />
+            <InstallTabs domain={domain} mode={privacy} />
             <div className="mt-6 flex items-center justify-between">
               <button
                 onClick={() => setStep("site")}
